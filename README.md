@@ -1,6 +1,6 @@
 # Niord Proxy #
 
-The Niord Proxy serves to deomonstrate how an end-user facing website could retrieve and render messages from a
+The Niord Proxy is intended to demonstrate how an end-user facing website could retrieve and render messages from a
 Niord back-end server.
 
 

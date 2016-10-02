@@ -1,0 +1,61 @@
+
+<td class="msi-details-image" style="border: none" ng-if="format == 'list'">
+</td>
+<td class="msi-details-item" style="border: none">
+
+    <!-- Title line -->
+    <div ng-if="msg.originalInformation">&#10029;</div>
+    <div>
+        <strong msi-message-title="msg" exclude-area-heading="excludeAreaHeading"></strong>
+        <span ng-if="msg.shortId">
+            &nbsp;(<strong>{{msg.shortId}}</strong>)
+        </span>
+        {{msg.descs[0].title}}
+    </div>
+
+    <!-- Reference lines -->
+    <div class="row" ng-repeat="ref in msg.references">
+        <div class="col-sm-1 msi-details-item-field" translate>FIELD_REFERENCE</div>
+        <div class="col-sm-11 msi-details-item-value">
+            <span>{{ref.messageId}}</span>
+            <span ng-switch="ref.type">
+                <span ng-switch-when="REPETITION" translate>REF_REPETITION</span>
+                <span ng-switch-when="CANCELLATION" translate>REF_CANCELLED</span>
+                <span ng-switch-when="UPDATE" translate>REF_UPDATED</span>
+            </span>
+        </div>
+    </div>
+
+
+    <!-- Details line -->
+    <div class="row" ng-if="msg.parts && msg.parts.length > 0">
+        <div class="col-sm-1 msi-details-item-field" translate>FIELD_DETAILS</div>
+        <div class="col-sm-11 msi-details-item-value">
+            <div ng-repeat="part in msg.parts" ng-if="part.descs">
+                <div ng-if="part.descs[0].subject"><strong>{{part.descs[0].subject}}</strong></div>
+                <div ng-if="part.descs[0].details" ng-bind-html="part.descs[0].details"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" ng-if="msg.descs[0].note">
+        <div class="col-sm-1 msi-details-item-field" translate>FIELD_NOTE</div>
+        <div class="col-sm-11 msi-details-item-value">{{msg.descs[0].note}}</div>
+    </div>
+
+    <!-- Charts line -->
+    <div class="row" ng-if="msg.charts.length > 0">
+        <div class="col-sm-1 msi-details-item-field" translate>FIELD_CHARTS</div>
+        <div class="col-sm-11 msi-details-item-value">
+            <span ng-repeat="chart in msg.charts"><span ng-if="!$first">, </span>{{chart.chartNumber}}
+                <span ng-if="chart.internationalNumber">(INT {{chart.internationalNumber}})</span></span>
+        </div>
+    </div>
+
+    <!-- Source line -->
+    <div class="row" ng-if="msg.descs[0].source">
+        <div class="col-sm-12 msi-details-item-value text-right">({{msg.descs[0].source}})</div>
+    </div>
+
+    <div class="msi-details-item-spacing" ng-if="format == 'list'"></div>
+</td>

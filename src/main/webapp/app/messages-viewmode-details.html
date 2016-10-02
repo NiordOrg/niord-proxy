@@ -1,0 +1,11 @@
+
+<div class="msi-details">
+    <table class="table table-condensed">
+        <tr ng-repeat-start="msg in messages"  ng-if="msg.areaHeading">
+            <td colspan="2" style="border: none">
+                <h2 class="msi-area-heading" style="margin-bottom: 5px;" msi-area="msg.areaHeading"></h2>
+            </td>
+        </tr>
+        <tr ng-repeat-end render-message-details msg="msg" messages="messages" ></tr>
+    </table>
+</div>

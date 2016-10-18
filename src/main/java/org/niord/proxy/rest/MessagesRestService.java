@@ -15,21 +15,26 @@
  */
 package org.niord.proxy.rest;
 
-import org.niord.proxy.conf.Settings;
+import org.niord.model.message.MessageVo;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
+
+/**
+ * Main REST endpoint for fetching messages from the NW-NM backend
+ */
 @Path("/messages")
 public class MessagesRestService {
 
@@ -38,42 +43,30 @@ public class MessagesRestService {
 	@Inject
 	Logger log;
 
-	@Inject
-	Settings settings;
-
     @Inject
-    MessageCacheService messageCacheService;
+    MessageService messageService;
 
+
+    /**
+     * Fetches and returns messages based on the request parameters
+     * @param request the request
+     * @param uriInfo the URI info
+     * @return the messages matching the request parameters
+     */
 	@GET
     @Path("/search")
 	@Produces("application/json;charset=UTF-8")
 	public Response doGet(@Context Request request, @Context UriInfo uriInfo) {
 
         String uri = uriInfo.getRequestUri().toString();
+        String params = uri.contains("?") ? uri.substring(uri.indexOf("?") + 1) : "";
 
-        String result = messageCacheService.get(uri);
-        if (result == null) {
-            long t0 = System.currentTimeMillis();
-
-            Response res = ClientBuilder.newClient()
-                    // TODO: Find correct timeout property
-                    .property("javax.ws.rs.client.http.connectionTimeout", 4000)
-                    .property("javax.ws.rs.client.http.socketTimeout", 4000)
-                    .target(settings.getServer())
-                    .path("public/v1/messages")
-                    .queryParam("domain", "niord-client-nm")
-                    .request("application/json")
-                    .get();
-
-            result = res.readEntity(String.class);
-            messageCacheService.put(uri, result);
-            log.info("Retrieved data for URI " + uri + " in " + (System.currentTimeMillis() - t0) + " ms");
-        }
+        List<MessageVo> messages = messageService.fetchMessages(params);
 
         Date expirationDate = new Date(System.currentTimeMillis() + 1000L * 60L * CACHE_TIMEOUT_MINUTES);
 
         // Check for an ETag match
-        EntityTag etag = new EntityTag(uri + "_" + result.length() + "_" + result.hashCode(), true);
+        EntityTag etag = new EntityTag(uri + "_" + etagForMessages(messages), true);
         Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(etag);
         if (responseBuilder != null) {
             // ETag match
@@ -83,9 +76,18 @@ public class MessagesRestService {
         }
 
         return Response
-                .ok(result)
+                .ok(messages)
                 .expires(expirationDate)
                 .tag(etag)
                 .build();
 	}
+
+
+	/** Computes a E-tag value for the message list **/
+    private String etagForMessages(List<MessageVo> messages) {
+        AtomicLong ts = new AtomicLong();
+        messages.forEach(m -> ts.addAndGet(m.getUpdated().getTime()));
+        return messages.size() + "_"+ ts;
+    }
+
 }

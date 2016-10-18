@@ -26,7 +26,7 @@ public class Settings {
     private void init() {
         // Initialize settings from system properties
 
-        server = System.getProperty("niord-proxy.server", "https://niord.e-navigation.net/rest");
+        server = System.getProperty("niord-proxy.server", "https://niord.e-navigation.net");
         log.info("server: " + server);
     }
 

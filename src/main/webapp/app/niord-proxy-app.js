@@ -41,8 +41,28 @@ var app = angular.module('niord.proxy.app', ['ngSanitize', 'ui.bootstrap', 'ui.r
             return {
 
                 /** Returns the message filters */
-                search: function() {
-                    return $http.get('/rest/messages/search');
+                search: function(params) {
+                    var p = 'language=' + params.language;
+                    if (params.onlyActive) {
+                        p += '&active=true';
+                    }
+                    if (params.mainTypes.NW) {
+                        p += '&mainType=NW';
+                    }
+                    if (params.mainTypes.NM) {
+                        p += '&mainType=NM';
+                    }
+                    /*
+                    for (var a = 0; a < params.areaIds.length; a++) {
+                        if (params.areaIds[a]) {
+                            p += '&areaId=' + params.areaIds[a];
+                        }
+                    }
+                    */
+                    if (params.wkt) {
+                        p += '&wkt=' + encodeURIComponent(params.wkt);
+                    }
+                    return $http.get('/rest/messages/search?' + p);
                 }
             };
         }])
@@ -77,6 +97,16 @@ var app = angular.module('niord.proxy.app', ['ngSanitize', 'ui.bootstrap', 'ui.r
             'use strict';
 
             $scope.messages = [];
+            $scope.params = {
+                language: 'en',
+                onlyActive: false,
+                mainTypes: [ {
+                    'NW': true,
+                    'NM': false
+                }],
+                areaIds: [],
+                wkt: undefined
+            };
 
             /**
              * Scans through the search result and marks all messages that should potentially
@@ -113,10 +143,16 @@ var app = angular.module('niord.proxy.app', ['ngSanitize', 'ui.bootstrap', 'ui.r
             };
 
 
-            MessageService.search()
-                .success(function (messages) {
-                    $scope.messages = messages;
-                    $scope.checkGroupByArea();
-                });
+            $scope.refreshMessages = function () {
+                MessageService.search($scope.params)
+                    .success(function (messages) {
+                        $scope.messages = messages;
+                        $scope.checkGroupByArea();
+                    });
+            };
+
+
+            // Every time the parameters change, refresh the message list
+            $scope.$watch("params", $scope.refreshMessages, true)
 
         }]);

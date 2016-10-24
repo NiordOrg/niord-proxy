@@ -5,8 +5,8 @@
 angular.module('niord.proxy.app')
 
 
-    .controller('MessageCtrl', ['$scope', '$rootScope', '$window', 'MessageService',
-        function ($scope, $rootScope, $window, MessageService) {
+    .controller('MessageCtrl', ['$scope', '$rootScope', '$window', '$timeout', 'MessageService',
+        function ($scope, $rootScope, $window, $timeout, MessageService) {
             'use strict';
 
 
@@ -37,6 +37,15 @@ angular.module('niord.proxy.app')
                 .success(function (areaGroups) {
                     $scope.params.areaGroups = areaGroups;
                 });
+
+
+            /**
+             * Called to initialize the controller whenever the viewmode changes.
+             */
+            $scope.init = function () {
+                $timeout(adjustMessageListTopPosition, 100);
+            };
+            $scope.init();
 
 
             /**

@@ -14,15 +14,11 @@ import org.niord.proxy.conf.Settings;
 import org.niord.proxy.util.JtsConverter;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.ejb.Timeout;
-import javax.ejb.TimerConfig;
-import javax.ejb.TimerService;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +35,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * The main service for accessing and caching messages from the Niord Server
+ * The main service for accessing and caching messages from the NW-NM service
  */
 @Singleton
 @Startup
@@ -49,9 +45,6 @@ public class MessageService {
 
     public static final DataFilter MESSAGE_DETAILS_FILTER =
             DataFilter.get().fields("Message.details", "Message.geometry", "Area.parent", "Category.parent");
-
-    @Resource
-    TimerService timerService;
 
     @Inject
     Settings settings;
@@ -67,8 +60,8 @@ public class MessageService {
     /** Initialize the service **/
     @PostConstruct
     private void init() {
-        // Wait 0.5 seconds before fetching messages
-        timerService.createSingleActionTimer(500, new TimerConfig());
+        // Fetch messages from the NW-NM service
+        periodicFetchMessages();
     }
 
 
@@ -170,7 +163,6 @@ public class MessageService {
     /**
      * Periodically loads the published messages from the Niord server
      */
-    @Timeout
     @Schedule(second = "12", minute = "*/3", hour = "*")
     public void periodicFetchMessages() {
 

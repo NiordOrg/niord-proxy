@@ -52,6 +52,15 @@
         </div>
     </div>
 
+    <div class="row" ng-if="msg.attachments">
+        <div class="col-sm-1 msi-details-item-field" translate>FIELD_ATTACHMENTS</div>
+        <div class="col-sm-11 msi-details-item-value">
+            <div ng-repeat="att in msg.attachments">
+                <a href="{{att.path}}" target="_blank">{{att.fileName}}</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Source line -->
     <div class="row" ng-if="msg.descs[0].source">
         <div class="col-sm-12 msi-details-item-value text-right">({{msg.descs[0].source}})</div>

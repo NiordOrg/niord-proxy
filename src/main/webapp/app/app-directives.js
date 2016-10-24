@@ -146,6 +146,8 @@ angular.module('niord.proxy.app')
             return {
                 restrict: 'E',
                 replace: false,
+                transclude: true,
+                templateUrl: '/app/render-message-map.html',
                 scope: {
                     messages:   '=?',
                     message:    '=?',

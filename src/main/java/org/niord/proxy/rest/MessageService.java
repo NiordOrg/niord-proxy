@@ -182,7 +182,7 @@ public class MessageService {
             log.warning("No message with ID " + messageId);
             return null;
         } else {
-            log.warning("Found message with ID " + messageId);
+            log.info("Found message with ID " + messageId);
             DataFilter filter = MESSAGE_DETAILS_FILTER.lang(language);
             return message.copy(filter);
         }

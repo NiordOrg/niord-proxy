@@ -15,6 +15,7 @@
  */
 package org.niord.proxy.rest;
 
+import org.niord.model.message.AreaVo;
 import org.niord.model.message.MainType;
 import org.niord.model.message.MessageVo;
 
@@ -39,20 +40,27 @@ public class MessagesRestService {
 
 
     /**
-     * Fetches and returns messages based on the request parameters
+     * Returns a filtered set of messages
      *
-     * @return the messages matching the request parameters
+     * @param language the language of the descriptive fields to include
+     * @param mainTypes the main types to include
+     * @param areaIds the area IDs of the messages to include
+     * @param wkt the geometric boundary of the messages to include
+     * @param active whether or not to only show messages that are currently active
+     * @return the filtered set of messages
      */
 	@GET
     @Path("/search")
 	@Produces("application/json;charset=UTF-8")
 	public List<MessageVo> search(
-	        @QueryParam("lang") @DefaultValue("en") String language,
+	        @QueryParam("language") @DefaultValue("en") String language,
             @QueryParam("mainType") Set<MainType> mainTypes,
             @QueryParam("areaId") Set<Integer> areaIds,
-            @QueryParam("wkt") String wkt) throws Exception {
+            @QueryParam("wkt") String wkt,
+            @QueryParam("active") boolean active
+            ) throws Exception {
 
-        return messageService.getMessages(language, mainTypes, areaIds, wkt);
+        return messageService.getMessages(language, mainTypes, areaIds, wkt, active);
     }
 
 
@@ -67,6 +75,20 @@ public class MessagesRestService {
     public List<String>  languages() {
 
         return messageService.getLanguages();
+    }
+
+
+    /**
+     * Fetches the area groups
+     *
+     * @return the area groups
+     */
+    @GET
+    @Path("/area-groups")
+    @Produces("application/json;charset=UTF-8")
+    public List<AreaVo>  areaGroups() {
+
+        return messageService.getAreaGroups();
     }
 
 }

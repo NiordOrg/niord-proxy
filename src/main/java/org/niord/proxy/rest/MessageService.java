@@ -27,9 +27,11 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -55,6 +57,7 @@ public class MessageService {
     private List<MessageVo> messages = new ArrayList<>();
     private Map<String, List<Geometry>> geometries = new HashMap<>();
     private List<String> languages = new ArrayList<>();
+    private List<AreaVo> areaGroups = new ArrayList<>();
 
 
     /** Initialize the service **/
@@ -71,9 +74,15 @@ public class MessageService {
     }
 
 
-    /** Returns a reference to the message languages **/
+    /** Returns the message languages **/
     public List<String> getLanguages() {
         return languages;
+    }
+
+
+    /** Returns the message area groups **/
+    public List<AreaVo> getAreaGroups() {
+        return areaGroups;
     }
 
 
@@ -83,9 +92,10 @@ public class MessageService {
      * @param mainTypes the main types to include
      * @param areaIds the area IDs of the messages to include
      * @param wkt the geometric boundary of the messages to include
+     * @param active whether or not to only show messages that are currently active
      * @return the filtered set of messages
      */
-    public List<MessageVo> getMessages(String language, Set<MainType> mainTypes, Set<Integer> areaIds, String wkt) throws Exception {
+    public List<MessageVo> getMessages(String language, Set<MainType> mainTypes, Set<Integer> areaIds, String wkt, boolean active) throws Exception {
 
         if (language != null && !languages.contains(language)) {
             language = languages.isEmpty() ? "en" : languages.get(0);
@@ -96,12 +106,18 @@ public class MessageService {
                 ? JtsConverter.wktToJts(wkt)
                 : null;
 
-        return messages.stream()
+        List<MessageVo> result = messages.stream()
                 .filter(m -> filterByMainTypes(m, mainTypes))
                 .filter(m -> filterByAreaIds(m, areaIds))
                 .filter(m -> filterByGeometry(m, geometry))
+                .filter(m -> filterByActiveStatus(m, active))
                 .map(m -> m.copy(filter))
                 .collect(Collectors.toList());
+
+        log.info(String.format("Search for language=%s, mainTypes=%s, areaIds=%s, wkt=%s -> returning %d messages",
+                language, mainTypes, areaIds, wkt, result.size()));
+
+        return result;
     }
 
 
@@ -136,6 +152,7 @@ public class MessageService {
                     msgArea = msgArea.getParent();
                 } while (msgArea != null);
             }
+            return false;
         }
         // If no area IDs is specified, include the message
         return true;
@@ -158,6 +175,26 @@ public class MessageService {
         }
         return true;
     }
+
+
+    /**
+     * Filters messages on whether they are current active or not
+     * @param message the message
+     * @param active if set, only include messages that are currently active
+     * @return if the message is included by the filter
+     */
+    private boolean filterByActiveStatus(MessageVo message, boolean active) {
+        if (active) {
+            Date now = new Date();
+            return message.getParts() != null &&
+                    message.getParts().stream()
+                        .filter(p -> p.getEventDates() != null)
+                        .flatMap(p -> p.getEventDates().stream())
+                        .anyMatch(di -> di.containsDate(now));
+        }
+        return true;
+    }
+
 
 
     /**
@@ -244,12 +281,37 @@ public class MessageService {
                 .collect(Collectors.toList());
 
 
+        // Update the area groups by picking the second parent-most area of each message and filter out duplicates
+        List<AreaVo> areaGroups = new ArrayList<>();
+        messages.stream()
+                .filter(m -> m.getAreas() != null && !m.getAreas().isEmpty())
+                .map(m -> m.getAreas().get(0))
+                .map(a -> getParentAreaAtLevel(a, 1))
+                .forEach(a -> {
+                    AreaVo lastArea = areaGroups.isEmpty() ? null : areaGroups.get(areaGroups.size() - 1);
+                    if (lastArea == null || !Objects.equals(lastArea.getId(), a.getId())) {
+                        areaGroups.add(a);
+                    }
+                });
+
+
+
         // Ready to update our local fields
         this.messages = messages;
         this.geometries = geometries;
+        this.areaGroups = areaGroups;
         this.languages = languages;
     }
 
+
+    /** Return the level parent-most area **/
+    private AreaVo getParentAreaAtLevel(AreaVo area, int level) {
+        List<AreaVo> areaLineage = new ArrayList<>();
+        for (AreaVo a = area; a != null; a = a.getParent()) {
+            areaLineage.add(0, a);
+        }
+        return areaLineage.get(Math.min(areaLineage.size() - 1, level));
+    }
 
     /**
      * Returns the url for fetching the list of active messages sorted by area

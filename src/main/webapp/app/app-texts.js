@@ -8,13 +8,13 @@ angular.module('niord.proxy.app')
 
         $translateProvider.translations('en', {
 
-            'TITLE' : 'Maritime Notifications',
             'MENU_DETAILS' : 'Details',
-            'MENU_GRID' : 'Gallery',
             'MENU_MAP' : 'Map',
             'MENU_PDF' : 'PDF',
+            'MENU_NW'  : 'Navigational Warnings',
+            'MENU_NM'  : 'Notices to Mariners',
             'BTN_CLOSE' : 'Close',
-            'GENERAL_MSGS' : 'General Notifications',
+            'GENERAL_MSGS' : 'General Messages',
             'FIELD_REFERENCE' : 'Reference',
             'FIELD_TIME' : 'Time',
             'FIELD_LOCATION' : 'Location',
@@ -33,13 +33,13 @@ angular.module('niord.proxy.app')
 
         $translateProvider.translations('da', {
 
-            'TITLE' : 'Maritime Notifikationer',
             'MENU_DETAILS' : 'Detaljer',
-            'MENU_GRID' : 'Galleri',
             'MENU_MAP' : 'Kort',
             'MENU_PDF' : 'PDF',
+            'MENU_NW'  : 'Navigationsadvarsler',
+            'MENU_NM'  : 'Efterretninger til søfarende',
             'BTN_CLOSE' : 'Luk',
-            'GENERAL_MSGS' : 'Generelle Notifikationer',
+            'GENERAL_MSGS' : 'Generelle Meddelelser',
             'FIELD_REFERENCE' : 'Reference',
             'FIELD_TIME' : 'Tid',
             'FIELD_LOCATION' : 'Placering',

@@ -50,33 +50,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Generate a HTML5 application cache manifest -->
-            <plugin>
-                <groupId>com.github.cameroncan</groupId>
-                <artifactId>cachemanifest-maven-plugin</artifactId>
-                <version>1.0.1</version>
-                <executions>
-                    <execution>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>generate-manifest</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <manifestVersion>${manifest.timestamp}</manifestVersion>
-                    <inputDirectory>${basedir}/src/main/webapp</inputDirectory>
-                    <outputManifestFile>${project.build.directory}/${project.build.finalName}/index.manifest</outputManifestFile>
-                    <includes>
-                        <include>ext/**</include>
-                    </includes>
-                    <networkResources>
-                        <networkResource>*</networkResource>
-                    </networkResources>
-                    <fallback>/index.html /index.html</fallback>
-                </configuration>
-            </plugin>
-
         </plugins>
     </build>
 

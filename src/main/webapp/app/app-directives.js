@@ -7,7 +7,8 @@ angular.module('niord.proxy.app')
     /********************************
      * Renders the message details
      ********************************/
-    .directive('renderMessageDetails', [ '$rootScope', function ($rootScope) {
+    .directive('renderMessageDetails', [ '$rootScope', 'MessageService',
+        function ($rootScope, MessageService) {
         'use strict';
 
         return {
@@ -15,16 +16,29 @@ angular.module('niord.proxy.app')
             templateUrl: '/app/render-message-details.html',
             replace: false,
             scope: {
-                msg: "=",
-                language: "=",
-                format: "@"
+                msg:            "=",
+                messages:       "=",
+                language:       "=",
+                format:         "@",
+                showDetails:    "&"
             },
-            link: function(scope) {
+            link: function(scope, element, attrs) {
                 scope.language = scope.language || $rootScope.language;
                 scope.format = scope.format || 'list';
                 scope.showAttachments = false;
                 scope.attachmentsAbove = [];
                 scope.attachmentsBelow = [];
+
+
+                /** Called when a message reference is clicked **/
+                scope.referenceClicked = function(messageId) {
+                    if (attrs.showDetails) {
+                        scope.showDetails({messageId: messageId});
+                    } else {
+                        MessageService.detailsDialog(messageId, scope.messages);
+                    }
+                };
+
 
                 /** Called whenever the message changes **/
                 scope.initMessage = function () {
@@ -130,6 +144,32 @@ angular.module('niord.proxy.app')
     }])
 
 
+    /****************************************************************
+     * Binds a click event that will open the message details dialog
+     ****************************************************************/
+    .directive('messageDetailsLink', ['MessageService',
+        function (MessageService) {
+            'use strict';
+
+            return {
+                restrict: 'A',
+                scope: {
+                    messageDetailsLink: "=",
+                    messages: "=",
+                    disabled: "=?"
+                },
+                link: function(scope, element) {
+
+                    if (!scope.disabled) {
+                        element.addClass('clickable');
+                        element.bind('click', function() {
+                            MessageService.detailsDialog(scope.messageDetailsLink, scope.messages);
+                        });
+                    }
+                }
+            };
+        }])
+
 
     /**
      * Converts a div into a search result map.
@@ -139,8 +179,8 @@ angular.module('niord.proxy.app')
      *
      * In the former case, the map will be interactive, i.e. with tooltip and clickable features. Not so in the latter case.
      */
-    .directive('messageMap', ['$rootScope', '$location', '$timeout', 'MapService',
-        function ($rootScope, $location, $timeout, MapService) {
+    .directive('messageMap', ['$rootScope', '$location', '$timeout', 'MapService', 'MessageService',
+        function ($rootScope, $location, $timeout, MapService, MessageService) {
             'use strict';
 
             return {
@@ -165,6 +205,8 @@ angular.module('niord.proxy.app')
                     scope.interactive = (attrs.messages !== undefined);
 
                     var maxZoom = scope.maxZoom ? parseInt(scope.maxZoom) : 10;
+                    var updateSizeTimer;
+
 
                     // Just used for bootstrapping the map
                     var zoom = 6;
@@ -263,6 +305,23 @@ angular.module('niord.proxy.app')
                     view.setCenter(MapService.fromLonLat([ lon, lat ]));
                     view.setZoom(zoom);
 
+                    // Update the map size if the element size changes.
+                    // In theory, this should not be necessary, but it seems to fix a problem
+                    // where maps are sometimes distorted
+                    scope.updateSize = function () {
+                        updateSizeTimer = null;
+                        map.updateSize();
+                    };
+                    scope.$watchGroup([
+                        function() { return element[0].clientWidth; },
+                        function() { return element[0].clientHeight; }
+                    ], function () {
+                        if (updateSizeTimer) {
+                            $timeout.cancel(updateSizeTimer);
+                        }
+                        updateSizeTimer = $timeout(scope.updateSize, 100);
+                    });
+
                     /*********************************/
                     /* Interactive Functionality     */
                     /*********************************/
@@ -280,23 +339,32 @@ angular.module('niord.proxy.app')
                     }
 
 
+                    // Returns the list of messages for the given pixel
+                    scope.getMessagesForPixel = function (pixel) {
+                        var messageIds = {};
+                        var messages = [];
+                        map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+                            var msg = feature.get('message');
+                            if ((layer  == nwLayer || layer  == nmLayer) && msg && messageIds[msg.id] === undefined) {
+                                messages.push(msg);
+                                messageIds[msg.id] = msg.id;
+                            }
+                        });
+                        return messages;
+                    };
+
+
+                    // Show Message details dialog when a message is clicked
+                    map.on('click', function(evt) {
+                        var messages = scope.getMessagesForPixel(map.getEventPixel(evt.originalEvent));
+                        if (messages.length >= 1) {
+                            MessageService.detailsDialog(messages[0].id, messages)
+                        }
+                    });
+
                     /*********************************/
                     /* Update Messages               */
                     /*********************************/
-
-
-                    /** Returns the features associated with a message **/
-                    function featuresForMessage(msg) {
-                        var features = [];
-                        if (msg && msg.parts && msg.parts.length) {
-                            angular.forEach(msg.parts, function (part) {
-                                if (part.geometry && part.geometry.features && part.geometry.features.length) {
-                                    features.push.apply(features, part.geometry.features);
-                                }
-                            });
-                        }
-                        return features;
-                    }
 
 
                     /** Called when messages are updated **/
@@ -310,7 +378,7 @@ angular.module('niord.proxy.app')
 
                         for (var x = 0; x < messages.length; x++) {
                             var message = messages[x];
-                            var features = featuresForMessage(message);
+                            var features = MessageService.featuresForMessage(message);
                             if (features.length > 0) {
                                 angular.forEach(features, function (gjFeature) {
                                     var olFeature = MapService.gjToOlFeature(gjFeature);

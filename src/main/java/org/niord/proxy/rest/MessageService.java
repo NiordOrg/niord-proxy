@@ -22,8 +22,10 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -120,6 +122,71 @@ public class MessageService {
         return result;
     }
 
+
+    /**
+     * Returns the message with the given ID
+     * @param language the language of the descriptive fields to include
+     * @param messageId the ID of the message
+     * @return the message with the given ID
+     */
+    public MessageVo getMessageDetails(String language, String messageId) {
+
+        // First, check if the message is already cached
+        MessageVo message = messages.stream()
+                .filter(m -> messageId.equals(m.getId()) || messageId.equals(m.getShortId()))
+                .findFirst()
+                .orElse(null);
+
+
+        // If not cached here, get it from the NW-NM service
+        if (message == null) {
+            String url = getMessageUrl(messageId);
+            long t0 = System.currentTimeMillis();
+
+            try {
+                HttpURLConnection con = newHttpUrlConnection(url);
+
+                int status = con.getResponseCode();
+                if (status == HttpURLConnection.HTTP_MOVED_TEMP
+                        || status == HttpURLConnection.HTTP_MOVED_PERM
+                        || status == HttpURLConnection.HTTP_SEE_OTHER) {
+
+                    // get redirect url from "location" header field
+                    String redirectUrl = con.getHeaderField("Location");
+
+                    // open the new connection again
+                    con = newHttpUrlConnection(redirectUrl);
+                }
+
+                try (InputStream is = con.getInputStream()) {
+
+                    String json = IOUtils.toString(is, Charset.forName("utf-8"));
+
+                    ObjectMapper mapper = new ObjectMapper();
+
+                    message = mapper.readValue(json, MessageVo.class);
+
+                    log.info(String.format(
+                            "Loaded NW-NM messages with ID %s in %s ms",
+                            messageId,
+                            System.currentTimeMillis() - t0));
+                }
+
+            } catch (Exception e) {
+                log.warning("Failed loading NW-NM message with ID " + messageId + " from url " + url +" : " + e.getMessage());
+            }
+        }
+
+
+        if (message == null) {
+            log.warning("No message with ID " + messageId);
+            return null;
+        } else {
+            log.warning("Found message with ID " + messageId);
+            DataFilter filter = MESSAGE_DETAILS_FILTER.lang(language);
+            return message.copy(filter);
+        }
+    }
 
     /**
      * Filters messages by their main type
@@ -313,6 +380,7 @@ public class MessageService {
         return areaLineage.get(Math.min(areaLineage.size() - 1, level));
     }
 
+
     /**
      * Returns the url for fetching the list of active messages sorted by area
      * @return the list of active messages sorted by area
@@ -320,6 +388,21 @@ public class MessageService {
     private String getActiveMessagesUrl() {
         return settings.getServer()
                 + "/rest/public/v1/messages";
+    }
+
+
+    /**
+     * Returns the url for fetching the public messages with the given ID
+     * @return the public message with the given ID
+     */
+    private String getMessageUrl(String messageId) {
+        try {
+            return settings.getServer()
+                    + "/rest/public/v1/messages/message/" + URLEncoder.encode(messageId, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            // Should never happen
+            return null;
+        }
     }
 
 

@@ -8,9 +8,22 @@ angular.module('niord.proxy.app')
     /**
      * Interface for calling the application server
      */
-    .factory('MessageService', [ '$rootScope', '$http', '$translate',
-        function($rootScope, $http, $translate) {
+    .factory('MessageService', [ '$rootScope', '$http', '$translate', '$uibModal',
+        function($rootScope, $http, $translate, $uibModal) {
             'use strict';
+
+
+            /** Returs the list of message ids **/
+            function extractMessageIds(messages) {
+                var ids = [];
+                if (messages) {
+                    for (var i in messages) {
+                        ids.push(messages[i].id);
+                    }
+                }
+                return ids;
+            }
+
 
             return {
 
@@ -53,6 +66,38 @@ angular.module('niord.proxy.app')
                 },
 
 
+                /** Returns the features associated with a message **/
+                featuresForMessage: function(msg) {
+                    var features = [];
+                    if (msg && msg.parts && msg.parts.length) {
+                        angular.forEach(msg.parts, function (part) {
+                            if (part.geometry && part.geometry.features && part.geometry.features.length) {
+                                features.push.apply(features, part.geometry.features);
+                            }
+                        });
+                    }
+                    return features;
+                },
+
+
+                /** Opens a message details dialog **/
+                detailsDialog: function(messageId, messages) {
+                    return $uibModal.open({
+                        controller: "MessageDialogCtrl",
+                        templateUrl: "/app/message-details-dialog.html",
+                        size: 'lg',
+                        resolve: {
+                            messageId: function () {
+                                return messageId;
+                            },
+                            messages: function () {
+                                return messages && messages.length > 0 ? extractMessageIds(messages) : [ messageId ];
+                            }
+                        }
+                    });
+                },
+
+
                 /** Returns the message filters */
                 search: function(params) {
                     var p = 'language=' + params.language;
@@ -74,6 +119,12 @@ angular.module('niord.proxy.app')
                         p += '&wkt=' + encodeURIComponent(params.wkt);
                     }
                     return $http.get('/rest/messages/search?' + p);
+                },
+
+
+                details: function (id) {
+                    return $http.get('/rest/messages/message/' + encodeURIComponent(id)
+                                + '?language=' + $rootScope.language);
                 }
             };
         }])

@@ -14,7 +14,7 @@
     <div ng-if="msg.shortId">
         <span class="badge label-message-id">{{msg.shortId}}</span>
     </div>
-    <div>
+    <div ng-if="msg.descs" message-details-link="msg.id" messages="messages" disabled="format == 'details'">
         <strong>{{msg.descs[0].title}}</strong>
         <span ng-if="msg.descs[0].lang != language">
             <img ng-src="/img/flags/{{msg.descs[0].lang}}.png" style="height: 12px; opacity: 0.5;"/>
@@ -97,7 +97,7 @@
 
 
         <!-- Source line -->
-        <tr ng-if="msg.descs[0].source">
+        <tr ng-if="msg.descs && msg.descs[0].source">
             <td colspan="2" class="text-right">({{msg.descs[0].source}})</td>
         </tr>
 

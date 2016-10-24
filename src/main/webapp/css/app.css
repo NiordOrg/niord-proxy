@@ -77,6 +77,22 @@ h4 {
     margin-top: 30px
 }
 
+.details-message-map {
+    display: block;
+    width: 100%;
+    height: 200px;
+    margin-bottom: 20px;
+    background-color: #b5d0d0;
+    border: 1px solid lightgray;
+}
+
+@media (min-width: 800px) {
+    .details-message-map {
+        height: 300px;
+    }
+}
+
+
 .message-map {
     width: 100%;
     height: 100%;

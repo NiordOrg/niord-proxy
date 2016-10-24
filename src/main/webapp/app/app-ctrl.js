@@ -5,6 +5,9 @@
 angular.module('niord.proxy.app')
 
 
+    /**********************************************************************
+     * Controller that handles the messages used for list and map overview
+     **********************************************************************/
     .controller('MessageCtrl', ['$scope', '$rootScope', '$window', '$timeout', 'MessageService',
         function ($scope, $rootScope, $window, $timeout, MessageService) {
             'use strict';
@@ -106,5 +109,94 @@ angular.module('niord.proxy.app')
 
             // Every time the parameters change, refresh the message list
             $scope.$watch("params", $scope.refreshMessages, true)
+
+        }])
+
+
+    /*******************************************************************
+     * Controller that handles displaying message details in a dialog
+     *******************************************************************/
+    .controller('MessageDialogCtrl', ['$scope', '$window', 'MessageService', 'messageId', 'messages',
+        function ($scope, $window, MessageService, messageId, messages) {
+            'use strict';
+
+            $scope.warning = undefined;
+            $scope.messages = messages;
+            $scope.pushedMessageIds = [];
+            $scope.pushedMessageIds[0] = messageId;
+
+            $scope.msg = undefined;
+            $scope.index = $.inArray(messageId, messages);
+            $scope.showNavigation = $scope.index >= 0;
+            $scope.showMap = true;
+            $scope.hasGeometry = false;
+
+
+            // Navigate to the previous message in the message list
+            $scope.selectPrev = function() {
+                if ($scope.pushedMessageIds.length == 1 && $scope.index > 0) {
+                    $scope.index--;
+                    $scope.pushedMessageIds[0] = $scope.messages[$scope.index];
+                    $scope.loadMessageDetails();
+                }
+            };
+
+
+            // Navigate to the next message in the message list
+            $scope.selectNext = function() {
+                if ($scope.pushedMessageIds.length == 1 && $scope.index >= 0 && $scope.index < $scope.messages.length - 1) {
+                    $scope.index++;
+                    $scope.pushedMessageIds[0] = $scope.messages[$scope.index];
+                    $scope.loadMessageDetails();
+                }
+            };
+
+
+            // Navigate to a new nested message
+            $scope.selectMessage = function (messageId) {
+                $scope.pushedMessageIds.push(messageId);
+                $scope.loadMessageDetails();
+            };
+
+
+            // Navigate back in the nested navigation
+            $scope.back = function () {
+                if ($scope.pushedMessageIds.length > 1) {
+                    $scope.pushedMessageIds.pop();
+                    $scope.loadMessageDetails();
+                }
+            };
+
+
+            // Return the currently diisplayed message id
+            $scope.currentMessageId = function() {
+                return $scope.pushedMessageIds[$scope.pushedMessageIds.length - 1];
+            };
+
+
+            // Load the message details for the given message id
+            $scope.loadMessageDetails = function() {
+
+                MessageService.details($scope.currentMessageId())
+                    .success(function (data) {
+                        $scope.warning = (data) ? undefined : "Message " + $scope.currentMessageId() + " not found";
+                        $scope.msg = data;
+                        $scope.showMap = true;
+                        if ($scope.msg.attachments) {
+                            var attachmentsAbove = $.grep($scope.msg.attachments, function (att) {
+                                return att.display == 'ABOVE';
+                            });
+                            if (attachmentsAbove.length > 0) {
+                                $scope.showMap = false;
+                            }
+                        }
+                        $scope.hasGeometry = MessageService.featuresForMessage($scope.msg).length > 0;
+                    })
+                    .error(function () {
+                        $scope.msg = undefined;
+                    });
+            };
+
+            $scope.loadMessageDetails();
 
         }]);

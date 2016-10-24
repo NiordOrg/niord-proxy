@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import java.util.List;
@@ -61,6 +62,25 @@ public class MessagesRestService {
             ) throws Exception {
 
         return messageService.getMessages(language, mainTypes, areaIds, wkt, active);
+    }
+
+
+    /**
+     * Returns the message with the given ID
+     *
+     * @param language the language of the descriptive fields to include
+     * @param messageId the message ID
+     * @return the message with the given ID
+     */
+    @GET
+    @Path("/message/{messageId}")
+    @Produces("application/json;charset=UTF-8")
+    public MessageVo details(
+            @QueryParam("language") @DefaultValue("en") String language,
+            @PathParam("messageId") String messageId
+    ) throws Exception {
+
+        return messageService.getMessageDetails(language, messageId);
     }
 
 

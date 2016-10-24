@@ -167,22 +167,20 @@ public class MessageService {
                     message = mapper.readValue(json, MessageVo.class);
 
                     log.info(String.format(
-                            "Loaded NW-NM messages with ID %s in %s ms",
+                            "Loaded NW-NM message with ID %s in %s ms",
                             messageId,
                             System.currentTimeMillis() - t0));
                 }
 
             } catch (Exception e) {
-                log.warning("Failed loading NW-NM message with ID " + messageId + " from url " + url +" : " + e.getMessage());
+                log.warning("Failed loading NW-NM message with ID " + messageId + " from url " + url);
             }
         }
 
 
         if (message == null) {
-            log.warning("No message with ID " + messageId);
             return null;
         } else {
-            log.info("Found message with ID " + messageId);
             DataFilter filter = MESSAGE_DETAILS_FILTER.lang(language);
             return message.copy(filter);
         }

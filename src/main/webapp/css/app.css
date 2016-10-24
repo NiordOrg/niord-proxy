@@ -7,8 +7,8 @@ body {
     margin: 0;
     padding: 0;
     color: #5A5A5A;
+    background-color: #eee;
     overflow-x:hidden;
-    background:none transparent;
     font-family: 'Lucida Grande', 'Lucida Sans Unicode', Helvetica, Arial, Verdana, sans-serif;
     font-size: 12px;
 }
@@ -65,144 +65,16 @@ h4 {
 
 .clickable:hover {
     cursor: pointer;
-    text-decoration: underline;
 }
 
 /**
  * Message details styles
  */
 
-.msi-area-heading {
+.message-area-heading {
     color: #8f2f7b;
-    font-size: 18px;
-    border-bottom: 1px dashed lightgray;
-}
-
-.msi-details {
-    margin: 70px 10px 10px 10px;
-}
-
-.msi-details-image img {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-    border: 2px solid #fff;
-    display: none;
-}
-
-.msi-details-image img:hover {
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.6);
-}
-
-@media (min-width: 500px) {
-    .msi-details-image {
-        width: 130px;
-    }
-    .msi-details-image img {
-        display: block;
-        width: 120px;
-        height: 120px;
-        margin-bottom: 10px;
-    }
-}
-@media (min-width: 800px) {
-    .msi-details-image {
-        width: 210px;
-    }
-    .msi-details-image img {
-        width: 200px;
-        height: 200px;
-    }
-}
-
-.msi-details-item {
-    font-size: 11px;
-}
-
-.msi-details-item-spacing {
-    margin-bottom: 20px;
-}
-
-.msi-details-item-field {
-    font-weight: bold;
-    color: gray;
-    padding-top: 5px;
-}
-
-.msi-details-item-value {
-    padding-top: 5px;
-}
-
-.msi-details-item-value ol {
-    padding-left: 0;
-}
-
-.msi-grid {
-    margin-top: 70px;
-}
-
-.msi-grid-item-container {
-    margin-bottom: 20px;
-    width: 280px;
-    height: 260px;
-    position: relative;
-}
-
-.msi-grid-item {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-    border: 2px solid #fff;
-    position: relative;
-    margin: 1px;
-    width: 260px;
-    height: 260px;
-    cursor: pointer;
-}
-
-.msi-grid-item:hover {
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.6);
-}
-
-.msi-grid-item:hover .msi-grid-item-details {
-    height: 80px;
-}
-
-.msi-grid-item-image {
-    top: 0;
-    left: 0;
-}
-
-.msi-grid-item-header {
-    background-color: rgba(247, 247, 247, 0.8);
-    font-size: 11px;
-    line-height: 12px;
-    position: absolute;
-    top: 0;
-    padding: 5px 8px 5px 5px;
-}
-
-.msi-grid-item-title {
-    max-height: 50px;
-    overflow: hidden;
-}
-
-.msi-grid-item-details {
-    background-color: rgba(121, 171, 181, 0.8);
-    color: rgb(30, 30, 30);
-    display: block;
-    font-size: 12px;
-    height: 50px;
-    line-height: 15px;
-    opacity: 1;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding: 5px 8px 5px 8px;
-
-    -webkit-transition: height 0.3s;
-    -moz-transition: height 0.3s;
-    transition: height 0.3s;
+    font-size: 20px;
+    margin-top: 30px
 }
 
 .msi-map {
@@ -322,6 +194,143 @@ img.msi-map-general-message-icon {
     display: none;
 }
 
+
+/** Message details classes **/
+
+.message-details-list {
+    margin: 100px auto 10px auto;
+    max-width: 800px;
+}
+
+
+.label-message-id {
+    background-color: gray;
+    font-size: 10px;
+    display: inline-block;
+    margin-bottom: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.message-details-item {
+    font-size: 11px;
+    padding: 20px;
+    margin: 5px auto;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+table.message-details-item-fields {
+    width: 100%;
+}
+
+table.message-details-item-fields th {
+    width: 90px;
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: top;
+    color: gray;
+    padding-top: 5px;
+}
+
+table.message-details-item-fields td {
+    padding-top: 5px;
+}
+
+/** For tables in the message rich text description field **/
+.message-description table {
+    border-collapse: collapse;
+    border: 1px solid #333;
+}
+
+.message-description table td, .message-description table th {
+    vertical-align: top;
+    border: 1px solid #333;
+    padding: 3px;
+}
+
+.message-description ol, .message-description ul {
+    padding-left: 20px;
+    margin-bottom: 0;
+}
+
+.message-description ol li, .message-description ul li {
+    margin-bottom: 3px;
+}
+
+.message-description ol li:last-child, .message-description ul li:last-child {
+    margin-bottom: 0;
+}
+
+.message-description p, .message-description p {
+    margin: 0 0 3px 0;
+}
+
+.message-description ol li p:last-child, .message-description ul li p:last-child {
+    padding: 0;
+    margin: 0;
+}
+
+table.no-border {
+    border: 0;
+}
+
+table.no-border td, table.no-border th {
+    border: 0;
+}
+
+table.condensed {
+    padding: 0;
+}
+
+table.condensed td, table.condensed th {
+    padding: 0;
+}
+
+tr.underline td {
+    border-bottom: 1px solid #333;
+}
+
+td.underline {
+    border-bottom: 1px solid #333;
+}
+
+table.positions {
+    border: 0;
+    margin-bottom: 1mm;
+}
+
+table.positions td, table.positions th {
+    color: #333;
+    border: 0;
+    padding: 0 3mm 0 0;
+    text-align: left;
+    white-space: nowrap;
+}
+
+table.positions td:nth-child(1) {
+    text-align: right;
+    color: darkgray;
+}
+
+table.position-table td.pos-col {
+    width: 4.8cm;
+    text-align: right;
+    white-space: nowrap;
+}
+
+table.position-table td.pos-index {
+    width: 0.8cm;
+    text-align: right;
+    white-space: nowrap;
+}
+
+
+/**
+ * Attachments
+ */
+
 .attachment {
     text-align: center;
     position: relative;
@@ -332,39 +341,17 @@ img.msi-map-general-message-icon {
     vertical-align: middle;
 }
 
-.attachment-image img {
+.attachment-image-shadow img {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
 .attachment-label {
+    margin-top: 2px;
     white-space: nowrap;
     overflow: hidden;
     font-size: 10px;
 }
 
-.attachment-list {
-    display: inline-block;
-    margin: 4px;
-    vertical-align: top;
-}
-
-.size-32 {
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
-}
-
-.size-64 {
-    width: 64px;
-    height: 64px;
-    line-height: 64px;
-}
-
-.size-128 {
-    width: 128px;
-    height: 128px;
-    line-height: 128px;
-}
 
 /** View-mode Bar classes **/
 

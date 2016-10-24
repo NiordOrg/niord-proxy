@@ -56,8 +56,8 @@
         <div class="input-group col-xs-12 center filter-bar-btns">
             <span ng-repeat="area in params.areaGroups" class="filter-bar-btn"
                 ng-class="{ 'filter-bar-btn-selected' : area.selected}"
-                ng-click="area.selected = !area.selected">
-                {{area.descs[0].name}}
+                ng-click="area.selected = !area.selected"
+                render-message-area="area" lineage="false">
             </span>
         </div>
     </div>

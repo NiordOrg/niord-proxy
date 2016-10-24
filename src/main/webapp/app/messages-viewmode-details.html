@@ -1,11 +1,15 @@
 
-<div class="msi-details">
-    <table class="table table-condensed">
+<div class="message-details-list">
+    <table style="width: 100%">
         <tr ng-repeat-start="msg in messages"  ng-if="msg.areaHeading">
             <td colspan="2" style="border: none">
-                <h2 class="msi-area-heading" style="margin-bottom: 5px;" msi-area="msg.areaHeading"></h2>
+                <h4 class="message-area-heading" render-message-area="msg.areaHeading" lineage="true"></h4>
             </td>
         </tr>
-        <tr ng-repeat-end render-message-details msg="msg" messages="messages" ></tr>
+        <tr ng-repeat-end>
+            <td>
+                <div class="message-details-item" render-message-details msg="msg" language="params.language" format="list"></div>
+            </td>
+        </tr>
     </table>
 </div>

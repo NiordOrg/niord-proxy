@@ -15,20 +15,21 @@ angular.module('niord.proxy.app')
             'MENU_NM'  : 'Notices to Mariners',
             'BTN_CLOSE' : 'Close',
             'GENERAL_MSGS' : 'General Messages',
-            'FIELD_REFERENCE' : 'Reference',
-            'FIELD_TIME' : 'Time',
-            'FIELD_LOCATION' : 'Location',
-            'FIELD_DETAILS' : 'Details',
+            'FIELD_REFERENCES' : 'References',
             'FIELD_ATTACHMENTS' : 'Attachments',
-            'FIELD_NOTE' : 'Note',
             'FIELD_CHARTS' : 'Charts',
-            'FIELD_PUBLICATION' : 'Publication',
+            'PART_TYPE_DETAILS' : 'Details',
+            'PART_TYPE_TIME' : 'Time',
+            'PART_TYPE_POSITIONS' : 'Positions',
+            'PART_TYPE_NOTE' : 'Note',
+            'PART_TYPE_PROHIBITION' : 'Prohibition',
+            'PART_TYPE_SIGNALS' : 'Signals',
             'REF_REPETITION' : '(repetition)',
             'REF_CANCELLED' : '(cancelled)',
             'REF_UPDATED' : '(updated)',
             'ACTIVE_NOW' : 'Active Now',
-            'SHOW_POS' : 'Show positions',
-            'HIDE_POS' : 'Hide positions'
+            'SHOW_ATTACHMENTS' : 'Show attachments',
+            'HIDE_ATTACHMENTS' : 'Hide attachments'
         });
 
         $translateProvider.translations('da', {
@@ -40,20 +41,21 @@ angular.module('niord.proxy.app')
             'MENU_NM'  : 'Efterretninger til søfarende',
             'BTN_CLOSE' : 'Luk',
             'GENERAL_MSGS' : 'Generelle Meddelelser',
-            'FIELD_REFERENCE' : 'Reference',
-            'FIELD_TIME' : 'Tid',
-            'FIELD_LOCATION' : 'Placering',
-            'FIELD_DETAILS' : 'Detaljer',
+            'FIELD_REFERENCES' : 'Referencer',
             'FIELD_ATTACHMENTS' : 'Vedhæftninger',
-            'FIELD_NOTE' : 'Note',
             'FIELD_CHARTS' : 'Søkort',
-            'FIELD_PUBLICATION' : 'Publikation',
+            'PART_TYPE_DETAILS' : 'Detaljer',
+            'PART_TYPE_TIME' : 'Tid',
+            'PART_TYPE_POSITIONS' : 'Positioner',
+            'PART_TYPE_NOTE' : 'Note',
+            'PART_TYPE_PROHIBITION' : 'Forbud',
+            'PART_TYPE_SIGNALS' : 'Skydesignaler',
             'REF_REPETITION' : '(gentagelse)',
             'REF_CANCELLED' : '(udgår)',
             'REF_UPDATED' : '(ajourført)',
             'ACTIVE_NOW' : 'Aktive nu',
-            'SHOW_POS' : 'Vis positioner',
-            'HIDE_POS' : 'Skjul positioner'
+            'SHOW_ATTACHMENTS' : 'Vis vedhæftninger',
+            'HIDE_ATTACHMENTS' : 'Skjul vedhæftninger'
         });
 
         $translateProvider.preferredLanguage('en');

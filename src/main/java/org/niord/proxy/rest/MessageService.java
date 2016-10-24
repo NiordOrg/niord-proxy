@@ -200,7 +200,7 @@ public class MessageService {
     /**
      * Periodically loads the published messages from the Niord server
      */
-    @Schedule(second = "12", minute = "*/3", hour = "*")
+    @Schedule(second = "12", minute = "*/1", hour = "*")
     public void periodicFetchMessages() {
 
         String url = getActiveMessagesUrl();

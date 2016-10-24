@@ -38,6 +38,21 @@ angular.module('niord.proxy.app')
                 },
 
 
+                /** Returns the description record for the given language **/
+                desc: function(o, lang) {
+                    lang = lang || $rootScope.language;
+                    if (o && o.descs && o.descs.length > 0) {
+                        for (var x = 0; x < o.descs.length; x++) {
+                            if (o.descs[x].lang == lang) {
+                                return o.descs[x];
+                            }
+                        }
+                        return o.descs[0];
+                    }
+                    return undefined;
+                },
+
+
                 /** Returns the message filters */
                 search: function(params) {
                     var p = 'language=' + params.language;

@@ -87,6 +87,30 @@ angular.module('niord.proxy.app')
             };
 
 
+            /** Returns the URL parameters string for the current search parameters **/
+            $scope.getSearchParams = function () {
+                var p = 'language=' + $scope.params.language;
+                if ($scope.params.activeNow) {
+                    p += '&active=true';
+                }
+                if ($scope.params.mainTypes.NW) {
+                    p += '&mainType=NW';
+                }
+                if ($scope.params.mainTypes.NM) {
+                    p += '&mainType=NM';
+                }
+                for (var x = 0; x < $scope.params.areaGroups.length; x++) {
+                    if ($scope.params.areaGroups[x].selected) {
+                        p += '&areaId=' + $scope.params.areaGroups[x].id;
+                    }
+                }
+                if ($scope.params.wkt) {
+                    p += '&wkt=' + encodeURIComponent($scope.params.wkt);
+                }
+                return p;
+            };
+
+
             /** Refreshes the message list from the back-end **/
             $scope.refreshMessages = function () {
 
@@ -99,11 +123,19 @@ angular.module('niord.proxy.app')
                 storage.NM = '' + $scope.params.mainTypes.NM;
 
                 // Perform the search
-                MessageService.search($scope.params)
+                var params = $scope.getSearchParams();
+                MessageService.search(params)
                     .success(function (messages) {
                         $scope.messages = messages;
                         $scope.checkGroupByArea();
                     });
+            };
+
+
+            /** Creates a PDF for the current search result **/
+            $scope.pdf = function () {
+                var params = $scope.getSearchParams();
+                $window.open('/details.pdf?' + params, '_blank');
             };
 
 

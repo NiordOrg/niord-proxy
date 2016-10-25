@@ -19,6 +19,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.niord.proxy.conf.LogConfiguration;
 import org.niord.proxy.rest.RestApplication;
 import org.niord.proxy.util.JtsConverter;
+import org.niord.proxy.web.TldFunctions;
 import org.wildfly.swarm.Swarm;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
 
@@ -39,6 +40,7 @@ public class NiordProxyMain {
             .addPackage( LogConfiguration.class.getPackage() )
             .addPackage( RestApplication.class.getPackage() )
             .addPackage( JtsConverter.class.getPackage() )
+            .addPackage( TldFunctions.class.getPackage() )
             .addAllDependencies()
             .staticContent();
 

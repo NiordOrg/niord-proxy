@@ -2,7 +2,7 @@
 <div class="message-details-list" ng-init="init()">
     <table style="width: 100%">
         <tr ng-repeat-start="msg in messages"  ng-if="msg.areaHeading">
-            <td colspan="2" style="border: none">
+            <td style="border: none">
                 <h4 class="message-area-heading" render-message-area="msg.areaHeading" lineage="true"></h4>
             </td>
         </tr>

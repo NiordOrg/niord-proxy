@@ -3,6 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/tags/functions" prefix="msg" %>
+<%@ taglib tagdir="/WEB-INF/tags/att"  prefix="att" %>
+
 <html>
 <fmt:setLocale value="${lang}"/>
 <fmt:bundle basename="MessageDetails">
@@ -49,98 +51,125 @@
             <td>
                 <div class="message-details-item">
 
-                <!-- Title line -->
-                <c:if test="${msg.originalInformation}">
-                    <div><b>*</b></div>
-                </c:if>
-                <c:if test="${not empty msg.shortId}">
-                    <div>
-                        <span class="badge label-message-id">${msg.shortId}</span>
-                    </div>
-                </c:if>
-                <c:if test="${not empty msg.descs}">
-                    <strong>${msg.descs[0].title}</strong>
-                </c:if>
+                    <!-- Render attachments above the message -->
+                    <c:forEach var="att" items="${msg:attachments(msg, 'ABOVE')}">
+                        <att:attachment att="${att}"/>
+                    </c:forEach>
 
-                <table class="message-details-item-fields">
-
-                    <!-- Reference lines -->
-                    <c:if test="${not empty msg.references}">
-                        <tr>
-                            <th><fmt:message key="field_references"/></th>
-                            <td>
-                                <c:forEach var="ref" items="${msg.references}">
-                                    <div>
-                                        ${ref.messageId}
-                                        <c:choose>
-                                            <c:when test="${ref.type == 'REPETITION'}"><fmt:message key="ref_repetition"/> </c:when>
-                                            <c:when test="${ref.type == 'CANCELLATION'}"><fmt:message key="ref_cancelled"/> </c:when>
-                                            <c:when test="${ref.type == 'UPDATE'}"><fmt:message key="ref_updated"/> </c:when>
-                                        </c:choose>
-                                        <c:if test="not empty ref.descs">
-                                            - ${ref.descs[0].description}
-                                        </c:if>
-                                    </div>
-                                </c:forEach>
-                            </td>
-                        </tr>
+                    <!-- Title line -->
+                    <c:if test="${msg.originalInformation}">
+                        <div><b>*</b></div>
+                    </c:if>
+                    <c:if test="${not empty msg.shortId}">
+                        <div>
+                            <span class="badge label-message-id">${msg.shortId}</span>
+                        </div>
+                    </c:if>
+                    <c:if test="${not empty msg.descs}">
+                        <strong>${msg.descs[0].title}</strong>
                     </c:if>
 
-                    <!-- Details line -->
-                    <c:if test="${not empty msg.parts}">
-                        <c:forEach var="part" items="${msg.parts}" varStatus="partIndex">
+                    <table class="message-details-item-fields">
+
+                        <!-- Reference lines -->
+                        <c:if test="${not empty msg.references}">
                             <tr>
-                                <th>
-                                    <c:if test="${partIndex.first || part.type != msg.parts[partIndex.index - 1].type}">
-                                        <c:choose>
-                                            <c:when test="${part.type == 'DETAILS'}"><fmt:message key="part_type_details"/> </c:when>
-                                            <c:when test="${part.type == 'TIME'}"><fmt:message key="part_type_time"/> </c:when>
-                                            <c:when test="${part.type == 'NOTE'}"><fmt:message key="part_type_note"/> </c:when>
-                                            <c:when test="${part.type == 'PROHIBITION'}"><fmt:message key="part_type_prohibition"/> </c:when>
-                                            <c:when test="${part.type == 'SIGNALS'}"><fmt:message key="part_type_signals"/> </c:when>
-                                        </c:choose>
-                                    </c:if>
-                                </th>
-                                <td class="message-description">
-                                    <c:if test="${not empty part.descs && not empty part.descs[0].subject}">
-                                        <div><strong>${part.descs[0].subject}</strong></div>
-                                    </c:if>
-                                    <c:if test="${not empty part.descs && not empty part.descs[0].details}">
-                                        <c:out value="${part.descs[0].details}" escapeXml="false"/>
-                                    </c:if>
+                                <th><fmt:message key="field_references"/></th>
+                                <td>
+                                    <c:forEach var="ref" items="${msg.references}">
+                                        <div>
+                                            ${ref.messageId}
+                                            <c:choose>
+                                                <c:when test="${ref.type == 'REPETITION'}"><fmt:message key="ref_repetition"/> </c:when>
+                                                <c:when test="${ref.type == 'CANCELLATION'}"><fmt:message key="ref_cancelled"/> </c:when>
+                                                <c:when test="${ref.type == 'UPDATE'}"><fmt:message key="ref_updated"/> </c:when>
+                                            </c:choose>
+                                            <c:if test="not empty ref.descs">
+                                                - ${ref.descs[0].description}
+                                            </c:if>
+                                        </div>
+                                    </c:forEach>
                                 </td>
                             </tr>
-                        </c:forEach>
-                    </c:if>
+                        </c:if>
 
-                    <!-- Charts line -->
-                    <c:if test="${not empty msg.charts}">
-                        <tr>
-                            <th><fmt:message key="field_charts"/></th>
-                            <td>
-                                <c:forEach var="chart" items="${msg.charts}" varStatus="status">
-                                    ${chart.chartNumber}<c:if test="${not empty chart.internationalNumber}"> (INT ${chart.internationalNumber})</c:if><c:if test="${not status.last}">, </c:if>
-                                </c:forEach>
-                            </td>
-                        </tr>
-                    </c:if>
+                        <!-- Details line -->
+                        <c:if test="${not empty msg.parts}">
+                            <c:forEach var="part" items="${msg.parts}" varStatus="partIndex">
+                                <tr>
+                                    <th>
+                                        <c:if test="${partIndex.first || part.type != msg.parts[partIndex.index - 1].type}">
+                                            <c:choose>
+                                                <c:when test="${part.type == 'DETAILS'}"><fmt:message key="part_type_details"/> </c:when>
+                                                <c:when test="${part.type == 'TIME'}"><fmt:message key="part_type_time"/> </c:when>
+                                                <c:when test="${part.type == 'NOTE'}"><fmt:message key="part_type_note"/> </c:when>
+                                                <c:when test="${part.type == 'PROHIBITION'}"><fmt:message key="part_type_prohibition"/> </c:when>
+                                                <c:when test="${part.type == 'SIGNALS'}"><fmt:message key="part_type_signals"/> </c:when>
+                                            </c:choose>
+                                        </c:if>
+                                    </th>
+                                    <td class="message-description">
+                                        <c:if test="${not empty part.descs && not empty part.descs[0].subject}">
+                                            <div><strong>${part.descs[0].subject}</strong></div>
+                                        </c:if>
+                                        <c:if test="${not empty part.descs && not empty part.descs[0].details}">
+                                            <c:out value="${part.descs[0].details}" escapeXml="false"/>
+                                        </c:if>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </c:if>
 
-                    <!-- Source line -->
-                    <c:if test="${not empty msg.descs and not empty msg.descs[0].source}">
-                        <tr>
-                            <td align="right" colspan="2">
-                                (${msg.descs[0].source})
-                            </td>
-                        </tr>
-                    </c:if>
+                        <!-- Charts line -->
+                        <c:if test="${not empty msg.charts}">
+                            <tr>
+                                <th><fmt:message key="field_charts"/></th>
+                                <td>
+                                    <c:forEach var="chart" items="${msg.charts}" varStatus="status">
+                                        ${chart.chartNumber}<c:if test="${not empty chart.internationalNumber}"> (INT ${chart.internationalNumber})</c:if><c:if test="${not status.last}">, </c:if>
+                                    </c:forEach>
+                                </td>
+                            </tr>
+                        </c:if>
 
-                </table>
+                        <!-- Source line -->
+                        <c:if test="${not empty msg.descs and not empty msg.descs[0].source}">
+                            <tr>
+                                <td align="right" colspan="2">
+                                    (${msg.descs[0].source})
+                                </td>
+                            </tr>
+                        </c:if>
+
+                    </table>
+
+                    <!-- Render attachments below the message -->
+                    <c:forEach var="att" items="${msg:attachments(msg, 'BELOW')}">
+                        <att:attachment att="${att}"/>
+                    </c:forEach>
+
                 </div>
             </td>
         </tr>
     </c:forEach>
 </table>
 </div>
+
+<!-- Render separate-page attachments -->
+<c:forEach var="msg" items="${messages}">
+    <c:forEach var="att" items="${msg:attachments(msg, 'SEPARATE_PAGE')}">
+        <div class="separate-attachment-page">
+            <c:set var="messageId" value="${(not empty msg.shortId) ? msg.shortId : msg.id}"/>
+            <div style="margin: 1mm">
+                <h4 style="color: #8f2f7b; font-size: 16px;">
+                    <fmt:message key="field_attachments"/> - ${messageId}
+                </h4>
+            </div>
+            <att:attachment att="${att}"/>
+        </div>
+    </c:forEach>
+</c:forEach>
+
 </body>
 </fmt:bundle>
 </html>

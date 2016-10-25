@@ -59,3 +59,11 @@ h4 {
     border-radius: 10px
 }
 
+.separate-attachment-page {
+    text-align: center;
+    clear: left;
+    display:block;
+    page-break-before:always;
+    margin: 5mm;
+    padding: 0;
+}

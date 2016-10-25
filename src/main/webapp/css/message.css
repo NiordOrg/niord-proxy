@@ -1,6 +1,13 @@
 
 /** Message details classes **/
 
+.message-table {
+    table-layout: fixed;
+    width: 100%;
+    max-width: 100%;
+    overflow : hidden;
+}
+
 .message-area-heading {
     color: #8f2f7b;
     font-size: 20px;
@@ -123,3 +130,14 @@ table.position-table td.pos-index {
     white-space: nowrap;
 }
 
+.attachment {
+    margin: 10px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+}
+
+.attachment-label {
+    margin: 1mm;
+    font-style: italic
+}

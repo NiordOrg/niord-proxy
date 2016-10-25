@@ -16,7 +16,14 @@
 package org.niord.proxy.web;
 
 import org.niord.model.message.AreaVo;
+import org.niord.model.message.AttachmentVo;
+import org.niord.model.message.AttachmentVo.AttachmentDisplayType;
 import org.niord.model.message.MessageVo;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Defines a set of TLD functions that may be used on a JSP page
@@ -60,5 +67,20 @@ public class TldFunctions {
         return result;
     }
 
+
+    /**
+     * Returns the attachments with the given display type.
+     * @param msg the message
+     * @param displayType the attachment display type
+     * @return the area lineage to display for an area
+     */
+    public static List<AttachmentVo> getAttachmentsWithDisplayType(MessageVo msg, String displayType) {
+        AttachmentDisplayType display = AttachmentDisplayType.valueOf(displayType);
+        return msg.getAttachments() == null
+                ? Collections.emptyList()
+                : msg.getAttachments().stream()
+                    .filter(a -> Objects.equals(display, a.getDisplay()))
+                    .collect(Collectors.toList());
+    }
 
 }

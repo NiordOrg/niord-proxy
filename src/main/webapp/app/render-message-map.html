@@ -8,7 +8,7 @@
             <td valign="top" width="24">
                <img ng-src="/img/{{msg.mainType | lowercase}}.png" height="18">
             </td>
-            <td width="*">
+            <td width="*" message-details-link="msg.id" messages="messages">
                 <span ng-if="msg.shortId" class="badge label-message-id">{{msg.shortId}}</span>
                 <strong ng-if="msg.descs">{{msg.descs[0].title}}</strong>
             </td>

@@ -326,6 +326,14 @@ angular.module('niord.proxy.app')
                     /* Interactive Functionality     */
                     /*********************************/
 
+                    var info = $('#info');
+                    info.tooltip({
+                        html: true,
+                        animation: false,
+                        trigger: 'manual'
+                    });
+
+
                     // Whenever the map extent is changed, record the new extent in the mapState
                     if (attrs.mapState) {
                         scope.mapChanged = function () {
@@ -358,7 +366,68 @@ angular.module('niord.proxy.app')
                     map.on('click', function(evt) {
                         var messages = scope.getMessagesForPixel(map.getEventPixel(evt.originalEvent));
                         if (messages.length >= 1) {
-                            MessageService.detailsDialog(messages[0].id, messages)
+                            MessageService.detailsDialog(messages[0].id, messages);
+                            info.tooltip('hide');
+                        }
+                    });
+
+
+                    /** Generate the messages HTML to display in the tooltip **/
+                    function renderTooltipContent(messages) {
+                        var maxMessageNo = 3;
+                        var html = '<table class="compact-message-list">';
+                        for (var x = 0; x < Math.min(messages.length, maxMessageNo); x++) {
+                            var msg = messages[x];
+                            html += '<tr>';
+                            html += '  <td valign="top" width="20">';
+                            html += '    <img src="/img/' + msg.mainType.toLowerCase() + '.png" height="16">';
+                            html += '  </td>';
+                            html += '  <td width="*">';
+                            if (msg.shortId) {
+                                html += '    <span class="badge label-message-id">' + msg.shortId + '</span>';
+                            }
+                            if (msg.descs && msg.descs.length > 0) {
+                                html += '    <strong ng-if="msg.descs">' + msg.descs[0].title + '</strong>';
+                            }
+                            html += '  </td>';
+                            html += '</tr>';
+                        };
+                        if (messages.length > maxMessageNo) {
+                            html += '<tr>';
+                            html += '  <td colspan="2" align="center">';
+                            html += '  and ' + (messages.length - maxMessageNo) + ' more messages...';
+                            html += '  </td>';
+                            html += '</tr>';
+                        }
+
+                        html += '</table>';
+                        return html;
+                    }
+
+
+                    /** Displays the tooltip info **/
+                    map.on('pointermove', function(evt) {
+                        if (evt.dragging) {
+                            info.tooltip('hide');
+                            return;
+                        }
+                        var pixel = map.getEventPixel(evt.originalEvent);
+                        info.css({
+                            left: pixel[0] + 'px',
+                            top: (pixel[1] - 15) + 'px'
+                        });
+                        var messages = scope.getMessagesForPixel(pixel);
+                        if (messages.length >  0) {
+                            var oldTitle = info.attr('data-original-title');
+                            var newTitle = renderTooltipContent(messages);
+                            if (oldTitle != newTitle) {
+                                info.tooltip('hide')
+                                    .attr('data-original-title', newTitle)
+                                    .tooltip('fixTitle');
+                            }
+                            info.tooltip('show');
+                        } else {
+                            info.tooltip('hide');
                         }
                     });
 

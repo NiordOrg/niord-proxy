@@ -1,17 +1,24 @@
 
-<div ng-if="generalMessages.length > 0" class="message-map-general-messages">
-    <div>
-        <h4 translate>GENERAL_MSGS</h4>
+<div>
+    <!-- Tooltip -->
+    <div id="info"> </div>
+
+    <!-- General messages -->
+    <div ng-if="generalMessages.length > 0" class="message-map-general-messages">
+        <div>
+            <h4 translate>GENERAL_MSGS</h4>
+        </div>
+        <table class="compact-message-list">
+            <tr ng-repeat="msg in generalMessages">
+                <td valign="top" width="24">
+                    <img ng-src="/img/{{msg.mainType | lowercase}}.png" height="18">
+                </td>
+                <td width="*" message-details-link="msg.id" messages="messages">
+                    <span ng-if="msg.shortId" class="badge label-message-id">{{msg.shortId}}</span>
+                    <strong ng-if="msg.descs">{{msg.descs[0].title}}</strong>
+                </td>
+            </tr>
+        </table>
     </div>
-    <table width="100%">
-        <tr ng-repeat="msg in generalMessages" style="border-bottom: 1px solid lightgray">
-            <td valign="top" width="24">
-               <img ng-src="/img/{{msg.mainType | lowercase}}.png" height="18">
-            </td>
-            <td width="*" message-details-link="msg.id" messages="messages">
-                <span ng-if="msg.shortId" class="badge label-message-id">{{msg.shortId}}</span>
-                <strong ng-if="msg.descs">{{msg.descs[0].title}}</strong>
-            </td>
-        </tr>
-    </table>
+
 </div>

@@ -25,9 +25,12 @@
 <c:if test="${not pdf}">
     <!-- Add language selection -->
     <div style="text-align: right; padding-top: 5px">
+        <span style="margin-right: 10px">
+            <a href="/details.pdf?language=${lang}" target="_blank"><img src="/img/print.png" border="0" height="16"></a>
+        </span>
         <c:forEach var="l" items="${languages}">
             <span style="margin-right: 10px">
-                <a href="/details.html?language=${l}"><img src="/img/flags/${l}.png" border="0" height="14"></a>
+                <a href="/details.html?language=${l}"><img src="/img/flags/${l}.png" border="0" height="16"></a>
             </span>
         </c:forEach>
     </div>

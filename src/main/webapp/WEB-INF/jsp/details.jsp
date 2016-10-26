@@ -128,6 +128,7 @@
                                             <c:choose>
                                                 <c:when test="${part.type == 'DETAILS'}"><fmt:message key="part_type_details"/> </c:when>
                                                 <c:when test="${part.type == 'TIME'}"><fmt:message key="part_type_time"/> </c:when>
+                                                <c:when test="${part.type == 'POSITIONS'}"><fmt:message key="part_type_positions"/> </c:when>
                                                 <c:when test="${part.type == 'NOTE'}"><fmt:message key="part_type_note"/> </c:when>
                                                 <c:when test="${part.type == 'PROHIBITION'}"><fmt:message key="part_type_prohibition"/> </c:when>
                                                 <c:when test="${part.type == 'SIGNALS'}"><fmt:message key="part_type_signals"/> </c:when>

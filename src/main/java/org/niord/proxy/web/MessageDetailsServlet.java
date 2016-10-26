@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.niord.model.message.MainType;
 import org.niord.model.message.MessageVo;
 import org.niord.proxy.rest.MessageService;
+import org.niord.proxy.util.WebUtils;
 import org.w3c.dom.Document;
 import org.w3c.tidy.Tidy;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -76,7 +77,7 @@ public class MessageDetailsServlet extends HttpServlet {
         boolean pdf = request.getServletPath().endsWith("pdf");
 
         // Never cache the response
-        response = nocache(response);
+        response = WebUtils.nocache(response);
 
         // Read the request parameters
         String language = StringUtils.defaultIfBlank(request.getParameter("language"), "en");
@@ -130,20 +131,6 @@ public class MessageDetailsServlet extends HttpServlet {
             log.log(Level.SEVERE, "Error generating file " + request.getServletPath(), e);
             throw new ServletException("Error generating file " + request.getServletPath(), e);
         }
-    }
-
-
-    /**
-     * Add headers to the response to ensure no caching takes place
-     * @param response the response
-     * @return the response
-     */
-    private HttpServletResponse nocache(HttpServletResponse response) {
-        response.setHeader("Cache-Control","no-cache");
-        response.setHeader("Cache-Control","no-store");
-        response.setHeader("Pragma","no-cache");
-        response.setDateHeader ("Expires", 0);
-        return response;
     }
 
 

@@ -12,6 +12,7 @@ import org.niord.model.message.MessageDescVo;
 import org.niord.model.message.MessageVo;
 import org.niord.proxy.conf.Settings;
 import org.niord.proxy.util.JtsConverter;
+import org.niord.proxy.util.WebUtils;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Lock;
@@ -384,8 +385,12 @@ public class MessageService {
      * @return the list of active messages sorted by area
      */
     private String getActiveMessagesUrl() {
-        return settings.getServer()
+        String url = settings.getServer()
                 + "/rest/public/v1/messages";
+        if (StringUtils.isNotBlank(settings.getAreaId())) {
+            url += "?areaId=" + WebUtils.encodeURIComponent(settings.getAreaId());
+        }
+        return url;
     }
 
 

@@ -21,6 +21,8 @@ public class Settings {
     // URL of the Niord server
     private String server;
 
+    private String areaId;
+
     /** Constructor **/
     @PostConstruct
     private void init() {
@@ -28,11 +30,16 @@ public class Settings {
 
         server = System.getProperty("niord-proxy.server", "https://niord.e-navigation.net");
         log.info("server: " + server);
+
+        areaId = System.getProperty("niord-proxy.area", "urn:mrn:iho:country:dk"); // Denmark in Niord
+        log.info("AreaId: " + areaId);
     }
 
     public String getServer() {
         return server;
     }
 
-
+    public String getAreaId() {
+        return areaId;
+    }
 }

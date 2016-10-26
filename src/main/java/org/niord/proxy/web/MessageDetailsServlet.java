@@ -39,6 +39,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -116,6 +117,7 @@ public class MessageDetailsServlet extends HttpServlet {
             request.setAttribute("lang", language);
             request.setAttribute("languages", messageService.getLanguages());
             request.setAttribute("locale", locale);
+            request.setAttribute("now", new Date());
             request.setAttribute("pdf", pdf);
 
             if (pdf) {

@@ -21,7 +21,9 @@
 </head>
 <body>
 
+
 <c:if test="${not pdf}">
+    <!-- Add language selection -->
     <div style="text-align: right; padding-top: 5px">
         <c:forEach var="l" items="${languages}">
             <span style="margin-right: 10px">
@@ -30,6 +32,27 @@
         </c:forEach>
     </div>
 </c:if>
+
+
+<c:if test="${pdf}">
+    <!-- PDF footer -->
+    <div class="footer">
+        <table width="100%">
+            <tr>
+                <td width="30%" align="left" valign="bottom">
+                    <fmt:formatDate value="${now}" type="both" dateStyle="long" timeStyle="medium"/>
+                </td>
+                <td width="40%" align="center" valign="middle">
+                    <img src="/img/logo.png" style="height: 1cm">
+                </td>
+                <td width="30%" align="right" valign="bottom">
+                    <fmt:message key="page"/> <span id="pagenumber"/>&nbsp;/&nbsp;<span id="pagecount"/>
+                </td>
+            </tr>
+        </table>
+    </div>
+</c:if>
+
 
 <div class="message-details-list">
 <table class="message-table">

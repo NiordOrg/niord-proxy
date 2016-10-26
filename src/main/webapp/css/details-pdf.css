@@ -1,8 +1,13 @@
 
 @page {
     size: a4 portrait;
-    margin: 1.5cm 1.5cm;
+    margin: 1cm 1cm 2cm 1cm;
     padding:0;
+
+    @bottom-center {
+        content: element(footer);
+        vertical-align: top;
+    }
 }
 
 body{
@@ -21,6 +26,23 @@ table {
 h4 {
     font-size: 14px;
     margin: 5px 0;
+}
+
+div.footer {
+    margin-top: 0;
+    text-align: center;
+    display: block;
+    position: running(footer);
+    padding-top: 5px;
+    color: darkgray;
+}
+
+#pagenumber:before {
+    content: counter(page);
+}
+
+#pagecount:before {
+    content: counter(pages);
 }
 
 

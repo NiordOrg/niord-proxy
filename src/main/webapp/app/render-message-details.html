@@ -15,7 +15,7 @@
         <span class="badge label-message-id">{{msg.shortId}}</span>
     </div>
     <div ng-if="msg.descs" message-details-link="msg.id" messages="messages" disabled="format == 'details'">
-        <strong>{{msg.descs[0].title}}</strong>
+        <span class="message-title">{{msg.descs[0].title}}</span>
         <span ng-if="msg.descs[0].lang != language">
             <img ng-src="/img/flags/{{msg.descs[0].lang}}.png" style="height: 12px; opacity: 0.5;"/>
         </span>

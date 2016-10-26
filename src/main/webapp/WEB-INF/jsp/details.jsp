@@ -92,7 +92,7 @@
                         </div>
                     </c:if>
                     <c:if test="${not empty msg.descs}">
-                        <strong>${msg.descs[0].title}</strong>
+                        <span class="message-title">${msg.descs[0].title}</span>
                     </c:if>
 
                     <table class="message-details-item-fields">

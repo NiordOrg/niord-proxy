@@ -16,6 +16,7 @@
     </div>
     <div ng-if="msg.descs" message-details-link="msg.id" messages="messages" disabled="format == 'details'">
         <span class="message-title">{{msg.descs[0].title}}</span>
+        <span ng-if="format == 'list'" class="glyphicon glyphicon-new-window message-details-link"></span>
         <span ng-if="msg.descs[0].lang != language">
             <img ng-src="/img/flags/{{msg.descs[0].lang}}.png" style="height: 12px; opacity: 0.5;"/>
         </span>

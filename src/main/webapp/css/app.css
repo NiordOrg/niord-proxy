@@ -65,6 +65,7 @@ h4 {
 
 .clickable:hover {
     cursor: pointer;
+    text-decoration: underline;
 }
 
 
@@ -75,6 +76,11 @@ h4 {
     padding: 0 10px;
 }
 
+.message-details-link {
+    font-size: 80%;
+    color: gray;
+    margin: 0 2px;
+}
 
 .message-details-item {
     padding: 20px;

@@ -3,8 +3,11 @@
     <div class="modal-body print" style="padding-bottom: 0">
 
         <div ng-if="warning">
-            <div class="empty-search-result">
-                <p>{{warning}}</p>
+            <div class="message-details-dialog-error">
+                <p>
+                    <span class="glyphicon glyphicon-warning-sign"></span>
+                    {{warning}}
+                </p>
             </div>
         </div>
 

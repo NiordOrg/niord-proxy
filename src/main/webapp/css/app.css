@@ -69,6 +69,14 @@ h4 {
 }
 
 
+.message-details-dialog-error {
+    width: 100%;
+    text-align: center;
+    color: darkred;
+    font-size: 120%;
+    margin-top: 20px;
+}
+
 .message-details-list {
     font-size: 11px;
     margin: 100px auto 10px auto;

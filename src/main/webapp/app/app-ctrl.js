@@ -211,7 +211,9 @@ angular.module('niord.proxy.app')
 
                 MessageService.details($scope.currentMessageId())
                     .success(function (data) {
-                        $scope.warning = (data) ? undefined : "Message " + $scope.currentMessageId() + " not found";
+                        $scope.warning = (data)
+                            ? undefined
+                            : MessageService.translate('MSG_NOT_FOUND', {'messageId': $scope.currentMessageId()});
                         $scope.msg = data;
                         $scope.showMap = true;
                         if ($scope.msg.attachments) {

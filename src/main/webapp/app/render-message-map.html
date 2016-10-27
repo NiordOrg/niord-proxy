@@ -1,7 +1,16 @@
 
 <div>
     <!-- Tooltip -->
-    <div id="info"> </div>
+    <div id="info"></div>
+
+    <!-- Layer switcher -->
+    <div ng-if="layerSwitcherLayers.length > 0" class="map-layer-switcher">
+        <ul>
+            <li ng-repeat="l in layerSwitcherLayers">
+                <input type="checkbox" ng-model="l.visible" ng-change="updateVisibility(l)">&nbsp;{{l.name}}
+            </li>
+        </ul>
+    </div>
 
     <!-- General messages -->
     <div ng-if="generalMessages.length > 0" class="message-map-general-messages">

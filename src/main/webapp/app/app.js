@@ -57,7 +57,7 @@ function adjustMessageListTopPosition() {
         if (messageDetails.length) {
             messageDetails.css("margin-top", offset + "px");
         }
-        var messageMap = $(".message-map");
+        var messageMap = $(".message-list-map");
         if (messageMap.length) {
             messageMap.css("top", offset + "px");
         }

@@ -139,7 +139,7 @@ angular.module('niord.proxy.app')
     /**
      * The language service is used for changing language, etc.
      */
-    .service('MapService', [function () {
+    .service('MapService', ['$rootScope', function ($rootScope) {
             'use strict';
 
             var projMercator = 'EPSG:3857';
@@ -217,6 +217,41 @@ angular.module('niord.proxy.app')
             };
 
 
+            /** Returns a "sensible" center point of the geometry. Used e.g. for placing labels **/
+            this.getGeometryCenter = function (g) {
+                var point;
+                try {
+                    switch (g.getType()) {
+                        case 'MultiPolygon':
+                            var poly = g.getPolygons().reduce(function(left, right) {
+                                return left.getArea() > right.getArea() ? left : right;
+                            });
+                            point = poly.getInteriorPoint().getCoordinates();
+                            break;
+                        case 'MultiLineString':
+                            var lineString = g.getLineStrings().reduce(function(left, right) {
+                                return left.getLength() > right.getLength() ? left : right;
+                            });
+                            point = this.getExtentCenter(lineString.getExtent());
+                            break;
+                        case 'Polygon':
+                            point = g.getInteriorPoint().getCoordinates();
+                            break;
+                        case 'Point':
+                            point = g.getCoordinates();
+                            break;
+                        case 'LineString':
+                        case 'MultiPoint':
+                        case 'GeometryCollection':
+                            point = this.getExtentCenter(g.getExtent());
+                            break;
+                    }
+                } catch (ex) {
+                }
+                return point;
+            };
+
+
             /** Converts a GeoJSON feature to an OL feature **/
             this.gjToOlFeature = function (feature) {
                 return geoJsonFormat.readFeature(feature, {
@@ -225,5 +260,71 @@ angular.module('niord.proxy.app')
                 });
             };
 
-        }]);
+
+        /**
+         * Serializes the "readable" coordinates of a geometry
+         * <p>
+         * When serializing coordinates, adhere to a couple of rules:
+         * <ul>
+         *     <li>If the "parentFeatureIds" feature property is defined, skip the coordinates.</li>
+         *     <li>If the "restriction" feature property has the value "affected", skip the coordinates.</li>
+         *     <li>For polygon linear rings, skip the last coordinate (which is identical to the first).</li>
+         *     <li>For (multi-)polygons, only include the exterior ring, not the interior ring.</li>
+         * </ul>
+         */
+        this.serializeReadableCoordinates = function (g, coords, props, index, polygonType) {
+            var that = this;
+            props = props || {};
+            index = index || 0;
+            if (g) {
+                if (g instanceof Array) {
+                    if (g.length >= 2 && $.isNumeric(g[0])) {
+                        var bufferFeature = props['parentFeatureIds'];
+                        var affectedArea = props['restriction'] == 'affected';
+                        var includeCoord = (polygonType != 'Exterior');
+                        if (includeCoord && !bufferFeature && !affectedArea) {
+                            coords.push({
+                                lon: g[0],
+                                lat: g[1],
+                                index: index,
+                                name: props['name:' + index + ':' + $rootScope.language]
+                            });
+                        }
+                        index++;
+                    } else {
+                        for (var x = 0; x < g.length; x++) {
+                            polygonType = (polygonType == 'Interior' && x == g.length - 1) ? 'Exterior' : polygonType;
+                            index = that.serializeReadableCoordinates(g[x], coords, props, index, polygonType);
+                        }
+                    }
+                } else if (g.type == 'FeatureCollection') {
+                    for (var x = 0; g.features && x < g.features.length; x++) {
+                        index = that.serializeReadableCoordinates(g.features[x], coords);
+                    }
+                } else if (g.type == 'Feature') {
+                    index = that.serializeReadableCoordinates(g.geometry, coords, g.properties, 0);
+                } else if (g.type == 'GeometryCollection') {
+                    for (var x = 0; g.geometries && x < g.geometries.length; x++) {
+                        index = that.serializeReadableCoordinates(g.geometries[x], coords, props, index);
+                    }
+                } else if (g.type == 'MultiPolygon') {
+                    for (var p = 0; p < g.coordinates.length; p++) {
+                        // For polygons, do not include coordinates for interior rings
+                        for (var x = 0; x < g.coordinates[p].length; x++) {
+                            index = that.serializeReadableCoordinates(g.coordinates[p][x], coords, props, index, x == 0 ? 'Interior' : 'Exterior');
+                        }
+                    }
+                } else if (g.type == 'Polygon') {
+                    // For polygons, do not include coordinates for interior rings
+                    for (var x = 0; x < g.coordinates.length; x++) {
+                        index = that.serializeReadableCoordinates(g.coordinates[x], coords, props, index, x == 0 ? 'Interior' : 'Exterior');
+                    }
+                } else if (g.type) {
+                    index = that.serializeReadableCoordinates(g.coordinates, coords, props, index);
+                }
+            }
+            return index;
+        };
+
+    }]);
 

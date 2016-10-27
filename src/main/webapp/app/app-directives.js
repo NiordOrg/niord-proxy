@@ -218,17 +218,17 @@ angular.module('niord.proxy.app')
                     messages:   '=?',
                     message:    '=?',
                     fitExtent:  '=',
-                    maxZoom:    '@',
-                    mapState:   '='
+                    maxZoom:    '@'
                 },
 
                 link: function (scope, element, attrs) {
 
                     scope.generalMessages = []; // Messages with no geometry
+                    scope.layerSwitcherLayers = [];
                     scope.language = $rootScope.language;
 
-                    // The map will only be interactive when displaying a list of messages.
-                    scope.interactive = (attrs.messages !== undefined);
+                    // Flags if the directive used for displaying message details or a message list.
+                    scope.detailsMap = (attrs.message !== undefined);
 
                     var maxZoom = scope.maxZoom ? parseInt(scope.maxZoom) : 10;
                     var updateSizeTimer;
@@ -239,8 +239,30 @@ angular.module('niord.proxy.app')
                     var lon  = 11;
                     var lat  = 56;
 
+
                     /*********************************/
-                    /* Layers                        */
+                    /* Layer switcher                */
+                    /*********************************/
+
+
+                    /** Adds a new layer to the layer switcher **/
+                    scope.addToLayerSwitcher = function (layer, name) {
+                        scope.layerSwitcherLayers.push({
+                            layer: layer,
+                            name: name,
+                            visible: layer.getVisible()
+                        })
+                    };
+
+
+                    /** Called when the visibility of a layer is toggled **/
+                    scope.updateVisibility = function (l) {
+                        l.layer.setVisible(l.visible);
+                    };
+
+
+                    /*********************************/
+                    /* Nw-NM Layers                  */
                     /*********************************/
 
                     var layers = [];
@@ -271,6 +293,18 @@ angular.module('niord.proxy.app')
                         })
                     });
 
+                    var messageDetailsStyle = new ol.style.Style({
+                        fill: new ol.style.Fill({ color: 'rgba(255, 0, 255, 0.2)' }),
+                        stroke: new ol.style.Stroke({ color: '#8B008B', width: 1 }),
+                        image: new ol.style.Circle({
+                            radius: 4,
+                            fill: new ol.style.Fill({
+                                color: 'rgba(255, 0, 255, 0.2)'
+                            }),
+                            stroke: new ol.style.Stroke({color: 'darkmagenta', width: 1})
+                        })
+                    });
+
                     var bufferedStyle = new ol.style.Style({
                         fill: new ol.style.Fill({
                             color: 'rgba(100, 50, 100, 0.2)'
@@ -281,6 +315,7 @@ angular.module('niord.proxy.app')
                         })
                     });
 
+
                     // Construct the NW layer
                     var nwLayer = new ol.layer.Vector({
                         source: new ol.source.Vector({
@@ -288,7 +323,14 @@ angular.module('niord.proxy.app')
                             wrapX: false
                         }),
                         style: function(feature) {
-                            var featureStyle = feature.get('parentFeatureIds') ? bufferedStyle : nwStyle;
+                            var featureStyle = null;
+                            if (feature.get('parentFeatureIds')) {
+                                featureStyle = bufferedStyle;
+                            } else if (scope.detailsMap) {
+                                featureStyle = messageDetailsStyle;
+                            } else {
+                              featureStyle = nwStyle;
+                            }
                             return [ featureStyle ];
                         }
                     });
@@ -302,13 +344,102 @@ angular.module('niord.proxy.app')
                             wrapX: false
                         }),
                         style: function(feature) {
-                            var featureStyle = feature.get('parentFeatureIds') ? bufferedStyle : nmStyle;
+                            var featureStyle = null;
+                            if (feature.get('parentFeatureIds')) {
+                                featureStyle = bufferedStyle;
+                            } else if (scope.detailsMap) {
+                                featureStyle = messageDetailsStyle;
+                            } else {
+                                featureStyle = nmStyle;
+                            }
                             return [ featureStyle ];
                         }
                     });
                     nmLayer.setVisible(true);
                     layers.push(nmLayer);
 
+
+                    /*********************************/
+                    /* Label Layer                   */
+                    /*********************************/
+
+
+                    /** Creates a feature style that displays the feature name in the "middle" of the feature **/
+                    scope.styleForFeatureName = function (feature, name) {
+                        return new ol.style.Style({
+                            text: new ol.style.Text({
+                                textAlign: 'center',
+                                font: '11px Arial',
+                                text: name,
+                                fill: new ol.style.Fill({color: 'darkmagenta'}),
+                                stroke: new ol.style.Stroke({color: 'white', width: 2.0}),
+                                offsetX: 0,
+                                offsetY: 5
+                            }) ,
+                            geometry: function(feature) {
+                                var point = MapService.getGeometryCenter(feature.getGeometry());
+                                return (point) ? new ol.geom.Point(point) : null;
+                            }
+                        });
+                    };
+
+
+                    /** Creates a features style that displays the index of the coordinate **/
+                    scope.styleForFeatureCoordIndex = function (feature, index, coord) {
+                        return new ol.style.Style({
+                            text: new ol.style.Text({
+                                textAlign: 'center',
+                                font: '9px Arial',
+                                text: '' + index,
+                                fill: new ol.style.Fill({color: 'white'}),
+                                offsetX: 0,
+                                offsetY: 0
+                            }),
+                            image: new ol.style.Circle({
+                                radius: 8,
+                                fill: new ol.style.Fill({
+                                    color: 'darkmagenta'
+                                }),
+                                stroke: new ol.style.Stroke({color: 'white', width: 2.0})
+                            }),
+                            geometry: function() {
+                                return new ol.geom.Point(coord);
+                            }
+                        });
+                    };
+
+
+                    /** Creates a features style that displays the name of a specific coordinate **/
+                    scope.styleForFeatureCoordName = function (feature, name, coord) {
+                        return new ol.style.Style({
+                            text: new ol.style.Text({
+                                textAlign: 'center',
+                                font: '11px Arial',
+                                text: name,
+                                fill: new ol.style.Fill({color: 'darkmagenta'}),
+                                stroke: new ol.style.Stroke({color: 'white', width: 2.0}),
+                                offsetX: 0,
+                                offsetY: 14
+                            }),
+                            geometry: function() {
+                                return new ol.geom.Point(coord);
+                            }
+                        });
+                    };
+
+                    // The label layer is only added when message details is being displayed
+                    if (scope.detailsMap) {
+
+                        var labelLayer = new ol.layer.Vector({
+                            source: new ol.source.Vector({
+                                features: new ol.Collection(),
+                                wrapX: false
+                            })
+                        });
+                        labelLayer.setVisible(true);
+                        layers.push(labelLayer);
+                        scope.addToLayerSwitcher(labelLayer, "Labels");
+                    }
 
                     /*********************************/
                     /* Map                           */
@@ -348,112 +479,105 @@ angular.module('niord.proxy.app')
                         updateSizeTimer = $timeout(scope.updateSize, 100);
                     });
 
+
                     /*********************************/
                     /* Interactive Functionality     */
                     /*********************************/
 
-                    var info = $('#info');
-                    info.tooltip({
-                        html: true,
-                        animation: false,
-                        trigger: 'manual'
-                    });
+
+                    // Interactive behaviour only applies to message list maps
+                    if (!scope.detailsMap) {
+
+                        var info = $('#info');
+                        info.tooltip({
+                            html: true,
+                            animation: false,
+                            trigger: 'manual'
+                        });
 
 
-                    // Whenever the map extent is changed, record the new extent in the mapState
-                    if (attrs.mapState) {
-                        scope.mapChanged = function () {
-                            var extent = view.calculateExtent(map.getSize());
-                            scope.mapState['zoom'] = view.getZoom();
-                            scope.mapState['center'] = MapService.round(MapService.toLonLat(view.getCenter()), 3);
-                            scope.mapState['extent'] = MapService.round(MapService.toLonLatExtent(extent), 3);
-                            scope.$$phase || scope.$apply();
+                        // Returns the list of messages for the given pixel
+                        scope.getMessagesForPixel = function (pixel) {
+                            var messageIds = {};
+                            var messages = [];
+                            map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+                                var msg = feature.get('message');
+                                if ((layer  == nwLayer || layer  == nmLayer) && msg && messageIds[msg.id] === undefined) {
+                                    messages.push(msg);
+                                    messageIds[msg.id] = msg.id;
+                                }
+                            });
+                            return messages;
                         };
-                        map.on('moveend', scope.mapChanged);
-                    }
 
 
-                    // Returns the list of messages for the given pixel
-                    scope.getMessagesForPixel = function (pixel) {
-                        var messageIds = {};
-                        var messages = [];
-                        map.forEachFeatureAtPixel(pixel, function(feature, layer) {
-                            var msg = feature.get('message');
-                            if ((layer  == nwLayer || layer  == nmLayer) && msg && messageIds[msg.id] === undefined) {
-                                messages.push(msg);
-                                messageIds[msg.id] = msg.id;
+                        // Show Message details dialog when a message is clicked
+                        map.on('click', function(evt) {
+                            var messages = scope.getMessagesForPixel(map.getEventPixel(evt.originalEvent));
+                            if (messages.length >= 1) {
+                                MessageService.detailsDialog(messages[0].id, messages);
+                                info.tooltip('hide');
                             }
                         });
-                        return messages;
-                    };
 
 
-                    // Show Message details dialog when a message is clicked
-                    map.on('click', function(evt) {
-                        var messages = scope.getMessagesForPixel(map.getEventPixel(evt.originalEvent));
-                        if (messages.length >= 1) {
-                            MessageService.detailsDialog(messages[0].id, messages);
-                            info.tooltip('hide');
-                        }
-                    });
-
-
-                    /** Generate the messages HTML to display in the tooltip **/
-                    function renderTooltipContent(messages) {
-                        var maxMessageNo = 3;
-                        var html = '';
-                        for (var x = 0; x < Math.min(messages.length, maxMessageNo); x++) {
-                            var msg = messages[x];
-                            html += '<div class="compact-message-list">';
-                            html += MessageService.messageIdLabelHtml(msg, true);
-                            if (msg.descs && msg.descs.length > 0) {
-                                html += '    <strong ng-if="msg.descs">' + msg.descs[0].title + '</strong>';
+                        /** Generate the messages HTML to display in the tooltip **/
+                        scope.renderTooltipContent = function(messages) {
+                            var maxMessageNo = 3;
+                            var html = '';
+                            for (var x = 0; x < Math.min(messages.length, maxMessageNo); x++) {
+                                var msg = messages[x];
+                                html += '<div class="compact-message-list">';
+                                html += MessageService.messageIdLabelHtml(msg, true);
+                                if (msg.descs && msg.descs.length > 0) {
+                                    html += '    <strong ng-if="msg.descs">' + msg.descs[0].title + '</strong>';
+                                }
+                                html += '</div>';
                             }
-                            html += '</div>';
-                        }
-                        if (messages.length > maxMessageNo) {
-                            html += '<div class="compact-message-list" style="text-align: center">';
-                            html += '  and ' + (messages.length - maxMessageNo) + ' more messages...';
-                            html += '</div>';
-                        }
+                            if (messages.length > maxMessageNo) {
+                                html += '<div class="compact-message-list" style="text-align: center">';
+                                html += '  and ' + (messages.length - maxMessageNo) + ' more messages...';
+                                html += '</div>';
+                            }
 
-                        return html;
+                            return html;
+                        };
+
+
+                        /** Displays the tooltip info **/
+                        map.on('pointermove', function(evt) {
+                            if (evt.dragging) {
+                                info.tooltip('hide');
+                                return;
+                            }
+                            var pixel = map.getEventPixel(evt.originalEvent);
+                            info.css({
+                                left: pixel[0] + 'px',
+                                top: (pixel[1] - 15) + 'px'
+                            });
+                            var messages = scope.getMessagesForPixel(pixel);
+                            if (messages.length >  0) {
+                                var oldTitle = info.attr('data-original-title');
+                                var newTitle = scope.renderTooltipContent(messages);
+                                if (oldTitle != newTitle) {
+                                    info.tooltip('hide')
+                                        .attr('data-original-title', newTitle)
+                                        .tooltip('fixTitle');
+                                }
+                                info.tooltip('show');
+                            } else {
+                                info.tooltip('hide');
+                            }
+                        });
                     }
 
-
-                    /** Displays the tooltip info **/
-                    map.on('pointermove', function(evt) {
-                        if (evt.dragging) {
-                            info.tooltip('hide');
-                            return;
-                        }
-                        var pixel = map.getEventPixel(evt.originalEvent);
-                        info.css({
-                            left: pixel[0] + 'px',
-                            top: (pixel[1] - 15) + 'px'
-                        });
-                        var messages = scope.getMessagesForPixel(pixel);
-                        if (messages.length >  0) {
-                            var oldTitle = info.attr('data-original-title');
-                            var newTitle = renderTooltipContent(messages);
-                            if (oldTitle != newTitle) {
-                                info.tooltip('hide')
-                                    .attr('data-original-title', newTitle)
-                                    .tooltip('fixTitle');
-                            }
-                            info.tooltip('show');
-                        } else {
-                            info.tooltip('hide');
-                        }
-                    });
 
                     /*********************************/
                     /* Update Messages               */
                     /*********************************/
 
-
-                    /** Called when messages are updated **/
-                    function messagesUpdated() {
+                    /** Updates the message layers **/
+                    function updateMessageLayers() {
                         var messages = attrs.messages ? scope.messages : [ scope.message ];
 
                         // Reset layers
@@ -461,6 +585,7 @@ angular.module('niord.proxy.app')
                         nmLayer.getSource().clear();
                         scope.generalMessages.length = 0;
 
+                        // Update the NW-NM message layers
                         for (var x = 0; x < messages.length; x++) {
                             var message = messages[x];
                             var features = MessageService.featuresForMessage(message);
@@ -478,6 +603,72 @@ angular.module('niord.proxy.app')
                                 scope.generalMessages.push(messages[x]);
                             }
                         }
+                    }
+
+
+                    /** Updates the label layer **/
+                    function updateLabelLayer() {
+
+                        labelLayer.getSource().clear();
+                        if (scope.message) {
+                            var features = MessageService.featuresForMessage(scope.message);
+                            if (features.length > 0) {
+                                var coordIndex = 1;
+                                angular.forEach(features, function (gjFeature) {
+
+                                    var olFeature = MapService.gjToOlFeature(gjFeature);
+                                    var styles = [];
+
+                                    // Create a label for the feature
+                                    var name = gjFeature.properties
+                                        ? gjFeature.properties['name:' + $rootScope.language]
+                                        : undefined;
+
+                                    if (name) {
+                                        styles.push(scope.styleForFeatureName(
+                                            olFeature,
+                                            name));
+                                    }
+
+                                    // Create labels for the "readable" coordinates
+                                    var coords = [];
+                                    MapService.serializeReadableCoordinates(gjFeature, coords);
+                                    for (var x = 0; x < coords.length; x++) {
+
+                                        var c = MapService.fromLonLat([ coords[x].lon, coords[x].lat ]);
+
+                                        styles.push(scope.styleForFeatureCoordIndex(
+                                            olFeature,
+                                            coordIndex,
+                                            c));
+
+                                        if (coords[x].name) {
+                                            styles.push(scope.styleForFeatureCoordName(
+                                                olFeature,
+                                                coords[x].name,
+                                                c));
+                                        }
+                                        coordIndex++;
+                                    }
+
+                                    if (styles.length > 0) {
+                                        olFeature.setStyle(styles);
+                                        labelLayer.getSource().addFeature(olFeature);
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+
+                    /** Called when messages are updated **/
+                    function messagesUpdated() {
+
+                        updateMessageLayers();
+
+                        if (scope.detailsMap) {
+                            updateLabelLayer();
+                        }
 
                         if (scope.fitExtent) {
                             var extent = ol.extent.createEmpty();
@@ -490,7 +681,6 @@ angular.module('niord.proxy.app')
                                 });
                             }
                         }
-
                     }
 
                     scope.$watch("message", messagesUpdated, true);

@@ -12,10 +12,12 @@
         </div>
 
         <div ng-if="msg">
-            <message-map ng-if="hasGeometry && showMap" class="details-message-map"
-                         message="msg" fit-extent="true" max-zoom="12">
-            </message-map>
 
+            <div ng-if="hasGeometry && showMap" class="message-details-map">
+                <message-map class="message-map"
+                             message="msg" fit-extent="true" max-zoom="12">
+                </message-map>
+            </div>
 
             <button type="button" class="close message-details-close-btn" ng-click="$dismiss('aborted')">x</button>
 

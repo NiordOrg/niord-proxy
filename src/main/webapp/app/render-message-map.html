@@ -8,17 +8,11 @@
         <div>
             <h4 translate>GENERAL_MSGS</h4>
         </div>
-        <table class="compact-message-list">
-            <tr ng-repeat="msg in generalMessages">
-                <td valign="top" width="24">
-                    <img ng-src="/img/{{msg.mainType | lowercase}}.png" height="18">
-                </td>
-                <td width="*" message-details-link="msg.id" messages="messages">
-                    <span ng-if="msg.shortId" class="badge label-message-id">{{msg.shortId}}</span>
-                    <strong ng-if="msg.descs">{{msg.descs[0].title}}</strong>
-                </td>
-            </tr>
-        </table>
+        <div ng-repeat="msg in generalMessages" class="compact-message-list"
+             message-details-link="msg.id" messages="messages">
+            <message-id-badge msg="msg" show-blank="true"></message-id-badge>
+            <strong ng-if="msg.descs">{{msg.descs[0].title}}</strong>
+        </div>
     </div>
 
 </div>

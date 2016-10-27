@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/tags/functions" prefix="msg" %>
-<%@ taglib tagdir="/WEB-INF/tags/att"  prefix="att" %>
+<%@ taglib tagdir="/WEB-INF/tags/render"  prefix="render" %>
 
 <html>
 <fmt:setLocale value="${lang}"/>
@@ -79,18 +79,16 @@
 
                     <!-- Render attachments above the message -->
                     <c:forEach var="att" items="${msg:attachments(msg, 'ABOVE')}">
-                        <att:attachment att="${att}"/>
+                        <render:attachment att="${att}"/>
                     </c:forEach>
 
                     <!-- Title line -->
                     <c:if test="${msg.originalInformation}">
                         <div><b>*</b></div>
                     </c:if>
-                    <c:if test="${not empty msg.shortId}">
-                        <div>
-                            <span class="badge label-message-id">${msg.shortId}</span>
-                        </div>
-                    </c:if>
+                    <div>
+                        <render:messageIdBadge msg="${msg}"/>
+                    </div>
                     <c:if test="${not empty msg.descs}">
                         <span class="message-title">${msg.descs[0].title}</span>
                     </c:if>
@@ -172,7 +170,7 @@
 
                     <!-- Render attachments below the message -->
                     <c:forEach var="att" items="${msg:attachments(msg, 'BELOW')}">
-                        <att:attachment att="${att}"/>
+                        <render:attachment att="${att}"/>
                     </c:forEach>
 
                 </div>
@@ -192,7 +190,7 @@
                     <fmt:message key="field_attachments"/> - ${messageId}
                 </h4>
             </div>
-            <att:attachment att="${att}"/>
+            <render:attachment att="${att}"/>
         </div>
     </c:forEach>
 </c:forEach>

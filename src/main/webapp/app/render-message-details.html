@@ -11,8 +11,8 @@
 
     <!-- Title line -->
     <div ng-if="msg.originalInformation">&#9733;</div>
-    <div ng-if="msg.shortId">
-        <span class="badge label-message-id">{{msg.shortId}}</span>
+    <div>
+        <message-id-badge msg="msg" show-blank="true"></message-id-badge>
     </div>
     <div ng-if="msg.descs" message-details-link="msg.id" messages="messages" disabled="format == 'details'">
         <span class="message-title">{{msg.descs[0].title}}</span>

@@ -138,17 +138,14 @@ h4 {
 }
 
 
-table.compact-message-list {
+.compact-message-list {
     width: 100%;
     text-align: left;
-}
-
-table.compact-message-list tr:not(:last-child) {
-    border-bottom: 1px solid lightgray
-}
-
-table.compact-message-list tr td {
     padding: 6px;
+}
+
+.compact-message-list:not(:last-child) {
+    border-bottom: 1px solid lightgray
 }
 
 .message-details-map {

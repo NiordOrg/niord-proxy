@@ -12,7 +12,6 @@ angular.module('niord.proxy.app')
         function($rootScope, $http, $translate, $uibModal) {
             'use strict';
 
-
             /** Returs the list of message ids **/
             function extractMessageIds(messages) {
                 var ids = [];
@@ -22,6 +21,13 @@ angular.module('niord.proxy.app')
                     }
                 }
                 return ids;
+            }
+
+
+            /** Translates the given key **/
+            function translate(key, params, language) {
+                language = language || $rootScope.language;
+                return $translate.instant(key, params, null, language);
             }
 
 
@@ -45,6 +51,12 @@ angular.module('niord.proxy.app')
                 },
 
 
+                /** Translates the given key **/
+                translate : function (key, params, language) {
+                    return translate(key, params, language);
+                },
+
+
                 /** Returns the area groups **/
                 getAreaGroups: function () {
                     return $http.get('/rest/messages/area-groups');
@@ -65,6 +77,18 @@ angular.module('niord.proxy.app')
                     return undefined;
                 },
 
+
+                /** Generate the HTML to display as a message ID badge **/
+                messageIdLabelHtml : function (msg, showBlank) {
+                    var shortId = msg && msg.shortId ? msg.shortId : undefined;
+                    var messageClass = 'label-message-id';
+                    if (msg && !shortId && showBlank) {
+                        shortId = msg.type ? translate('TYPE_' + msg.type) + ' ' : '';
+                        shortId += msg.mainType ? translate('MAIN_TYPE_' + msg.mainType) : '';
+                        messageClass = 'label-message-type';
+                    }
+                    return shortId ? '<span class="' + messageClass + '">' + shortId + '</span>' : '';
+                },
 
                 /** Returns the features associated with a message **/
                 featuresForMessage: function(msg) {
@@ -115,8 +139,7 @@ angular.module('niord.proxy.app')
     /**
      * The language service is used for changing language, etc.
      */
-    .service('MapService', ['$rootScope', '$http',
-        function ($rootScope, $http) {
+    .service('MapService', [function () {
             'use strict';
 
             var projMercator = 'EPSG:3857';

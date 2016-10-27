@@ -68,11 +68,37 @@ angular.module('niord.proxy.app')
     }])
 
 
+    /********************************************************
+     * Renders a badge with the short ID if defined, and
+     * the type otherwise
+     ********************************************************/
+    .directive('messageIdBadge', ['MessageService', function (MessageService) {
+        'use strict';
+
+        return {
+            restrict: 'E',
+            scope: {
+                msg:       "=",
+                showBlank: "="
+            },
+            link: function(scope, element) {
+
+                /** Updates the label based on the current status and short ID **/
+                function updateIdLabel() {
+                    element.html(MessageService.messageIdLabelHtml(scope.msg, scope.showBlank));
+                }
+
+                scope.$watch('[msg.shortId, msg.mainType, msg.type]', updateIdLabel, true);
+            }
+        }
+    }])
+
+
     /****************************************************************
      * Replaces the content of the element with the area description
      ****************************************************************/
-    .directive('renderMessageArea', ['$rootScope', '$translate', 'MessageService',
-        function ($rootScope, $translate, MessageService) {
+    .directive('renderMessageArea', ['$rootScope', 'MessageService',
+        function ($rootScope, MessageService) {
         return {
             restrict: 'A',
             scope: {
@@ -96,9 +122,9 @@ angular.module('niord.proxy.app')
                     while (area) {
                         if (area.id == -999999) {
                             // Special "General" area used for messages without an assigned area
-                            result = prepend($translate.instant('GENERAL_MSGS', null, null, $rootScope.language), result);
+                            result = prepend(MessageService.translate('GENERAL_MSGS'), result);
                         } else {
-                            var desc = MessageService.desc(area, $rootScope.language);
+                            var desc = MessageService.desc(area);
                             var areaName = (desc && desc.name) ? desc.name : '';
                             result = prepend(areaName, result);
                         }
@@ -375,32 +401,22 @@ angular.module('niord.proxy.app')
                     /** Generate the messages HTML to display in the tooltip **/
                     function renderTooltipContent(messages) {
                         var maxMessageNo = 3;
-                        var html = '<table class="compact-message-list">';
+                        var html = '';
                         for (var x = 0; x < Math.min(messages.length, maxMessageNo); x++) {
                             var msg = messages[x];
-                            html += '<tr>';
-                            html += '  <td valign="top" width="20">';
-                            html += '    <img src="/img/' + msg.mainType.toLowerCase() + '.png" height="16">';
-                            html += '  </td>';
-                            html += '  <td width="*">';
-                            if (msg.shortId) {
-                                html += '    <span class="badge label-message-id">' + msg.shortId + '</span>';
-                            }
+                            html += '<div class="compact-message-list">';
+                            html += MessageService.messageIdLabelHtml(msg, true);
                             if (msg.descs && msg.descs.length > 0) {
                                 html += '    <strong ng-if="msg.descs">' + msg.descs[0].title + '</strong>';
                             }
-                            html += '  </td>';
-                            html += '</tr>';
-                        };
+                            html += '</div>';
+                        }
                         if (messages.length > maxMessageNo) {
-                            html += '<tr>';
-                            html += '  <td colspan="2" align="center">';
+                            html += '<div class="compact-message-list" style="text-align: center">';
                             html += '  and ' + (messages.length - maxMessageNo) + ' more messages...';
-                            html += '  </td>';
-                            html += '</tr>';
+                            html += '</div>';
                         }
 
-                        html += '</table>';
                         return html;
                     }
 

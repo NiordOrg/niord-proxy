@@ -168,7 +168,7 @@ public class MessageService {
 
                     message = mapper.readValue(json, MessageVo.class);
 
-                    log.log(Level.FINE, String.format(
+                    log.log(Level.FINER, String.format(
                             "Loaded NW-NM message with ID %s in %s ms",
                             messageId,
                             System.currentTimeMillis() - t0));
@@ -297,7 +297,7 @@ public class MessageService {
                 List<MessageVo> messages = mapper.readValue(json, new TypeReference<List<MessageVo>>(){});
                 updateMessages(messages);
 
-                log.info(String.format(
+                log.log(Level.FINER, String.format(
                         "Loaded %d NW-NM messages in %s ms",
                         messages.size(),
                         System.currentTimeMillis() - t0));

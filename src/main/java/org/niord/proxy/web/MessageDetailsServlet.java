@@ -40,6 +40,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -81,24 +82,6 @@ public class MessageDetailsServlet extends HttpServlet {
 
         // Read the request parameters
         String language = StringUtils.defaultIfBlank(request.getParameter("language"), "en");
-        Set<MainType> mainTypes = null;
-        if (StringUtils.isNotBlank(request.getParameter("mainType"))) {
-            mainTypes = Arrays.stream(request.getParameterValues("mainType"))
-                    .map(MainType::valueOf)
-                    .collect(Collectors.toSet());
-        }
-        Set<Integer> areaIds = null;
-        if (StringUtils.isNotBlank(request.getParameter("areaId"))) {
-            areaIds = Arrays.stream(request.getParameterValues("areaId"))
-                    .map(Integer::valueOf)
-                    .collect(Collectors.toSet());
-        }
-        String wkt = request.getParameter("wkt");
-        boolean active = false;
-        if (StringUtils.isNotBlank(request.getParameter("active"))) {
-            active = Boolean.valueOf(request.getParameter("active"));
-        }
-
 
         // Force the encoding and the locale based on the lang parameter
         request.setCharacterEncoding("UTF-8");
@@ -109,9 +92,8 @@ public class MessageDetailsServlet extends HttpServlet {
         };
 
         try {
-
             // Get the messages in the given language for the requested provider
-            List<MessageVo> messages = messageService.getMessages(language, mainTypes, areaIds, wkt, active);
+            List<MessageVo> messages = getMessages(request, language);
 
             // Register the attributes to be used on the JSP page
             request.setAttribute("messages", messages);
@@ -131,6 +113,43 @@ public class MessageDetailsServlet extends HttpServlet {
             log.log(Level.SEVERE, "Error generating file " + request.getServletPath(), e);
             throw new ServletException("Error generating file " + request.getServletPath(), e);
         }
+    }
+
+
+    /** Gets the messages for the given search criteria **/
+    List<MessageVo> getMessages(HttpServletRequest request, String language) throws Exception {
+
+        // A specific message was requested
+        if (StringUtils.isNotBlank(request.getParameter("messageId"))) {
+            MessageVo message = messageService.getMessageDetails(language, request.getParameter("messageId"));
+            return message == null
+                    ? Collections.emptyList()
+                    : Collections.singletonList(message);
+        }
+
+        // Search message based on the request parameters
+
+        Set<MainType> mainTypes = null;
+        if (StringUtils.isNotBlank(request.getParameter("mainType"))) {
+            mainTypes = Arrays.stream(request.getParameterValues("mainType"))
+                    .map(MainType::valueOf)
+                    .collect(Collectors.toSet());
+        }
+
+        Set<Integer> areaIds = null;
+        if (StringUtils.isNotBlank(request.getParameter("areaId"))) {
+            areaIds = Arrays.stream(request.getParameterValues("areaId"))
+                    .map(Integer::valueOf)
+                    .collect(Collectors.toSet());
+        }
+
+        String wkt = request.getParameter("wkt");
+        boolean active = false;
+        if (StringUtils.isNotBlank(request.getParameter("active"))) {
+            active = Boolean.valueOf(request.getParameter("active"));
+        }
+
+        return messageService.getMessages(language, mainTypes, areaIds, wkt, active);
     }
 
 

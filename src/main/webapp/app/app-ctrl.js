@@ -148,8 +148,8 @@ angular.module('niord.proxy.app')
     /*******************************************************************
      * Controller that handles displaying message details in a dialog
      *******************************************************************/
-    .controller('MessageDialogCtrl', ['$scope', '$window', 'MessageService', 'messageId', 'messages',
-        function ($scope, $window, MessageService, messageId, messages) {
+    .controller('MessageDialogCtrl', ['$scope', '$rootScope', '$window', 'MessageService', 'messageId', 'messages',
+        function ($scope, $rootScope, $window, MessageService, messageId, messages) {
             'use strict';
 
             $scope.warning = undefined;
@@ -197,6 +197,14 @@ angular.module('niord.proxy.app')
                     $scope.pushedMessageIds.pop();
                     $scope.loadMessageDetails();
                 }
+            };
+
+
+            // Creates a PDF for the current search result
+            $scope.pdf = function () {
+                var params = 'messageId=' + encodeURIComponent($scope.currentMessageId())
+                        + '&language=' + $rootScope.language;
+                $window.open('/details.pdf?' + params, '_blank');
             };
 
 

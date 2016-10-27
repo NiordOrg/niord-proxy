@@ -15,8 +15,8 @@
     <link rel="icon" href="/img/niord-proxy_152.png" sizes="152x152" type="image/png" />
     <link rel="apple-touch-icon" href="/img/niord-proxy_152.png" sizes="152x152" type="image/png" />
 
-    <link rel="stylesheet" type="text/css" href="/css/details${pdf ? '-pdf' : '-html'}.css">
     <link rel="stylesheet" type="text/css" href="/css/message.css">
+    <link rel="stylesheet" type="text/css" href="/css/details${pdf ? '-pdf' : '-html'}.css">
 
 </head>
 <body>

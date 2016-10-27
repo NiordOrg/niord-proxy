@@ -11,14 +11,14 @@
 }
 
 body{
-    font-size:12px;
+    font-size:11px;
     font-family: Helvetica;
     margin: 0;
     padding:0;
 }
 
 table {
-    font-size: 12px;
+    font-size: 11px;
     border-spacing: 0;
     border-collapse: collapse
 }
@@ -56,7 +56,7 @@ div.footer {
 }
 
 .message-details-list {
-    font-size: 12px;
+    font-size: 11px;
 }
 
 
@@ -67,20 +67,6 @@ div.footer {
     page-break-inside: avoid;
 }
 
-
-.badge {
-    display: inline-block;
-    padding: 3px 7px;
-    font-weight: 700;
-    line-height: 1;
-    color: #fff;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    background-color: #777;
-    border-radius: 10px
-}
-
 .separate-attachment-page {
     text-align: center;
     clear: left;
@@ -89,3 +75,14 @@ div.footer {
     margin: 5mm;
     padding: 0;
 }
+
+/** Override message classes **/
+
+table.position-table td.pos-col {
+    width: 4.0cm;
+}
+
+table.position-table td.pos-index {
+    width: 0.6cm;
+}
+

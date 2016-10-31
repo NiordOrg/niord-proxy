@@ -97,6 +97,12 @@
         </tr>
 
 
+        <!-- Publication line -->
+        <tr ng-if="msg.descs && msg.descs[0].publication">
+            <th translate>FIELD_PUBLICATION</th>
+            <td>({{msg.descs[0].publication}})</td>
+        </tr>
+
         <!-- Source line -->
         <tr ng-if="msg.descs && msg.descs[0].source">
             <td colspan="2" class="text-right">({{msg.descs[0].source}})</td>

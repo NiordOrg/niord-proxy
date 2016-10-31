@@ -157,6 +157,16 @@
                             </tr>
                         </c:if>
 
+                        <!-- Publication line -->
+                        <c:if test="${not empty msg.descs and not empty msg.descs[0].publication}">
+                            <tr>
+                                <th><fmt:message key="field_publication"/></th>
+                                <td>
+                                    ${msg.descs[0].publication}
+                                </td>
+                            </tr>
+                        </c:if>
+
                         <!-- Source line -->
                         <c:if test="${not empty msg.descs and not empty msg.descs[0].source}">
                             <tr>

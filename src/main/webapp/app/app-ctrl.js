@@ -22,7 +22,7 @@ angular.module('niord.proxy.app')
                 activeNow: false,
                 mainTypes: {
                     'NW': storage.NW ? storage.NW == 'true' : true,
-                    'NM': storage.NM ? storage.NM == 'true' : false
+                    'NM': storage.NM ? storage.NM == 'true' : true
                 },
                 areaGroups: [],
                 wkt: undefined

@@ -274,7 +274,7 @@ angular.module('niord.proxy.app')
 
 
                     var nwStyle = new ol.style.Style({
-                        fill: new ol.style.Fill({ color: 'rgba(255, 0, 255, 0.2)' }),
+                        fill: new ol.style.Fill({ color: 'rgba(255, 255, 255, 0.3)' }),
                         stroke: new ol.style.Stroke({ color: '#8B008B', width: 1 }),
                         image: new ol.style.Icon({
                             anchor: [0.5, 0.5],

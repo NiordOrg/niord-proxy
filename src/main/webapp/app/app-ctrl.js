@@ -15,6 +15,7 @@ angular.module('niord.proxy.app')
 
             $scope.messages = [];
             $scope.languages = [];
+            $scope.rootAreas = [];
             var storage = $window.localStorage;
 
             $scope.params = {
@@ -24,7 +25,7 @@ angular.module('niord.proxy.app')
                     'NW': storage.NW ? storage.NW == 'true' : true,
                     'NM': storage.NM ? storage.NM == 'true' : true
                 },
-                areaGroups: [],
+                rootArea: undefined,
                 wkt: undefined
             };
 
@@ -39,6 +40,42 @@ angular.module('niord.proxy.app')
             MessageService.getAreaGroups()
                 .success(function (areaGroups) {
                     $scope.params.areaGroups = areaGroups;
+
+                    // Build the list of root areas, each having a list of sub-areas
+                    $scope.rootAreas = [];
+                    $scope.params.rootArea = undefined;
+                    for (var x = 0; x < areaGroups.length; x++) {
+                        var area = areaGroups[x];
+                        var rootArea = area;
+                        while( rootArea.parent !== undefined) {
+                            rootArea = rootArea.parent;
+                        }
+                        if ($scope.rootAreas.length == 0 ||
+                            rootArea.id != $scope.rootAreas[$scope.rootAreas.length - 1].id) {
+                            $scope.rootAreas.push(rootArea);
+                            rootArea.subAreas = [];
+                        } else {
+                            rootArea = $scope.rootAreas[$scope.rootAreas.length - 1];
+                        }
+
+                        area.rootId = rootArea.id;
+                        area.isRoot = area.rootId == area.id;
+                        if (!area.isRoot) {
+                            rootArea.subAreas.push(area);
+                        }
+                    }
+
+                    // Set the currently selected root area to the one registered in the local-storage
+                    if ($scope.rootAreas.length > 0) {
+                        angular.forEach($scope.rootAreas, function (rootArea) {
+                           if ('' + rootArea.id == storage.rootAreaId) {
+                               $scope.params.rootArea = rootArea;
+                           }
+                        });
+                        if (!$scope.params.rootArea) {
+                            $scope.params.rootArea = $scope.rootAreas[0];
+                        }
+                    }
                 });
 
 
@@ -99,10 +136,16 @@ angular.module('niord.proxy.app')
                 if ($scope.params.mainTypes.NM) {
                     p += '&mainType=NM';
                 }
-                for (var x = 0; x < $scope.params.areaGroups.length; x++) {
-                    if ($scope.params.areaGroups[x].selected) {
-                        p += '&areaId=' + $scope.params.areaGroups[x].id;
+                var areas =  $scope.params.rootArea ? $scope.params.rootArea.subAreas : [];
+                var selectedAreas = 0;
+                for (var x = 0; x < areas.length; x++) {
+                    if (areas[x].selected) {
+                        p += '&areaId=' + areas[x].id;
+                        selectedAreas++;
                     }
+                }
+                if ($scope.params.rootArea && selectedAreas == 0) {
+                    p += '&areaId=' + $scope.params.rootArea.id;
                 }
                 if ($scope.params.wkt) {
                     p += '&wkt=' + encodeURIComponent($scope.params.wkt);
@@ -121,6 +164,9 @@ angular.module('niord.proxy.app')
                 storage.language = $scope.params.language;
                 storage.NW = '' + $scope.params.mainTypes.NW;
                 storage.NM = '' + $scope.params.mainTypes.NM;
+                if ($scope.params.rootArea) {
+                    storage.rootAreaId = $scope.params.rootArea.id;
+                }
 
                 // Perform the search
                 var params = $scope.getSearchParams();

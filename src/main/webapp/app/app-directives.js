@@ -536,7 +536,7 @@ angular.module('niord.proxy.app')
                             }
                             if (messages.length > maxMessageNo) {
                                 html += '<div class="compact-message-list" style="text-align: center">';
-                                html += '  and ' + (messages.length - maxMessageNo) + ' more messages...';
+                                html += MessageService.translate('MORE_MSGS', { 'messageNo': messages.length - maxMessageNo});
                                 html += '</div>';
                             }
 

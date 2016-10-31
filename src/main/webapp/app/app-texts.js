@@ -41,7 +41,8 @@ angular.module('niord.proxy.app')
             'ACTIVE_NOW' : 'Active Now',
             'SHOW_ATTACHMENTS' : 'Show attachments',
             'HIDE_ATTACHMENTS' : 'Hide attachments',
-            'MSG_NOT_FOUND' : 'Message {{messageId}} not found'
+            'MSG_NOT_FOUND' : 'Message {{messageId}} not found',
+            'MORE_MSGS' : ' and {{messageNo}} more messages'
         });
 
         $translateProvider.translations('da', {
@@ -79,7 +80,8 @@ angular.module('niord.proxy.app')
             'ACTIVE_NOW' : 'Aktive nu',
             'SHOW_ATTACHMENTS' : 'Vis vedhæftninger',
             'HIDE_ATTACHMENTS' : 'Skjul vedhæftninger',
-            'MSG_NOT_FOUND' : 'Meddelelse {{messageId}} ikke fundet'
+            'MSG_NOT_FOUND' : 'Meddelelse {{messageId}} ikke fundet',
+            'MORE_MSGS' : ' samt {{messageNo}} andre meddelelser'
         });
 
         $translateProvider.preferredLanguage('en');

@@ -12,7 +12,7 @@ angular.module('niord.proxy.app')
         function ($scope, $rootScope, $window, $timeout, MessageService) {
             'use strict';
 
-
+            $scope.loading = true;
             $scope.messages = [];
             $scope.languages = [];
             $scope.areas = [];
@@ -68,6 +68,13 @@ angular.module('niord.proxy.app')
                         }
                         $scope.updateSubAreas();
                     }
+
+                    // Ready to load messages
+                    $scope.loading = false;
+                })
+                .error(function () {
+                    // Ready to load messages
+                    $scope.loading = false;
                 });
 
 
@@ -163,6 +170,11 @@ angular.module('niord.proxy.app')
 
             /** Refreshes the message list from the back-end **/
             $scope.refreshMessages = function () {
+
+                // If area groups have not been loaded yet, wait with the messages
+                if ($scope.loading) {
+                    return;
+                }
 
                 // Change the language use for translations
                 MessageService.setLanguage($scope.params.language);

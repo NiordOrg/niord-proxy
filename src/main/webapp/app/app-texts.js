@@ -53,7 +53,7 @@ angular.module('niord.proxy.app')
             'MENU_TABLE' : 'Liste',
             'MENU_PDF' : 'PDF',
             'MENU_NW'  : 'Navigationsadvarsler',
-            'MENU_NM'  : 'Efterretninger til søfarende',
+            'MENU_NM'  : 'Efterretninger for søfarende',
             'BTN_CLOSE' : 'Luk',
             'GENERAL_MSGS' : 'Generelle Meddelelser',
             'FIELD_REFERENCES' : 'Referencer',

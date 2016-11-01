@@ -63,6 +63,15 @@ angular.module('niord.proxy.app')
                 },
 
 
+                /** Returns the root area for the given area **/
+                rootArea: function (area) {
+                    while (area && area.parent) {
+                        area = area.parent;
+                    }
+                    return area;
+                },
+
+
                 /** Returns the description record for the given language **/
                 desc: function(o, lang) {
                     lang = lang || $rootScope.language;
@@ -81,11 +90,10 @@ angular.module('niord.proxy.app')
                 /** Generate the HTML to display as a message ID badge **/
                 messageIdLabelHtml : function (msg, showBlank) {
                     var shortId = msg && msg.shortId ? msg.shortId : undefined;
-                    var messageClass = 'label-message-id';
+                    var messageClass = msg.mainType == 'NW' ? 'label-message-nw' : 'label-message-nm';
                     if (msg && !shortId && showBlank) {
                         shortId = msg.type ? translate('TYPE_' + msg.type) + ' ' : '';
                         shortId += msg.mainType ? translate('MAIN_TYPE_' + msg.mainType) : '';
-                        messageClass = 'label-message-type';
                     }
                     return shortId ? '<span class="' + messageClass + '">' + shortId + '</span>' : '';
                 },

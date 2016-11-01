@@ -15,7 +15,8 @@ angular.module('niord.proxy.app')
 
             $scope.messages = [];
             $scope.languages = [];
-            $scope.rootAreas = [];
+            $scope.areas = [];
+            $scope.rootAreas = []; // All root areas
             var storage = $window.localStorage;
 
             $scope.params = {
@@ -25,7 +26,8 @@ angular.module('niord.proxy.app')
                     'NW': storage.NW ? storage.NW == 'true' : true,
                     'NM': storage.NM ? storage.NM == 'true' : true
                 },
-                rootArea: undefined,
+                rootArea: undefined, // Currently selected root area
+                subAreas: [],        // Sub-areas of current root area
                 wkt: undefined
             };
 
@@ -39,29 +41,18 @@ angular.module('niord.proxy.app')
             // Pre-load the area groups
             MessageService.getAreaGroups()
                 .success(function (areaGroups) {
-                    $scope.params.areaGroups = areaGroups;
 
-                    // Build the list of root areas, each having a list of sub-areas
-                    $scope.rootAreas = [];
+                    $scope.areas = areaGroups;
+
+                    $scope.rootAreas.length = 0;
                     $scope.params.rootArea = undefined;
-                    for (var x = 0; x < areaGroups.length; x++) {
-                        var area = areaGroups[x];
-                        var rootArea = area;
-                        while( rootArea.parent !== undefined) {
-                            rootArea = rootArea.parent;
-                        }
-                        if ($scope.rootAreas.length == 0 ||
-                            rootArea.id != $scope.rootAreas[$scope.rootAreas.length - 1].id) {
+                    var prevRootArea = undefined;
+                    for (var x = 0; x < $scope.areas.length; x++) {
+                        var area = $scope.areas[x];
+                        var rootArea = MessageService.rootArea(area);
+                        if (!prevRootArea || rootArea.id != prevRootArea.id) {
                             $scope.rootAreas.push(rootArea);
-                            rootArea.subAreas = [];
-                        } else {
-                            rootArea = $scope.rootAreas[$scope.rootAreas.length - 1];
-                        }
-
-                        area.rootId = rootArea.id;
-                        area.isRoot = area.rootId == area.id;
-                        if (!area.isRoot) {
-                            rootArea.subAreas.push(area);
+                            prevRootArea = rootArea;
                         }
                     }
 
@@ -75,8 +66,24 @@ angular.module('niord.proxy.app')
                         if (!$scope.params.rootArea) {
                             $scope.params.rootArea = $scope.rootAreas[0];
                         }
+                        $scope.updateSubAreas();
                     }
                 });
+
+
+            // Update the list of sub-areas of the currently selected root area
+            $scope.updateSubAreas = function () {
+                $scope.params.subAreas.length = 0;
+                if ($scope.params.rootArea) {
+                    var rootId = $scope.params.rootArea.id;
+                    for (var x = 0; x < $scope.areas.length; x++) {
+                        var area = $scope.areas[x];
+                        if (area.parent && MessageService.rootArea(area).id == rootId) {
+                            $scope.params.subAreas.push(area);
+                        }
+                    }
+                }
+            };
 
 
             /**
@@ -136,7 +143,7 @@ angular.module('niord.proxy.app')
                 if ($scope.params.mainTypes.NM) {
                     p += '&mainType=NM';
                 }
-                var areas =  $scope.params.rootArea ? $scope.params.rootArea.subAreas : [];
+                var areas =  $scope.params.subAreas ? $scope.params.subAreas : [];
                 var selectedAreas = 0;
                 for (var x = 0; x < areas.length; x++) {
                     if (areas[x].selected) {

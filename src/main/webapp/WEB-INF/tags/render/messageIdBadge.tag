@@ -6,11 +6,11 @@
 <%@ attribute name="msg" rtexprvalue="true" required="true" type="org.niord.model.message.MessageVo"  description="Message to render ID badge for" %>
 
 <c:if test="${not empty msg.shortId}">
-    <span class="label-message-id">${msg.shortId}</span>
+    <span class="label-message-${fn:toLowerCase(msg.mainType)}">${msg.shortId}</span>
 </c:if>
 
 <c:if test="${empty msg.shortId}">
-    <span class="label-message-type">
+    <span class="label-message-${fn:toLowerCase(msg.mainType)}">
         <fmt:message key="${msg.type}"/>
         <fmt:message key="${msg.mainType}"/>
     </span>

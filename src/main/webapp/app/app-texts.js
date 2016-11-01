@@ -10,6 +10,7 @@ angular.module('niord.proxy.app')
 
             'MENU_DETAILS' : 'Details',
             'MENU_MAP' : 'Map',
+            'MENU_TABLE' : 'List',
             'MENU_PDF' : 'PDF',
             'MENU_NW'  : 'Navigational Warnings',
             'MENU_NM'  : 'Notices to Mariners',
@@ -49,6 +50,7 @@ angular.module('niord.proxy.app')
 
             'MENU_DETAILS' : 'Detaljer',
             'MENU_MAP' : 'Kort',
+            'MENU_TABLE' : 'Liste',
             'MENU_PDF' : 'PDF',
             'MENU_NW'  : 'Navigationsadvarsler',
             'MENU_NM'  : 'Efterretninger til søfarende',

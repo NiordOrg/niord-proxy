@@ -97,6 +97,14 @@ h4 {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+.message-table-item td {
+    border-bottom: 1px solid #eee;
+}
+
+.message-table-item td {
+    padding: 10px 10px;
+    background-color: white;
+}
 
 .details-message-map {
     display: block;

@@ -31,6 +31,10 @@ angular.module('niord.proxy.app',
                     url: "/map",
                     templateUrl: "/app/messages-viewmode-map.html"
                 })
+                .state('messages.table', {
+                    url: "/table",
+                    templateUrl: "/app/messages-viewmode-table.html"
+                })
                 .state('messages.details', {
                     url: "/details",
                     templateUrl: "/app/messages-viewmode-details.html"

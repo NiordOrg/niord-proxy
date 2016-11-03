@@ -173,3 +173,12 @@ table.position-table td.pos-index {
     margin: 1mm;
     font-style: italic
 }
+
+.message-publication a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.message-publication a:hover {
+    text-decoration: underline;
+}

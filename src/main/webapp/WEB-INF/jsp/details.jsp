@@ -161,7 +161,7 @@
                         <c:if test="${not empty msg.descs and not empty msg.descs[0].publication}">
                             <tr>
                                 <th><fmt:message key="field_publication"/></th>
-                                <td>
+                                <td class="message-publication">
                                     ${msg.descs[0].publication}
                                 </td>
                             </tr>

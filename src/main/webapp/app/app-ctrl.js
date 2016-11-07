@@ -8,8 +8,8 @@ angular.module('niord.proxy.app')
     /**********************************************************************
      * Controller that handles the messages used for list and map overview
      **********************************************************************/
-    .controller('MessageCtrl', ['$scope', '$rootScope', '$window', '$timeout', 'MessageService',
-        function ($scope, $rootScope, $window, $timeout, MessageService) {
+    .controller('MessageCtrl', ['$scope', '$rootScope', '$window', '$location', '$timeout', 'MessageService',
+        function ($scope, $rootScope, $window, $location, $timeout, MessageService) {
             'use strict';
 
             $scope.loading = true;
@@ -19,8 +19,14 @@ angular.module('niord.proxy.app')
             $scope.rootAreas = []; // All root areas
             var storage = $window.localStorage;
 
+            // Check if root area and language has been specified via request parameters
+            // If not, default to settings stored in local storage
+            var requestParams = $location.search();
+            var initLang = requestParams.lang || storage.language;
+            var initRootAreaId = requestParams.area || storage.rootAreaId;
+
             $scope.params = {
-                language: storage.language ? storage.language : 'en',
+                language: initLang || 'en',
                 activeNow: false,
                 mainTypes: {
                     'NW': storage.NW ? storage.NW == 'true' : true,
@@ -59,7 +65,7 @@ angular.module('niord.proxy.app')
                     // Set the currently selected root area to the one registered in the local-storage
                     if ($scope.rootAreas.length > 0) {
                         angular.forEach($scope.rootAreas, function (rootArea) {
-                           if ('' + rootArea.id == storage.rootAreaId) {
+                           if ('' + rootArea.id == initRootAreaId) {
                                $scope.params.rootArea = rootArea;
                            }
                         });
@@ -180,10 +186,12 @@ angular.module('niord.proxy.app')
                 MessageService.setLanguage($scope.params.language);
 
                 // Persist the settings in local storage
-                storage.language = $scope.params.language;
+                if (!requestParams.lang) {
+                    storage.language = $scope.params.language;
+                }
                 storage.NW = '' + $scope.params.mainTypes.NW;
                 storage.NM = '' + $scope.params.mainTypes.NM;
-                if ($scope.params.rootArea) {
+                if ($scope.params.rootArea && !requestParams.area) {
                     storage.rootAreaId = $scope.params.rootArea.id;
                 }
 

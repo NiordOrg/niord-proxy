@@ -219,6 +219,7 @@ angular.module('niord.proxy.app')
                     message:    '=?',
                     fitExtent:  '=',
                     maxZoom:    '@',
+                    osm:        '@',
                     readOnly:   '='
                 },
 
@@ -269,8 +270,12 @@ angular.module('niord.proxy.app')
                     var layers = [];
 
                     // Add OSM layer
+                    var osmSource = new ol.source.OSM();
+                    if (scope.osm == 'ArcGIS') {
+                        osmSource.setUrl('//services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}');
+                    }
                     layers.push(new ol.layer.Tile({
-                        source: new ol.source.OSM()
+                        source: osmSource
                     }));
 
 

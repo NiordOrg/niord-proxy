@@ -18,11 +18,12 @@
     <link rel="stylesheet" type="text/css" href="css/message.css">
     <link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
-<body>
+<body class="teaser-body">
 
 <div ng-controller="MessageCtrl">
     <a href="/index.html#/messages/map" target="_blank">
-        <message-map class="teaser-map" messages="messages" fit-extent="true" max-zoom="10" ng-init="init()" read-only="true">
+        <message-map class="teaser-map" messages="messages" fit-extent="true" max-zoom="10" ng-init="init()"
+                     read-only="true" osm="ArcGIS">
             <div class="teaser-banner" translate>
                 TEASER_TEXT
             </div>

@@ -363,6 +363,9 @@ h4 {
     border-left: 1px dotted gray;
 }
 
+.teaser-body {
+    background-color: #d0cfd4;
+}
 
 .teaser-map {
     position: absolute;
@@ -370,7 +373,6 @@ h4 {
     left: 0;
     bottom: 0;
     right: 0;
-    background-color: #b5d0d0;
 }
 
 .teaser-banner {
@@ -383,7 +385,7 @@ h4 {
     right: 40px;
     padding: 20px;
     background-color: rgba(0, 0, 0, 0.5);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     z-index: 100;
 }
 

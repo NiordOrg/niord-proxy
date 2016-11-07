@@ -7,12 +7,11 @@
 angular.module('niord.proxy.app',
     [   'ngSanitize',
         'ui.bootstrap',
-        'ui.router',
         'pascalprecht.translate'
     ])
 
-    .config(['$stateProvider', '$urlRouterProvider', '$translateProvider',
-        function ($stateProvider, $urlRouterProvider, $translateProvider) {
+    .config(['$translateProvider',
+        function ($translateProvider) {
             'use strict';
             $translateProvider.useSanitizeValueStrategy('sanitize');
         }]);

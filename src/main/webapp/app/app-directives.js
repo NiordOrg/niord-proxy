@@ -487,7 +487,7 @@ angular.module('niord.proxy.app')
 
 
                     // Interactive behaviour only applies to message list maps
-                    if (!scope.detailsMap) {
+                    if (!scope.detailsMap && !scope.readOnly) {
 
                         var info = $('#info');
                         info.tooltip({
@@ -513,15 +513,13 @@ angular.module('niord.proxy.app')
 
 
                         // Show Message details dialog when a message is clicked
-                        if (!scope.readOnly) {
-                            map.on('click', function(evt) {
-                                var messages = scope.getMessagesForPixel(map.getEventPixel(evt.originalEvent));
-                                if (messages.length >= 1) {
-                                    $timeout(function() { info.tooltip('hide'); });
-                                    MessageService.detailsDialog(messages[0].id, messages);
-                                }
-                            });
-                        }
+                        map.on('click', function(evt) {
+                            var messages = scope.getMessagesForPixel(map.getEventPixel(evt.originalEvent));
+                            if (messages.length >= 1) {
+                                $timeout(function() { info.tooltip('hide'); });
+                                MessageService.detailsDialog(messages[0].id, messages);
+                            }
+                        });
 
 
                         /** Generate the messages HTML to display in the tooltip **/
@@ -548,32 +546,30 @@ angular.module('niord.proxy.app')
 
 
                         /** Displays the tooltip info **/
-                        if (!scope.readOnly) {
-                            map.on('pointermove', function (evt) {
-                                if (evt.dragging) {
-                                    info.tooltip('hide');
-                                    return;
-                                }
-                                var pixel = map.getEventPixel(evt.originalEvent);
-                                info.css({
-                                    left: pixel[0] + 'px',
-                                    top: (pixel[1] - 15) + 'px'
-                                });
-                                var messages = scope.getMessagesForPixel(pixel);
-                                if (messages.length > 0) {
-                                    var oldTitle = info.attr('data-original-title');
-                                    var newTitle = scope.renderTooltipContent(messages);
-                                    if (oldTitle != newTitle) {
-                                        info.tooltip('hide')
-                                            .attr('data-original-title', newTitle)
-                                            .tooltip('fixTitle');
-                                    }
-                                    info.tooltip('show');
-                                } else {
-                                    info.tooltip('hide');
-                                }
+                        map.on('pointermove', function (evt) {
+                            if (evt.dragging) {
+                                info.tooltip('hide');
+                                return;
+                            }
+                            var pixel = map.getEventPixel(evt.originalEvent);
+                            info.css({
+                                left: pixel[0] + 'px',
+                                top: (pixel[1] - 15) + 'px'
                             });
-                        }
+                            var messages = scope.getMessagesForPixel(pixel);
+                            if (messages.length > 0) {
+                                var oldTitle = info.attr('data-original-title');
+                                var newTitle = scope.renderTooltipContent(messages);
+                                if (oldTitle != newTitle) {
+                                    info.tooltip('hide')
+                                        .attr('data-original-title', newTitle)
+                                        .tooltip('fixTitle');
+                                }
+                                info.tooltip('show');
+                            } else {
+                                info.tooltip('hide');
+                            }
+                        });
                     }
 
 

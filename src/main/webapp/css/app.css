@@ -376,6 +376,7 @@ h4 {
 .teaser-banner {
     font-family: "Source Sans Pro", Calibri, sans-serif;
     font-size: 18px;
+    line-height: 28px;
     color: white;
     position: absolute;
     top: 40px;

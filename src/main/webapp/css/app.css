@@ -363,3 +363,26 @@ h4 {
     border-left: 1px dotted gray;
 }
 
+
+.teaser-map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: #b5d0d0;
+}
+
+.teaser-banner {
+    font-family: "Source Sans Pro", Calibri, sans-serif;
+    font-size: 18px;
+    color: white;
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+    z-index: 100;
+}
+

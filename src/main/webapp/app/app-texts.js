@@ -43,7 +43,8 @@ angular.module('niord.proxy.app')
             'SHOW_ATTACHMENTS' : 'Show attachments',
             'HIDE_ATTACHMENTS' : 'Hide attachments',
             'MSG_NOT_FOUND' : 'Message {{messageId}} not found',
-            'MORE_MSGS' : ' and {{messageNo}} more messages'
+            'MORE_MSGS' : ' and {{messageNo}} more messages',
+            'TEASER_TEXT': 'View the current<br>Notices to Mariners<br>and Navigational Warnings'
         });
 
         $translateProvider.translations('da', {
@@ -83,7 +84,8 @@ angular.module('niord.proxy.app')
             'SHOW_ATTACHMENTS' : 'Vis vedhæftninger',
             'HIDE_ATTACHMENTS' : 'Skjul vedhæftninger',
             'MSG_NOT_FOUND' : 'Meddelelse {{messageId}} ikke fundet',
-            'MORE_MSGS' : ' samt {{messageNo}} andre meddelelser'
+            'MORE_MSGS' : ' samt {{messageNo}} andre meddelelser',
+            'TEASER_TEXT': 'Se alle aktuelle<br>Efterretninger for Søfarende<br>samt Navigationsadvarsler'
         });
 
         $translateProvider.preferredLanguage('en');

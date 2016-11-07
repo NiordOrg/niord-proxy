@@ -218,7 +218,8 @@ angular.module('niord.proxy.app')
                     messages:   '=?',
                     message:    '=?',
                     fitExtent:  '=',
-                    maxZoom:    '@'
+                    maxZoom:    '@',
+                    readOnly:   '='
                 },
 
                 link: function (scope, element, attrs) {
@@ -446,8 +447,8 @@ angular.module('niord.proxy.app')
                     /*********************************/
 
                     // Disable rotation on mobile devices
-                    var controls = scope.readonly ? [] : ol.control.defaults({ rotate: false });
-                    var interactions = scope.readonly ? [] : ol.interaction.defaults({ altShiftDragRotate: false, pinchRotate: false});
+                    var controls = scope.readOnly ? [] : ol.control.defaults({ rotate: false });
+                    var interactions = scope.readOnly ? [] : ol.interaction.defaults({ altShiftDragRotate: false, pinchRotate: false});
 
                     var view = new ol.View();
                     var map = new ol.Map({
@@ -512,13 +513,15 @@ angular.module('niord.proxy.app')
 
 
                         // Show Message details dialog when a message is clicked
-                        map.on('click', function(evt) {
-                            var messages = scope.getMessagesForPixel(map.getEventPixel(evt.originalEvent));
-                            if (messages.length >= 1) {
-                                $timeout(function() { info.tooltip('hide'); });
-                                MessageService.detailsDialog(messages[0].id, messages);
-                            }
-                        });
+                        if (!scope.readOnly) {
+                            map.on('click', function(evt) {
+                                var messages = scope.getMessagesForPixel(map.getEventPixel(evt.originalEvent));
+                                if (messages.length >= 1) {
+                                    $timeout(function() { info.tooltip('hide'); });
+                                    MessageService.detailsDialog(messages[0].id, messages);
+                                }
+                            });
+                        }
 
 
                         /** Generate the messages HTML to display in the tooltip **/
@@ -545,30 +548,32 @@ angular.module('niord.proxy.app')
 
 
                         /** Displays the tooltip info **/
-                        map.on('pointermove', function(evt) {
-                            if (evt.dragging) {
-                                info.tooltip('hide');
-                                return;
-                            }
-                            var pixel = map.getEventPixel(evt.originalEvent);
-                            info.css({
-                                left: pixel[0] + 'px',
-                                top: (pixel[1] - 15) + 'px'
-                            });
-                            var messages = scope.getMessagesForPixel(pixel);
-                            if (messages.length >  0) {
-                                var oldTitle = info.attr('data-original-title');
-                                var newTitle = scope.renderTooltipContent(messages);
-                                if (oldTitle != newTitle) {
-                                    info.tooltip('hide')
-                                        .attr('data-original-title', newTitle)
-                                        .tooltip('fixTitle');
+                        if (!scope.readOnly) {
+                            map.on('pointermove', function (evt) {
+                                if (evt.dragging) {
+                                    info.tooltip('hide');
+                                    return;
                                 }
-                                info.tooltip('show');
-                            } else {
-                                info.tooltip('hide');
-                            }
-                        });
+                                var pixel = map.getEventPixel(evt.originalEvent);
+                                info.css({
+                                    left: pixel[0] + 'px',
+                                    top: (pixel[1] - 15) + 'px'
+                                });
+                                var messages = scope.getMessagesForPixel(pixel);
+                                if (messages.length > 0) {
+                                    var oldTitle = info.attr('data-original-title');
+                                    var newTitle = scope.renderTooltipContent(messages);
+                                    if (oldTitle != newTitle) {
+                                        info.tooltip('hide')
+                                            .attr('data-original-title', newTitle)
+                                            .tooltip('fixTitle');
+                                    }
+                                    info.tooltip('show');
+                                } else {
+                                    info.tooltip('hide');
+                                }
+                            });
+                        }
                     }
 
 

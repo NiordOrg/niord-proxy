@@ -302,6 +302,7 @@ h4 {
 }
 
 .view-mode-bar .active {
+    font-weight: bold;
     color: #ffffff;
 }
 

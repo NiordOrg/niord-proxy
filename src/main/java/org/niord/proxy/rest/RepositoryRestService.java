@@ -18,7 +18,6 @@ package org.niord.proxy.rest;
 import org.apache.commons.lang.StringUtils;
 import org.niord.proxy.conf.Settings;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -66,25 +65,16 @@ public class RepositoryRestService {
     int cacheTimeout = 5;
 
     /**
-     * Initializes the repository
+     * Returns the repository root
+     * @return the repository root
      */
-    @PostConstruct
-    public void init() {
-
-        if (StringUtils.isNotBlank(settings.getRepoRoot())) {
+    public Path getRepoRoot() {
+        if (repoRoot == null && StringUtils.isNotBlank(settings.getRepoRoot())) {
             Path path = Paths.get(settings.getRepoRoot());
             if (Files.isDirectory(path)) {
                 repoRoot = path;
             }
         }
-    }
-
-
-    /**
-     * Returns the repository root
-     * @return the repository root
-     */
-    public Path getRepoRoot() {
         return repoRoot;
     }
 

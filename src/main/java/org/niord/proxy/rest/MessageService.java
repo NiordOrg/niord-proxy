@@ -88,6 +88,12 @@ public class MessageService {
     }
 
 
+    /** Returns the current execution model **/
+    public Settings.ExecutionMode getExecutionMode() {
+        return settings.getExecutionMode();
+    }
+
+
     /**
      * Returns a filtered set of messages
      * @param language the language of the descriptive fields to include

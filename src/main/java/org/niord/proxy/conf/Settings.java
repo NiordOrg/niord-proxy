@@ -13,7 +13,11 @@ import java.util.logging.Logger;
  * </ul>
  */
 @Singleton
+@SuppressWarnings("unused")
 public class Settings {
+
+    // The possible execution modes of Niord
+    public enum ExecutionMode { DEVELOPMENT, TEST, PRODUCTION }
 
     @Inject
     Logger log;
@@ -24,6 +28,8 @@ public class Settings {
     private String areaId;
 
     private String repoRoot;
+
+    private ExecutionMode executionMode;
 
     /** Constructor **/
     @PostConstruct
@@ -38,6 +44,13 @@ public class Settings {
 
         repoRoot = System.getProperty("niord-proxy.repoRootPath");
         log.info("repoRoot: " + repoRoot);
+
+        try {
+            executionMode = ExecutionMode.valueOf(System.getProperty("niord-proxy.mode"));
+        } catch (Exception ignored) {
+            executionMode = ExecutionMode.DEVELOPMENT;
+        }
+        log.info("mode: " + executionMode);
     }
 
     public String getServer() {
@@ -50,5 +63,9 @@ public class Settings {
 
     public String getRepoRoot() {
         return repoRoot;
+    }
+
+    public ExecutionMode getExecutionMode() {
+        return executionMode;
     }
 }

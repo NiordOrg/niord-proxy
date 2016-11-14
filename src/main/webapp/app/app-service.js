@@ -45,6 +45,12 @@ angular.module('niord.proxy.app')
                 },
 
 
+                /** Returns the execution mode **/
+                getExecutionMode: function () {
+                    return $http.get('/rest/messages/execution-mode');
+                },
+
+
                 /** Returns the languages **/
                 getLanguages: function () {
                     return $http.get('/rest/messages/languages');

@@ -1,4 +1,7 @@
 
+<span ng-if="mode == 'DEVELOPMENT'" class="execution-mode" uib-tooltip="Development System" tooltip-placement="right">DEV</span>
+<span ng-if="mode == 'TEST'" class="execution-mode" uib-tooltip="Test System" tooltip-placement="right">TEST</span>
+
 <div class="row-fluid view-mode-bar">
     <div class="input-group col-xs-12 col-sm-8 col-md-6 col-lg-6 center">
         <span class="view-mode-bar-btn" ui-sref="messages.details" ui-sref-active="active">

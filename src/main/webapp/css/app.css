@@ -315,6 +315,23 @@ h4 {
     }
 }
 
+.execution-mode {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    margin: 0 20px;
+    padding: 0 10px;
+    display:inline-block;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    border: 2px solid white;
+    border-radius: 5px;
+    background-color: darkred;
+    z-index: 220;
+}
+
+
 /** Filter Bar classes **/
 
 .filter-bars {

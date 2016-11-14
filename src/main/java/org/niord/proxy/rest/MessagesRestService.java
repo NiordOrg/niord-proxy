@@ -18,6 +18,7 @@ package org.niord.proxy.rest;
 import org.niord.model.message.AreaVo;
 import org.niord.model.message.MainType;
 import org.niord.model.message.MessageVo;
+import org.niord.proxy.conf.Settings;
 
 import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
@@ -110,5 +111,20 @@ public class MessagesRestService {
 
         return messageService.getAreaGroups();
     }
+
+
+    /**
+     * Returns the execution mode
+     *
+     * @return the execution mode
+     */
+    @GET
+    @Path("/execution-mode")
+    @Produces("application/json;charset=UTF-8")
+    public Settings.ExecutionMode executionMode() {
+
+        return messageService.getExecutionMode();
+    }
+
 
 }

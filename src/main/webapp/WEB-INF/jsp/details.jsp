@@ -66,7 +66,7 @@
         <c:set var="areaHeading" value="${msg:areaHeading(msg)}"/>
         <c:if test="${not empty areaHeading and areaHeadingId != areaHeading.id}">
             <c:set var="areaHeadingId" value="${areaHeading.id}"/>
-            <tr>
+            <tr style="page-break-after: avoid;">
                 <td>
                     <h4 class="message-area-heading">${msg:areaLineage(areaHeading, null)}</h4>
                 </td>

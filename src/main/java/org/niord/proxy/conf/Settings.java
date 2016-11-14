@@ -46,7 +46,7 @@ public class Settings {
         log.info("repoRoot: " + repoRoot);
 
         try {
-            executionMode = ExecutionMode.valueOf(System.getProperty("niord-proxy.mode"));
+            executionMode = ExecutionMode.valueOf(System.getProperty("niord-proxy.mode").toUpperCase());
         } catch (Exception ignored) {
             executionMode = ExecutionMode.DEVELOPMENT;
         }

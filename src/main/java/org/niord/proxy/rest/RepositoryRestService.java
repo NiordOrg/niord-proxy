@@ -80,6 +80,27 @@ public class RepositoryRestService {
 
 
     /**
+     * Returns the repository file with the given path
+     * @param path the path
+     * @return the repository file with the given path
+     */
+    public Path getRepoFile(String path) {
+        Path repoRoot = getRepoRoot();
+        if (StringUtils.isBlank(path) || repoRoot == null) {
+            return null;
+        }
+
+        // Check that the specified file is indeed under the repository root
+        Path file = repoRoot.resolve(path);
+        if (!file.toAbsolutePath().startsWith(repoRoot.toAbsolutePath())) {
+            log.log(Level.WARNING, "Illegal file path not in repo root: " + file);
+            return null;
+        }
+        return file;
+    }
+
+
+    /**
      * Streams the file specified by the path
      * @param path the path
      * @param request the servlet request
@@ -90,7 +111,7 @@ public class RepositoryRestService {
     public Response streamFile(@PathParam("file") String path,
                                @Context Request request) throws IOException {
 
-        Path f = repoRoot != null ? repoRoot.resolve(path) : null;
+        Path f = getRepoFile(path);
 
         if (f == null || Files.notExists(f) || Files.isDirectory(f)) {
             log.log(Level.WARNING, "Failed streaming file: " + f);

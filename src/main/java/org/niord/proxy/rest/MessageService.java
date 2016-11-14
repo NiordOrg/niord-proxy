@@ -23,10 +23,8 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -168,6 +166,8 @@ public class MessageService {
 
                     message = mapper.readValue(json, MessageVo.class);
 
+                    checkRewriteRepoPath(message);
+
                     log.log(Level.FINER, String.format(
                             "Loaded NW-NM message with ID %s in %s ms",
                             messageId,
@@ -187,6 +187,27 @@ public class MessageService {
             return message.copy(filter);
         }
     }
+
+
+    /**
+     * If the Niord Proxy has been initialized with a valid path to the Niord message repository,
+     * then the proxy will rewrite messages fetched from Niord and handle streaming of files.
+     * @param message the message to rewrite
+     * @return the updated message
+     */
+    private MessageVo checkRewriteRepoPath(MessageVo message) {
+
+        if (message != null && StringUtils.isNotBlank(settings.getRepoRoot())) {
+            // Replace absolute links pointing to the Niord server to local links
+            message.rewriteRepoPath(
+                    settings.getServer() + "/rest/repo/file/",
+                    "/rest/repo/file/"
+            );
+        }
+
+        return message;
+    }
+
 
     /**
      * Filters messages by their main type
@@ -316,6 +337,9 @@ public class MessageService {
      */
     private void updateMessages(List<MessageVo> messages) {
 
+        // First, check if we need to rewrite the repository paths
+        messages.forEach(this::checkRewriteRepoPath);
+
         // Convert the message geometries to JTS geometries
         // This is a fairly expensive operation, so we only want to do it once and cache the result
         Map<String, List<Geometry>> geometries = new HashMap<>();
@@ -400,13 +424,8 @@ public class MessageService {
      * @return the public message with the given ID
      */
     private String getMessageUrl(String messageId) {
-        try {
-            return settings.getServer()
-                    + "/rest/public/v1/messages/message/" + URLEncoder.encode(messageId, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            // Should never happen
-            return null;
-        }
+        return settings.getServer()
+                + "/rest/public/v1/message/" + WebUtils.encodeURIComponent(messageId);
     }
 
 

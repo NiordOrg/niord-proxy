@@ -23,6 +23,8 @@ public class Settings {
 
     private String areaId;
 
+    private String repoRoot;
+
     /** Constructor **/
     @PostConstruct
     private void init() {
@@ -33,6 +35,9 @@ public class Settings {
 
         areaId = System.getProperty("niord-proxy.area");
         log.info("AreaId: " + areaId);
+
+        repoRoot = System.getProperty("niord-proxy.repoRootPath");
+        log.info("repoRoot: " + repoRoot);
     }
 
     public String getServer() {
@@ -41,5 +46,9 @@ public class Settings {
 
     public String getAreaId() {
         return areaId;
+    }
+
+    public String getRepoRoot() {
+        return repoRoot;
     }
 }

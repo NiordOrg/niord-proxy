@@ -317,7 +317,7 @@ h4 {
 }
 
 .execution-mode {
-    position: absolute;
+    position: fixed;
     width: 100px;
     height: 25px;
     background: red;

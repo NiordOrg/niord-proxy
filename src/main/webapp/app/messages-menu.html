@@ -1,6 +1,7 @@
 
-<span ng-if="mode == 'DEVELOPMENT'" class="execution-mode" uib-tooltip="Development System" tooltip-placement="right">DEV</span>
-<span ng-if="mode == 'TEST'" class="execution-mode" uib-tooltip="Test System" tooltip-placement="right">TEST</span>
+<div class="execution-mode">
+    {{modeText}}
+</div>
 
 <div class="row-fluid view-mode-bar">
     <div class="input-group col-xs-12 col-sm-8 col-md-6 col-lg-6 center">

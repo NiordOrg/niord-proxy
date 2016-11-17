@@ -13,7 +13,7 @@ angular.module('niord.proxy.app')
             'use strict';
 
             $scope.loading = true;
-            $scope.mode = '';
+            $scope.modeText = '';
             $scope.messages = [];
             $scope.languages = [];
             $scope.areas = [];
@@ -43,6 +43,12 @@ angular.module('niord.proxy.app')
             MessageService.getExecutionMode()
                 .success(function (mode) {
                     $scope.mode = mode;
+                    if (mode == 'DEVELOPMENT' || mode == 'TEST') {
+                        $scope.modeText = mode == 'DEVELOPMENT' ? 'DEV' : 'TEST';
+                        $timeout(function() {
+                            $('.execution-mode').fadeIn(500);
+                        }, 200);
+                    }
                 });
 
             // Pre-load the languages

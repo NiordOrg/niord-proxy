@@ -7,10 +7,10 @@
             </td>
         </tr>
         <tr ng-repeat-end class="message-table-item">
-            <td valign="middle" align="right" width="100" nowrap>
+            <td valign="middle" align="left" nowrap>
                 <message-id-badge msg="msg" show-blank="true"></message-id-badge>
             </td>
-            <td valign="middle">
+            <td valign="middle" width="*">
                 <span ng-if="msg.descs" message-details-link="msg.id" messages="messages">
                     <span class="message-title">{{msg.descs[0].title}}</span>
                     <span ng-if="msg.descs[0].lang != language">

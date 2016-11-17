@@ -84,13 +84,13 @@
 
                     <!-- Title line -->
                     <c:if test="${msg.originalInformation}">
-                        <div><b>*</b></div>
+                        <div class="original-information"><b>*</b></div>
                     </c:if>
                     <div>
                         <render:messageIdBadge msg="${msg}"/>
                     </div>
                     <c:if test="${not empty msg.descs}">
-                        <span class="message-title">${msg.descs[0].title}</span>
+                        <div class="message-title">${msg.descs[0].title}</div>
                     </c:if>
 
                     <table class="message-details-item-fields">

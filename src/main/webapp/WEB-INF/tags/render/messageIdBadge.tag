@@ -7,6 +7,8 @@
 
 <c:if test="${not empty msg.shortId}">
     <span class="label-message-${fn:toLowerCase(msg.mainType)}">${msg.shortId}</span>
+    <c:if test="${msg.type == 'PRELIMINARY_NOTICE'}"><span class="label-message-suffix"> (P)</span></c:if>
+    <c:if test="${msg.type == 'TEMPORARY_NOTICE'}"><span class="label-message-suffix"> (T)</span></c:if>
 </c:if>
 
 <c:if test="${empty msg.shortId}">

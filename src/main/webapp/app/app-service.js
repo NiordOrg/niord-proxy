@@ -101,7 +101,13 @@ angular.module('niord.proxy.app')
                         shortId = msg.type ? translate('TYPE_' + msg.type) + ' ' : '';
                         shortId += msg.mainType ? translate('MAIN_TYPE_' + msg.mainType) : '';
                     }
-                    return shortId ? '<span class="' + messageClass + '">' + shortId + '</span>' : '';
+                    var suffix = '';
+                    if (msg && (msg.type == 'TEMPORARY_NOTICE' || msg.type == 'PRELIMINARY_NOTICE')) {
+                        suffix = msg.type == 'TEMPORARY_NOTICE' ? '&nbsp; (T)' : '&nbsp; (P)';
+                    }
+                    return shortId
+                        ? '<span class="' + messageClass + '">' + shortId + '</span>' + suffix
+                        : '';
                 },
 
                 /** Returns the features associated with a message **/

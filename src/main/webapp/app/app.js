@@ -38,6 +38,10 @@ angular.module('niord.proxy.app',
                 .state('messages.details', {
                     url: "/details",
                     templateUrl: "/app/messages-viewmode-details.html"
+                })
+                .state('publications', {
+                    url: "/publications",
+                    templateUrl: "/app/publications.html"
                 });
 
         }]);

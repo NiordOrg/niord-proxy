@@ -6,10 +6,64 @@
 angular.module('niord.proxy.app')
 
     /**
-     * Interface for calling the application server
+     * Interface for common functionality
      */
-    .factory('MessageService', [ '$rootScope', '$http', '$translate', '$uibModal',
-        function($rootScope, $http, $translate, $uibModal) {
+    .factory('AppService', [ '$rootScope', '$window', '$http', '$translate',
+        function($rootScope, $window, $http, $translate) {
+            'use strict';
+
+            /** Translates the given key **/
+            function translate(key, params, language) {
+                language = language || $rootScope.language;
+                return $translate.instant(key, params, null, language);
+            }
+
+            return {
+
+                /** Returns the execution mode **/
+                getExecutionMode: function () {
+                    return $http.get('/rest/messages/execution-mode');
+                },
+
+
+                /** Returns the currently selected language **/
+                getLanguage: function () {
+                    return $rootScope.language || $window.localStorage['language'] || 'en';
+                },
+
+
+                /**
+                 * Registers the current language
+                 * @param lang the language
+                 */
+                setLanguage: function (lang) {
+                    if (lang != $rootScope.language) {
+                        $translate.use(lang);
+                        $rootScope.language = lang;
+                        $window.localStorage['language'] = lang;
+                    }
+                },
+
+
+                /** Returns the languages **/
+                getLanguages: function () {
+                    return $http.get('/rest/messages/languages');
+                },
+
+
+                /** Translates the given key **/
+                translate: function (key, params, language) {
+                    return translate(key, params, language);
+                }
+            };
+        }])
+
+
+    /**
+     * Interface for message-related functionality
+     */
+    .factory('MessageService', [ '$rootScope', '$http', '$uibModal', 'AppService',
+        function($rootScope, $http, $uibModal, AppService) {
             'use strict';
 
             /** Returs the list of message ids **/
@@ -23,45 +77,7 @@ angular.module('niord.proxy.app')
                 return ids;
             }
 
-
-            /** Translates the given key **/
-            function translate(key, params, language) {
-                language = language || $rootScope.language;
-                return $translate.instant(key, params, null, language);
-            }
-
-
             return {
-
-                /**
-                 * Registers the current language
-                 * @param lang the language
-                 */
-                setLanguage: function(lang) {
-                    if (lang != $rootScope.language) {
-                        $translate.use(lang);
-                        $rootScope.language = lang;
-                    }
-                },
-
-
-                /** Returns the execution mode **/
-                getExecutionMode: function () {
-                    return $http.get('/rest/messages/execution-mode');
-                },
-
-
-                /** Returns the languages **/
-                getLanguages: function () {
-                    return $http.get('/rest/messages/languages');
-                },
-
-
-                /** Translates the given key **/
-                translate : function (key, params, language) {
-                    return translate(key, params, language);
-                },
-
 
                 /** Returns the area groups **/
                 getAreaGroups: function () {
@@ -98,8 +114,8 @@ angular.module('niord.proxy.app')
                     var shortId = msg && msg.shortId ? msg.shortId : undefined;
                     var messageClass = msg.mainType == 'NW' ? 'label-message-nw' : 'label-message-nm';
                     if (msg && !shortId && showBlank) {
-                        shortId = msg.type ? translate('TYPE_' + msg.type) + ' ' : '';
-                        shortId += msg.mainType ? translate('MAIN_TYPE_' + msg.mainType) : '';
+                        shortId = msg.type ? AppService.translate('TYPE_' + msg.type) + ' ' : '';
+                        shortId += msg.mainType ? AppService.translate('MAIN_TYPE_' + msg.mainType) : '';
                     }
                     var suffix = '';
                     if (msg && (msg.type == 'TEMPORARY_NOTICE' || msg.type == 'PRELIMINARY_NOTICE')) {
@@ -201,39 +217,11 @@ angular.module('niord.proxy.app')
             };
 
 
-            /** Converts lon-lat extent array to xy extent array in mercator */
-            this.fromLonLatExtent = function(lonLatExtent) {
-                if (lonLatExtent && lonLatExtent.length == 4) {
-                    var minPos = this.fromLonLat([lonLatExtent[0], lonLatExtent[1]]);
-                    var maxPos = this.fromLonLat([lonLatExtent[2], lonLatExtent[3]]);
-                    return [minPos[0], minPos[1], maxPos[0], maxPos[1]];
-                }
-                return null;
-            };
-
-
-            /** Converts xy extent array in mercator to a lon-lat extent array */
-            this.toLonLatExtent = function(xyExtent) {
-                if (xyExtent && xyExtent.length == 4) {
-                    var minPos = this.toLonLat([xyExtent[0], xyExtent[1]]);
-                    var maxPos = this.toLonLat([xyExtent[2], xyExtent[3]]);
-                    return [minPos[0], minPos[1], maxPos[0], maxPos[1]];
-                }
-                return null;
-            };
-
-
             /** Returns the center of the extent */
             this.getExtentCenter = function (extent) {
                 var x = extent[0] + (extent[2]-extent[0]) / 2.0;
                 var y = extent[1] + (extent[3]-extent[1]) / 2.0;
                 return [x, y];
-            };
-
-
-            /** Return a lon-lat center from the xy geometry */
-            this.toCenterLonLat = function(geometry) {
-                return this.toLonLat(this.getExtentCenter(geometry.getExtent()));
             };
 
 

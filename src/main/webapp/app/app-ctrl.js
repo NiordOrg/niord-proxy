@@ -6,41 +6,33 @@ angular.module('niord.proxy.app')
 
 
     /**********************************************************************
-     * Controller that handles the messages used for list and map overview
+     * Controller for common functionality of the main menu
      **********************************************************************/
-    .controller('MessageCtrl', ['$scope', '$rootScope', '$window', '$location', '$timeout', 'MessageService',
-        function ($scope, $rootScope, $window, $location, $timeout, MessageService) {
+    .controller('AppCtrl', ['$scope', '$location', '$timeout', 'AppService',
+        function ($scope, $location, $timeout, AppService) {
             'use strict';
 
-            $scope.loading = true;
-            $scope.modeText = '';
-            $scope.messages = [];
             $scope.languages = [];
-            $scope.areas = [];
-            $scope.rootAreas = []; // All root areas
-            var storage = $window.localStorage;
 
-            // Check if root area and language has been specified via request parameters
-            // If not, default to settings stored in local storage
+            // Check if a language has been specified via request parameters
             var requestParams = $location.search();
-            var initLang = requestParams.lang || storage.language;
-            var initRootAreaId = requestParams.area || storage.rootAreaId;
+            if (requestParams.lang) {
+                AppService.setLanguage(requestParams.lang);
+            }
 
-            $scope.params = {
-                language: initLang || 'en',
-                activeNow: false,
-                mainTypes: {
-                    'NW': storage.NW ? storage.NW == 'true' : true,
-                    'NM': storage.NM ? storage.NM == 'true' : true
-                },
-                rootArea: undefined, // Currently selected root area
-                subAreas: [],        // Sub-areas of current root area
-                wkt: undefined
-            };
+            $scope.getLanguage = AppService.getLanguage;
+            $scope.setLanguage = AppService.setLanguage;
+
+
+            // Pre-load the languages
+            AppService.getLanguages()
+                .success(function (languages) {
+                    $scope.languages = languages;
+                });
 
 
             // Fetch the execution mode
-            MessageService.getExecutionMode()
+            AppService.getExecutionMode()
                 .success(function (mode) {
                     $scope.mode = mode;
                     if (mode == 'DEVELOPMENT' || mode == 'TEST') {
@@ -51,11 +43,40 @@ angular.module('niord.proxy.app')
                     }
                 });
 
-            // Pre-load the languages
-            MessageService.getLanguages()
-                .success(function (languages) {
-                    $scope.languages = languages;
-                });
+        }])
+
+
+    /**********************************************************************
+     * Controller that handles the messages used for list and map overview
+     **********************************************************************/
+    .controller('MessageCtrl', ['$scope', '$rootScope', '$window', '$location', '$timeout', 'MessageService', 'AppService',
+        function ($scope, $rootScope, $window, $location, $timeout, MessageService, AppService) {
+            'use strict';
+
+            $scope.loading = true;
+            $scope.modeText = '';
+            $scope.messages = [];
+            $scope.areas = [];
+            $scope.rootAreas = []; // All root areas
+            var storage = $window.localStorage;
+
+            // Check if a root area has been specified via request parameters
+            // If not, default to settings stored in local storage
+            var requestParams = $location.search();
+            var initRootAreaId = requestParams.area || storage.rootAreaId;
+
+            $scope.params = {
+                language: AppService.getLanguage(),
+                activeNow: false,
+                mainTypes: {
+                    'NW': storage.NW ? storage.NW == 'true' : true,
+                    'NM': storage.NM ? storage.NM == 'true' : true
+                },
+                rootArea: undefined, // Currently selected root area
+                subAreas: [],        // Sub-areas of current root area
+                wkt: undefined
+            };
+
 
             // Pre-load the area groups
             MessageService.getAreaGroups()
@@ -195,13 +216,6 @@ angular.module('niord.proxy.app')
                     return;
                 }
 
-                // Change the language use for translations
-                MessageService.setLanguage($scope.params.language);
-
-                // Persist the settings in local storage
-                if (!requestParams.lang) {
-                    storage.language = $scope.params.language;
-                }
                 storage.NW = '' + $scope.params.mainTypes.NW;
                 storage.NM = '' + $scope.params.mainTypes.NM;
                 if ($scope.params.rootArea && !requestParams.area) {
@@ -226,7 +240,12 @@ angular.module('niord.proxy.app')
 
 
             // Every time the parameters change, refresh the message list
-            $scope.$watch("params", $scope.refreshMessages, true)
+            $scope.$watch("params", $scope.refreshMessages, true);
+
+            // Every time the language change, update the params
+            $scope.$watch(AppService.getLanguage, function (lang) {
+                $scope.params.language = lang;
+            }, true);
 
         }])
 
@@ -234,8 +253,8 @@ angular.module('niord.proxy.app')
     /*******************************************************************
      * Controller that handles displaying message details in a dialog
      *******************************************************************/
-    .controller('MessageDialogCtrl', ['$scope', '$rootScope', '$window', 'MessageService', 'messageId', 'messages',
-        function ($scope, $rootScope, $window, MessageService, messageId, messages) {
+    .controller('MessageDialogCtrl', ['$scope', '$rootScope', '$window', 'MessageService', 'AppService', 'messageId', 'messages',
+        function ($scope, $rootScope, $window, MessageService, AppService, messageId, messages) {
             'use strict';
 
             $scope.warning = undefined;
@@ -307,7 +326,7 @@ angular.module('niord.proxy.app')
                     .success(function (data) {
                         $scope.warning = (data)
                             ? undefined
-                            : MessageService.translate('MSG_NOT_FOUND', {'messageId': $scope.currentMessageId()});
+                            : AppService.translate('MSG_NOT_FOUND', {'messageId': $scope.currentMessageId()});
                         $scope.msg = data;
                         $scope.showMap = true;
                         if ($scope.msg.attachments) {
@@ -327,4 +346,19 @@ angular.module('niord.proxy.app')
 
             $scope.loadMessageDetails();
 
+        }])
+
+
+
+
+    /**********************************************************************
+     * Controller that handles the list of publications
+     **********************************************************************/
+    .controller('PublicationCtrl', ['$scope', '$rootScope', '$window', '$location', '$timeout', 'MessageService',
+        function ($scope, $rootScope, $window, $location, $timeout, MessageService) {
+            'use strict';
+
+
+
         }]);
+

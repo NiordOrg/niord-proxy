@@ -306,6 +306,16 @@ h4 {
     color: #ffffff;
 }
 
+.view-mode-bar .language-flag {
+    height: 16px;
+    padding-right: 15px;
+    opacity: 0.3;
+}
+
+.view-mode-bar .active-language {
+    opacity: 0.8;
+}
+
 .view-mode-bar-txt {
     display: none;
 }

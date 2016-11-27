@@ -3,6 +3,25 @@
 
     <div ng-include="'/app/main-menu.html'"></div>
 
-    Publications
+    <div class="publication-list">
+        <table style="width: 100%">
+            <tr ng-repeat-start="pub in publications"  ng-if="pub.categoryHeading">
+                <td colspan="2" style="border: none">
+                    <h4 class="publication-category-heading">{{pub.categoryHeading.descs[0].name}}</h4>
+                </td>
+            </tr>
+            <tr ng-repeat-end class="publication-table-item">
+                <td valign="middle" align="left" nowrap>
+                    {{pub.descs[0].title}}
+                </td>
+                <td valign="middle" width="*">
+                    <span ng-if="pub.descs[0].link">
+                        <a ng-href="{{pub.descs[0].link}}" target="_blank">Open</a>
+                    </span>
+                </td>
+            </tr>
+        </table>
+
+    </div>
 
 </div>

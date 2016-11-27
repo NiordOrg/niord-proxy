@@ -354,11 +354,56 @@ angular.module('niord.proxy.app')
     /**********************************************************************
      * Controller that handles the list of publications
      **********************************************************************/
-    .controller('PublicationCtrl', ['$scope', '$rootScope', '$window', '$location', '$timeout', 'MessageService',
-        function ($scope, $rootScope, $window, $location, $timeout, MessageService) {
+    .controller('PublicationCtrl', ['$scope', '$rootScope', '$window', '$location', '$timeout', 'AppService', 'PublicationService',
+        function ($scope, $rootScope, $window, $location, $timeout, AppService, PublicationService) {
             'use strict';
 
+            $scope.publications = [];
+            $scope.params = {
+                language: AppService.getLanguage()
+            };
 
+
+            /** Refreshes the publication list from the back-end **/
+            $scope.refreshPublications = function () {
+
+                // Perform the search
+                var params = 'language=' + $scope.params.language;
+
+                PublicationService.search(params)
+                    .success(function (publications) {
+                        $scope.publications = publications;
+                        $scope.checkGroupByCategory();
+                    });
+            };
+
+
+            // Every time the parameters change, refresh the publication list
+            $scope.$watch("params", $scope.refreshPublications, true);
+
+            // Every time the language change, update the params
+            $scope.$watch(AppService.getLanguage, function (lang) {
+                $scope.params.language = lang;
+            }, true);
+
+
+            /**
+             * Scans through the search result and marks all publications that should
+             * display a category head line
+             **/
+            $scope.checkGroupByCategory = function () {
+
+                var lastCategoryId = undefined;
+                if ($scope.publications && $scope.publications.length > 0) {
+                    for (var p = 0; p < $scope.publications.length; p++) {
+                        var pub = $scope.publications[p];
+                        if (pub.category && (lastCategoryId === undefined || lastCategoryId != pub.category.categoryId)) {
+                            lastCategoryId = pub.category.categoryId;
+                            pub.categoryHeading = pub.category;
+                        }
+                    }
+                }
+            };
 
         }]);
 

@@ -1,9 +1,23 @@
+/*
+ * Copyright 2016 Danish Maritime Authority.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.niord.proxy.rest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vividsolutions.jts.geom.Geometry;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.niord.model.DataFilter;
 import org.niord.model.message.AreaVo;
@@ -21,11 +35,6 @@ import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -34,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -45,7 +53,7 @@ import java.util.stream.Collectors;
 @Startup
 @Lock(LockType.READ)
 @SuppressWarnings("unused")
-public class MessageService {
+public class MessageService extends AbstractNiordService {
 
     public static final DataFilter MESSAGE_DETAILS_FILTER =
             DataFilter.get().fields("Message.details", "Message.geometry", "Area.parent", "Category.parent");
@@ -146,43 +154,12 @@ public class MessageService {
 
         // If not cached here, get it from the NW-NM service
         if (message == null) {
-            String url = getMessageUrl(messageId);
-            long t0 = System.currentTimeMillis();
 
-            try {
-                HttpURLConnection con = newHttpUrlConnection(url);
+            message = executeAdminRequest(
+                    getMessageUrl(messageId),
+                    json -> new ObjectMapper().readValue(json, MessageVo.class));
 
-                int status = con.getResponseCode();
-                if (status == HttpURLConnection.HTTP_MOVED_TEMP
-                        || status == HttpURLConnection.HTTP_MOVED_PERM
-                        || status == HttpURLConnection.HTTP_SEE_OTHER) {
-
-                    // get redirect url from "location" header field
-                    String redirectUrl = con.getHeaderField("Location");
-
-                    // open the new connection again
-                    con = newHttpUrlConnection(redirectUrl);
-                }
-
-                try (InputStream is = con.getInputStream()) {
-
-                    String json = IOUtils.toString(is, Charset.forName("utf-8"));
-
-                    ObjectMapper mapper = new ObjectMapper();
-
-                    message = mapper.readValue(json, MessageVo.class);
-
-                    checkRewriteRepoPath(message);
-
-                    log.log(Level.FINER, String.format(
-                            "Loaded NW-NM message with ID %s in %s ms",
-                            messageId,
-                            System.currentTimeMillis() - t0));
-                }
-
-            } catch (Exception e) {
-                log.warning("Failed loading NW-NM message with ID " + messageId + " from url " + url);
-            }
+            checkRewriteRepoPath(message);
         }
 
 
@@ -297,41 +274,13 @@ public class MessageService {
     @Schedule(second = "12", minute = "*/3", hour = "*")
     public void periodicFetchMessages() {
 
-        String url = getActiveMessagesUrl();
-        long t0 = System.currentTimeMillis();
+        List<MessageVo> messages = executeAdminRequest(
+                getActiveMessagesUrl(),
+                json -> new ObjectMapper().readValue(json, new TypeReference<List<MessageVo>>(){})
+        );
 
-        try {
-            HttpURLConnection con = newHttpUrlConnection(url);
-
-            int status = con.getResponseCode();
-            if (status == HttpURLConnection.HTTP_MOVED_TEMP
-                    || status == HttpURLConnection.HTTP_MOVED_PERM
-                    || status == HttpURLConnection.HTTP_SEE_OTHER) {
-
-                // get redirect url from "location" header field
-                String redirectUrl = con.getHeaderField("Location");
-
-                // open the new connection again
-                con = newHttpUrlConnection(redirectUrl);
-            }
-
-            try (InputStream is = con.getInputStream()) {
-
-                String json = IOUtils.toString(is, Charset.forName("utf-8"));
-
-                ObjectMapper mapper = new ObjectMapper();
-
-                List<MessageVo> messages = mapper.readValue(json, new TypeReference<List<MessageVo>>(){});
-                updateMessages(messages);
-
-                log.log(Level.FINER, String.format(
-                        "Loaded %d NW-NM messages in %s ms",
-                        messages.size(),
-                        System.currentTimeMillis() - t0));
-            }
-
-        } catch (Exception e) {
-            log.warning("Failed loading NW-NM messages from url " + url +" : " + e.getMessage());
+        if (messages != null) {
+            updateMessages(messages);
         }
     }
 
@@ -402,6 +351,7 @@ public class MessageService {
 
 
     /** Return the level parent-most area **/
+    @SuppressWarnings("all")
     private AreaVo getParentAreaAtLevel(AreaVo area, int level) {
         List<AreaVo> areaLineage = new ArrayList<>();
         for (AreaVo a = area; a != null; a = a.getParent()) {
@@ -433,15 +383,4 @@ public class MessageService {
         return settings.getServer()
                 + "/rest/public/v1/message/" + WebUtils.encodeURIComponent(messageId);
     }
-
-
-    /** Creates a new connection to the given URL **/
-    private HttpURLConnection newHttpUrlConnection(String url) throws IOException {
-        HttpURLConnection con = (HttpURLConnection)(new URL(url).openConnection());
-        con.setRequestProperty("Accept", "application/json;charset=UTF-8");
-        con.setConnectTimeout(5000); //  5 seconds
-        con.setReadTimeout(10000);   // 10 seconds
-        return con;
-    }
-
 }

@@ -173,6 +173,23 @@ angular.module('niord.proxy.app')
 
 
     /**
+     * Interface for publication-related functionality
+     */
+    .factory('PublicationService', [ '$rootScope', '$http',
+        function($rootScope, $http) {
+            'use strict';
+
+            return {
+
+                /** Returns the publications */
+                search: function(params) {
+                    return $http.get('/rest/publications/search?' + params);
+                }
+            };
+        }])
+
+
+    /**
      * The language service is used for changing language, etc.
      */
     .service('MapService', ['$rootScope', function ($rootScope) {

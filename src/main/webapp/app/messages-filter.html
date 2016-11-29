@@ -59,7 +59,7 @@
         <div class="input-group col-xs-12 center filter-bar-btns">
 
             <span class="filter-bar-btn filter-bar-btn-selected" style="cursor: auto">
-                <span class="glyphicon glyphicon-file"></span>
+                <span class="glyphicon glyphicon-book"></span>
                 {{publication.descs[0].title}}
             </span>
             <span ui-sref="{publicationId:''}" class="filter-bar-close-btn" title="{{'REMOVE_PUBLICATION' | translate}}">
@@ -69,7 +69,7 @@
             <span ng-if="publication.descs[0].link" class="filter-bar-separator"></span>
 
             <span ng-if="publication.descs[0].link" class="filter-bar-btn">
-                <span class="glyphicon glyphicon-download"></span>
+                <span class="glyphicon glyphicon-new-window"></span>
                 <a ng-href="{{publication.descs[0].link}}" target="_blank" translate>DOWNLOAD_PUBLICATION</a>
             </span>
         </div>

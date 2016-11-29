@@ -19,7 +19,6 @@ import org.apache.commons.lang.StringUtils;
 import org.niord.model.message.AreaVo;
 import org.niord.model.message.MainType;
 import org.niord.model.message.MessageVo;
-import org.niord.proxy.conf.Settings;
 
 import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
@@ -93,20 +92,6 @@ public class MessagesRestService {
 
 
     /**
-     * Fetches the message languages
-     *
-     * @return the message languages
-     */
-    @GET
-    @Path("/languages")
-    @Produces("application/json;charset=UTF-8")
-    public List<String>  languages() {
-
-        return messageService.getLanguages();
-    }
-
-
-    /**
      * Fetches the area groups
      *
      * @return the area groups
@@ -118,20 +103,5 @@ public class MessagesRestService {
 
         return messageService.getAreaGroups();
     }
-
-
-    /**
-     * Returns the execution mode
-     *
-     * @return the execution mode
-     */
-    @GET
-    @Path("/execution-mode")
-    @Produces("application/json;charset=UTF-8")
-    public Settings.ExecutionMode executionMode() {
-
-        return messageService.getExecutionMode();
-    }
-
 
 }

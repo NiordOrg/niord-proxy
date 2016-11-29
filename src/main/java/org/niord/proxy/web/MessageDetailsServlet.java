@@ -19,6 +19,7 @@ import com.itextpdf.text.DocumentException;
 import org.apache.commons.lang.StringUtils;
 import org.niord.model.message.MainType;
 import org.niord.model.message.MessageVo;
+import org.niord.proxy.conf.Settings;
 import org.niord.proxy.rest.MessageService;
 import org.niord.proxy.util.WebUtils;
 import org.w3c.dom.Document;
@@ -66,6 +67,9 @@ public class MessageDetailsServlet extends HttpServlet {
     MessageService messageService;
 
 
+    @Inject
+    Settings settings;
+
     /**
      * Main GET method
      * @param request servlet request
@@ -81,7 +85,8 @@ public class MessageDetailsServlet extends HttpServlet {
         response = WebUtils.nocache(response);
 
         // Read the request parameters
-        String language = StringUtils.defaultIfBlank(request.getParameter("language"), "en");
+        String language = settings.language(request.getParameter("language"));
+
 
         // Force the encoding and the locale based on the lang parameter
         request.setCharacterEncoding("UTF-8");
@@ -98,7 +103,7 @@ public class MessageDetailsServlet extends HttpServlet {
             // Register the attributes to be used on the JSP page
             request.setAttribute("messages", messages);
             request.setAttribute("lang", language);
-            request.setAttribute("languages", messageService.getLanguages());
+            request.setAttribute("languages", Arrays.asList(settings.getLanguages()));
             request.setAttribute("locale", locale);
             request.setAttribute("now", new Date());
             request.setAttribute("pdf", pdf);

@@ -74,6 +74,7 @@ public class PublicationService extends AbstractNiordService {
      */
     public List<PublicationVo> getPublications(String language) {
 
+        language = settings.language(language);
         DataFilter filter = DataFilter.get().lang(language);
 
         return publications.stream()
@@ -90,6 +91,9 @@ public class PublicationService extends AbstractNiordService {
      * @return the filtered set of publications
      */
     public List<PublicationVo> getPublicationsForDates(String language, Long from, Long to) {
+
+        language = settings.language(language);
+
         List<PublicationVo> publications = executeAdminRequest(
                 getPublicationsForDatesUrl(from, to, language),
                 json -> new ObjectMapper().readValue(json, new TypeReference<List<PublicationVo>>(){}));
@@ -116,6 +120,8 @@ public class PublicationService extends AbstractNiordService {
      * @return the publication with the given ID
      */
     public PublicationVo getPublicationDetails(String language, String publicationId) {
+
+        language = settings.language(language);
 
         // First, check if the publication is already cached
         PublicationVo publication = publications.stream()

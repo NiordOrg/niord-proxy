@@ -16,9 +16,7 @@ angular.module('niord.proxy.app')
 
             // Check if a language has been specified via request parameters
             var requestParams = $location.search();
-            if (requestParams.lang) {
-                AppService.setLanguage(requestParams.lang);
-            }
+            AppService.initLanguage(requestParams.lang);
 
             $scope.getLanguage = AppService.getLanguage;
             $scope.setLanguage = AppService.setLanguage;

@@ -22,7 +22,6 @@ import org.apache.commons.lang.StringUtils;
 import org.niord.model.DataFilter;
 import org.niord.model.message.AreaVo;
 import org.niord.model.message.MainType;
-import org.niord.model.message.MessageDescVo;
 import org.niord.model.message.MessageVo;
 import org.niord.proxy.conf.Settings;
 import org.niord.proxy.util.JtsConverter;
@@ -67,7 +66,6 @@ public class MessageService extends AbstractNiordService {
 
     private List<MessageVo> messages = new ArrayList<>();
     private Map<String, List<Geometry>> geometries = new HashMap<>();
-    private List<String> languages = new ArrayList<>();
     private List<AreaVo> areaGroups = new ArrayList<>();
 
 
@@ -85,21 +83,9 @@ public class MessageService extends AbstractNiordService {
     }
 
 
-    /** Returns the message languages **/
-    public List<String> getLanguages() {
-        return languages;
-    }
-
-
     /** Returns the message area groups **/
     public List<AreaVo> getAreaGroups() {
         return areaGroups;
-    }
-
-
-    /** Returns the current execution model **/
-    public Settings.ExecutionMode getExecutionMode() {
-        return settings.getExecutionMode();
     }
 
 
@@ -114,9 +100,7 @@ public class MessageService extends AbstractNiordService {
      */
     public List<MessageVo> getMessages(String language, Set<MainType> mainTypes, Set<Integer> areaIds, String wkt, boolean active) throws Exception {
 
-        if (language != null && !languages.contains(language)) {
-            language = languages.isEmpty() ? "en" : languages.get(0);
-        }
+        language = settings.language(language);
         DataFilter filter = MESSAGE_DETAILS_FILTER.lang(language);
 
         Geometry geometry = StringUtils.isNotBlank(wkt)
@@ -146,9 +130,7 @@ public class MessageService extends AbstractNiordService {
      */
     public List<MessageVo> getPublicationMessages(String language, String publication) throws Exception {
 
-        if (language != null && !languages.contains(language)) {
-            language = languages.isEmpty() ? "en" : languages.get(0);
-        }
+        language = settings.language(language);
         DataFilter filter = MESSAGE_DETAILS_FILTER.lang(language);
 
         List<MessageVo> messages = executeAdminRequest(
@@ -353,15 +335,6 @@ public class MessageService extends AbstractNiordService {
         });
 
 
-        // Determine the languages involved
-        List<String> languages = messages.stream()
-                .filter(m -> m.getDescs() != null)
-                .flatMap(m -> m.getDescs().stream())
-                .map(MessageDescVo::getLang)
-                .distinct()
-                .collect(Collectors.toList());
-
-
         // Update the area groups by picking the second parent-most area of each message and filter out duplicates
         List<AreaVo> areaGroups = new ArrayList<>();
         messages.stream()
@@ -381,7 +354,6 @@ public class MessageService extends AbstractNiordService {
         this.messages = messages;
         this.geometries = geometries;
         this.areaGroups = areaGroups;
-        this.languages = languages;
     }
 
 

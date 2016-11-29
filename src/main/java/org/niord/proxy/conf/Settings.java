@@ -3,6 +3,8 @@ package org.niord.proxy.conf;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -29,6 +31,8 @@ public class Settings {
 
     private String repoRoot;
 
+    private String[] languages;
+
     private ExecutionMode executionMode;
 
     /** Constructor **/
@@ -45,6 +49,9 @@ public class Settings {
         repoRoot = System.getProperty("niord-proxy.repoRootPath");
         log.info("repoRoot: " + repoRoot);
 
+        languages = System.getProperty("niord-proxy.languages", "da,en").split(",");
+        log.info("languages: " + Arrays.asList(languages));
+
         try {
             executionMode = ExecutionMode.valueOf(System.getProperty("niord-proxy.mode").toUpperCase());
         } catch (Exception ignored) {
@@ -52,6 +59,19 @@ public class Settings {
         }
         log.info("mode: " + executionMode);
     }
+
+    /**
+     * Returns the language if it is valid, and defaults to a valid language
+     * @param language the language to test
+     * @return the language if it is valid, and defaults to a valid language
+     */
+    public String language(String language) {
+        if (Arrays.stream(languages).anyMatch(l -> Objects.equals(l, language))) {
+            return language;
+        }
+        return languages.length > 0 ? languages[0] : "en";
+    }
+
 
     public String getServer() {
         return server;
@@ -63,6 +83,10 @@ public class Settings {
 
     public String getRepoRoot() {
         return repoRoot;
+    }
+
+    public String[] getLanguages() {
+        return languages;
     }
 
     public ExecutionMode getExecutionMode() {

@@ -2,11 +2,12 @@
 <div ng-controller="PublicationCtrl">
 
     <div ng-include="'/app/main-menu.html'"></div>
+    <div ng-include="'/app/publications-filter.html'"></div>
 
     <div class="publication-list">
         <table style="width: 100%">
             <tr ng-repeat-start="pub in publications"  ng-if="pub.categoryHeading">
-                <td colspan="3" style="border: none">
+                <td colspan="4" style="border: none">
                     <h4 class="publication-category-heading">{{pub.categoryHeading.descs[0].name}}</h4>
                 </td>
             </tr>

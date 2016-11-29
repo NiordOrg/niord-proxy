@@ -1,0 +1,42 @@
+
+<div class="filter-bars">
+
+    <div class="row-fluid filter-bar">
+        <div class="input-group col-xs-12 center filter-bar-btns" style="padding-bottom: 0">
+
+            <table style="margin: 0 auto">
+                <tr>
+                    <td>
+                        <span class="filter-bar-btn"
+                              ng-class="{ 'filter-bar-btn-selected' : params.date == null }"
+                              ng-click="params.date = undefined" translate>
+                            ACTIVE_NOW
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="filter-bar-btn">
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" id="date" role="button" data-toggle="dropdown" data-target="#">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control input-sm calendar" style="height: 28px;"
+                                               value="{{params.date | formatDate:'ll'}}" readonly="readonly">
+                                        <span class="input-group-addon calendar">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </span>
+                                    </div>
+                                </a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                    <datetimepicker style="font-size: 12px" ng-model="params.date" data-datetimepicker-config="datePickerConfig"></datetimepicker>
+                                </ul>
+                            </div>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+

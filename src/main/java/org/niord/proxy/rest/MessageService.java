@@ -37,6 +37,7 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -154,6 +155,13 @@ public class MessageService extends AbstractNiordService {
                 getPublicationMessagesUrl(publication, language),
                 json -> new ObjectMapper().readValue(json, new TypeReference<List<MessageVo>>(){})
         );
+
+        if (messages == null) {
+            log.severe(String.format("Error searching for language=%s, publication=%s",
+                    language, publication));
+            return Collections.emptyList();
+
+        }
 
         log.info(String.format("Search for language=%s, publication=%s -> returning %d messages",
                 language, publication, messages.size()));

@@ -395,8 +395,16 @@ angular.module('niord.proxy.app')
             'use strict';
 
             $scope.publications = [];
+            $scope.dateFormat = 'dd-MM-yyyy';
             $scope.params = {
-                language: AppService.getLanguage()
+                language: AppService.getLanguage(),
+                date: undefined
+            };
+
+            $scope.datePickerConfig = {
+                dropdownSelector: '#date',
+                startView:'day',
+                minView:'day'
             };
 
 
@@ -405,6 +413,9 @@ angular.module('niord.proxy.app')
 
                 // Perform the search
                 var params = 'language=' + $scope.params.language;
+                if ($scope.params.date) {
+                    params += '&from=' + $scope.params.date.getTime() + '&to=' + $scope.params.date.getTime();
+                }
 
                 PublicationService.search(params)
                     .success(function (publications) {

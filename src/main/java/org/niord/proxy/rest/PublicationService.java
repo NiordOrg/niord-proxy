@@ -31,6 +31,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -67,7 +68,7 @@ public class PublicationService extends AbstractNiordService {
 
 
     /**
-     * Returns a filtered set of publications
+     * Returns a filtered set of the cached active publications
      * @param language the language of the descriptive fields to include
      * @return the filtered set of publications
      */
@@ -77,6 +78,33 @@ public class PublicationService extends AbstractNiordService {
 
         return publications.stream()
                 .map(p -> p.copy(filter))
+                .collect(Collectors.toList());
+    }
+
+
+    /**
+     * Returns a filtered set of publications from the back-end
+     * @param language the language of the descriptive fields to include
+     * @param from the start of the date interval to find publications from
+     * @param to the end of the date interval to find publications from
+     * @return the filtered set of publications
+     */
+    public List<PublicationVo> getPublicationsForDates(String language, Long from, Long to) {
+        List<PublicationVo> publications = executeAdminRequest(
+                getPublicationsForDatesUrl(from, to, language),
+                json -> new ObjectMapper().readValue(json, new TypeReference<List<PublicationVo>>(){}));
+
+        if (publications == null) {
+            log.severe(String.format("Error searching for language=%s, from=%d, to=%d",
+                    language, from, to));
+            return Collections.emptyList();
+        }
+
+        log.info(String.format("Search for language=%s, from=%d, to=%d -> returning %d publications",
+                language, from, to, publications.size()));
+
+        return publications.stream()
+                .map(this::checkRewriteRepoPath)
                 .collect(Collectors.toList());
     }
 
@@ -163,6 +191,22 @@ public class PublicationService extends AbstractNiordService {
                 + "/rest/public/v1/publications";
     }
 
+
+    /**
+     * Returns the url for fetching the list of active publications
+     * @return the list of active publications
+     */
+    private String getPublicationsForDatesUrl(Long from, Long to, String language) {
+        String params = "lang=" + language;
+        if (from != null) {
+            params += "&from=" + from;
+        }
+        if (to != null) {
+            params += "&to=" + to;
+        }
+        return settings.getServer()
+                + "/rest/public/v1/publications?" + params;
+    }
 
     /**
      * Returns the url for fetching the public publications with the given ID

@@ -47,10 +47,18 @@ public class PublicationsRestService {
     @Path("/search")
 	@Produces("application/json;charset=UTF-8")
 	public List<PublicationVo> search(
-	        @QueryParam("language") @DefaultValue("en") String language
+	        @QueryParam("language") @DefaultValue("en") String language,
+            @QueryParam("from") Long from,
+            @QueryParam("to") Long to
             ) throws Exception {
 
-        return publicationService.getPublications(language);
+        if (from != null || to != null) {
+            // Get result from back-end server
+            return publicationService.getPublicationsForDates(language, from, to);
+        } else {
+            // Get cached result
+            return publicationService.getPublications(language);
+        }
     }
 
 

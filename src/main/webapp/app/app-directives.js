@@ -4,6 +4,16 @@
 
 angular.module('niord.proxy.app')
 
+
+    /** Formats a data using moment() **/
+    .filter('formatDate', [function () {
+        return function(input, format) {
+            format = format || 'lll';
+            return input ? moment(input).format(format) : '';
+        };
+    }])
+
+
     /********************************
      * Renders the message details
      ********************************/

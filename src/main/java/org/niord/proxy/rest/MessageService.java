@@ -138,6 +138,33 @@ public class MessageService extends AbstractNiordService {
 
 
     /**
+     * Returns a filtered set of messages associated with the given publication
+     * @param language the language of the descriptive fields to include
+     * @param publication the ID of the publication to fetch message from
+     * @return the resulting set of messages
+     */
+    public List<MessageVo> getPublicationMessages(String language, String publication) throws Exception {
+
+        if (language != null && !languages.contains(language)) {
+            language = languages.isEmpty() ? "en" : languages.get(0);
+        }
+        DataFilter filter = MESSAGE_DETAILS_FILTER.lang(language);
+
+        List<MessageVo> messages = executeAdminRequest(
+                getPublicationMessagesUrl(publication, language),
+                json -> new ObjectMapper().readValue(json, new TypeReference<List<MessageVo>>(){})
+        );
+
+        log.info(String.format("Search for language=%s, publication=%s -> returning %d messages",
+                language, publication, messages.size()));
+
+        return messages.stream()
+                .map(this::checkRewriteRepoPath)
+                .collect(Collectors.toList());
+    }
+
+
+    /**
      * Returns the message with the given ID
      * @param language the language of the descriptive fields to include
      * @param messageId the ID of the message
@@ -372,6 +399,18 @@ public class MessageService extends AbstractNiordService {
             url += "?areaId=" + WebUtils.encodeURIComponent(settings.getAreaId());
         }
         return url;
+    }
+
+
+    /**
+     * Returns the url for fetching the list of publication messages
+     * @return the list of publication messages
+     */
+    private String getPublicationMessagesUrl(String publicationId, String language) {
+        return settings.getServer()
+                + "/rest/public/v1/messages"
+                + "?publication=" + WebUtils.encodeURIComponent(publicationId)
+                + "&lang=" + language;
     }
 
 

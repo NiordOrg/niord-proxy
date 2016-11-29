@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import java.util.List;
@@ -50,6 +51,25 @@ public class PublicationsRestService {
             ) throws Exception {
 
         return publicationService.getPublications(language);
+    }
+
+
+    /**
+     * Returns the publication with the given ID
+     *
+     * @param language the language of the descriptive fields to include
+     * @param publicationId the publication ID
+     * @return the publication with the given ID
+     */
+    @GET
+    @Path("/publication/{publicationId}")
+    @Produces("application/json;charset=UTF-8")
+    public PublicationVo details(
+            @QueryParam("language") @DefaultValue("en") String language,
+            @PathParam("publicationId") String publicationId
+    ) throws Exception {
+
+        return publicationService.getPublicationDetails(language, publicationId);
     }
 
 }

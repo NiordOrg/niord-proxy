@@ -25,7 +25,10 @@ angular.module('niord.proxy.app',
             $stateProvider
                 .state('messages', {
                     url: "/messages",
-                    templateUrl: "/app/messages.html"
+                    templateUrl: "/app/messages.html",
+                    params: {
+                        publicationId: { value: '' }
+                    }
                 })
                 .state('messages.map', {
                     url: "/map",

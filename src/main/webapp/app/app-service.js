@@ -79,6 +79,13 @@ angular.module('niord.proxy.app')
 
             return {
 
+                /** Returns the publication with the given ID **/
+                getPublication: function (publicationId, language) {
+                    return $http.get('/rest/publications/publication/' + encodeURIComponent(publicationId)
+                            + '?language=' + language);
+                },
+
+
                 /** Returns the area groups **/
                 getAreaGroups: function () {
                     return $http.get('/rest/messages/area-groups');

@@ -385,6 +385,11 @@ h4 {
     cursor: pointer;
 }
 
+.filter-bar-btn a {
+    text-decoration: none;
+    color: inherit;
+}
+
 .filter-bar-btn-selected {
     color: white;
     background-color: #636;
@@ -395,6 +400,13 @@ h4 {
 .filter-bar-separator {
     margin: 5px 20px;
     border-left: 1px dotted gray;
+}
+
+.filter-bar-close-btn {
+    display:inline-block;
+    padding-top: 4px;
+    font-size: 120%;
+    cursor: pointer;
 }
 
 .teaser-body {

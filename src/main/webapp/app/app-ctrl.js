@@ -49,11 +49,12 @@ angular.module('niord.proxy.app')
     /**********************************************************************
      * Controller that handles the messages used for list and map overview
      **********************************************************************/
-    .controller('MessageCtrl', ['$scope', '$rootScope', '$window', '$location', '$timeout', 'MessageService', 'AppService',
-        function ($scope, $rootScope, $window, $location, $timeout, MessageService, AppService) {
+    .controller('MessageCtrl', ['$scope', '$rootScope', '$window', '$location', '$timeout', '$stateParams', 'MessageService', 'AppService',
+        function ($scope, $rootScope, $window, $location, $timeout, $stateParams, MessageService, AppService) {
             'use strict';
 
             $scope.loading = true;
+            $scope.publication = undefined;
             $scope.modeText = '';
             $scope.messages = [];
             $scope.areas = [];
@@ -67,6 +68,11 @@ angular.module('niord.proxy.app')
 
             $scope.params = {
                 language: AppService.getLanguage(),
+
+                // Publication based message list
+                publicationId: undefined,
+
+                // Active messages
                 activeNow: false,
                 mainTypes: {
                     'NW': storage.NW ? storage.NW == 'true' : true,
@@ -78,44 +84,62 @@ angular.module('niord.proxy.app')
             };
 
 
-            // Pre-load the area groups
-            MessageService.getAreaGroups()
-                .success(function (areaGroups) {
+            if ($stateParams.publicationId) {
+                // Look for selected publication
+                MessageService.getPublication($stateParams.publicationId, AppService.getLanguage())
+                    .success(function (publication) {
+                        $scope.params.publicationId = publication.publicationId;
+                        $scope.publication = publication;
 
-                    $scope.areas = areaGroups;
+                        // Ready to load messages
+                        $scope.loading = false;
+                    })
+                    .error(function () {
+                        // Ready to load messages
+                        $scope.loading = false;
+                    });
 
-                    $scope.rootAreas.length = 0;
-                    $scope.params.rootArea = undefined;
-                    var prevRootArea = undefined;
-                    for (var x = 0; x < $scope.areas.length; x++) {
-                        var area = $scope.areas[x];
-                        var rootArea = MessageService.rootArea(area);
-                        if (!prevRootArea || rootArea.id != prevRootArea.id) {
-                            $scope.rootAreas.push(rootArea);
-                            prevRootArea = rootArea;
+            } else {
+
+                // Pre-load the area groups
+                MessageService.getAreaGroups()
+                    .success(function (areaGroups) {
+
+                        $scope.areas = areaGroups;
+
+                        $scope.rootAreas.length = 0;
+                        $scope.params.rootArea = undefined;
+                        var prevRootArea = undefined;
+                        for (var x = 0; x < $scope.areas.length; x++) {
+                            var area = $scope.areas[x];
+                            var rootArea = MessageService.rootArea(area);
+                            if (!prevRootArea || rootArea.id != prevRootArea.id) {
+                                $scope.rootAreas.push(rootArea);
+                                prevRootArea = rootArea;
+                            }
                         }
-                    }
 
-                    // Set the currently selected root area to the one registered in the local-storage
-                    if ($scope.rootAreas.length > 0) {
-                        angular.forEach($scope.rootAreas, function (rootArea) {
-                           if ('' + rootArea.id == initRootAreaId) {
-                               $scope.params.rootArea = rootArea;
-                           }
-                        });
-                        if (!$scope.params.rootArea) {
-                            $scope.params.rootArea = $scope.rootAreas[0];
+                        // Set the currently selected root area to the one registered in the local-storage
+                        if ($scope.rootAreas.length > 0) {
+                            angular.forEach($scope.rootAreas, function (rootArea) {
+                                if ('' + rootArea.id == initRootAreaId) {
+                                    $scope.params.rootArea = rootArea;
+                                }
+                            });
+                            if (!$scope.params.rootArea) {
+                                $scope.params.rootArea = $scope.rootAreas[0];
+                            }
+                            $scope.updateSubAreas();
                         }
-                        $scope.updateSubAreas();
-                    }
 
-                    // Ready to load messages
-                    $scope.loading = false;
-                })
-                .error(function () {
-                    // Ready to load messages
-                    $scope.loading = false;
-                });
+                        // Ready to load messages
+                        $scope.loading = false;
+                    })
+                    .error(function () {
+                        // Ready to load messages
+                        $scope.loading = false;
+                    });
+            }
 
 
             // Update the list of sub-areas of the currently selected root area
@@ -181,29 +205,38 @@ angular.module('niord.proxy.app')
             /** Returns the URL parameters string for the current search parameters **/
             $scope.getSearchParams = function () {
                 var p = 'language=' + $scope.params.language;
-                if ($scope.params.activeNow) {
-                    p += '&active=true';
-                }
-                if ($scope.params.mainTypes.NW) {
-                    p += '&mainType=NW';
-                }
-                if ($scope.params.mainTypes.NM) {
-                    p += '&mainType=NM';
-                }
-                var areas =  $scope.params.subAreas ? $scope.params.subAreas : [];
-                var selectedAreas = 0;
-                for (var x = 0; x < areas.length; x++) {
-                    if (areas[x].selected) {
-                        p += '&areaId=' + areas[x].id;
-                        selectedAreas++;
+
+                if ($scope.params.publicationId) {
+                    // Publication-based searching
+                    p += '&publication=' + $scope.params.publicationId;
+
+                } else {
+                    // Active messages searching
+                    if ($scope.params.activeNow) {
+                        p += '&active=true';
+                    }
+                    if ($scope.params.mainTypes.NW) {
+                        p += '&mainType=NW';
+                    }
+                    if ($scope.params.mainTypes.NM) {
+                        p += '&mainType=NM';
+                    }
+                    var areas =  $scope.params.subAreas ? $scope.params.subAreas : [];
+                    var selectedAreas = 0;
+                    for (var x = 0; x < areas.length; x++) {
+                        if (areas[x].selected) {
+                            p += '&areaId=' + areas[x].id;
+                            selectedAreas++;
+                        }
+                    }
+                    if ($scope.params.rootArea && selectedAreas == 0) {
+                        p += '&areaId=' + $scope.params.rootArea.id;
+                    }
+                    if ($scope.params.wkt) {
+                        p += '&wkt=' + encodeURIComponent($scope.params.wkt);
                     }
                 }
-                if ($scope.params.rootArea && selectedAreas == 0) {
-                    p += '&areaId=' + $scope.params.rootArea.id;
-                }
-                if ($scope.params.wkt) {
-                    p += '&wkt=' + encodeURIComponent($scope.params.wkt);
-                }
+
                 return p;
             };
 
@@ -211,15 +244,18 @@ angular.module('niord.proxy.app')
             /** Refreshes the message list from the back-end **/
             $scope.refreshMessages = function () {
 
-                // If area groups have not been loaded yet, wait with the messages
+                // If publication/area groups have not been loaded yet, wait with the messages
                 if ($scope.loading) {
                     return;
                 }
 
-                storage.NW = '' + $scope.params.mainTypes.NW;
-                storage.NM = '' + $scope.params.mainTypes.NM;
-                if ($scope.params.rootArea && !requestParams.area) {
-                    storage.rootAreaId = $scope.params.rootArea.id;
+                // Store the current NW/NM settings
+                if (!$scope.params.publicationId) {
+                    storage.NW = '' + $scope.params.mainTypes.NW;
+                    storage.NM = '' + $scope.params.mainTypes.NM;
+                    if ($scope.params.rootArea && !requestParams.area) {
+                        storage.rootAreaId = $scope.params.rootArea.id;
+                    }
                 }
 
                 // Perform the search

@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.niord.model.DataFilter;
 import org.niord.model.publication.PublicationVo;
 import org.niord.proxy.conf.Settings;
+import org.niord.proxy.util.WebUtils;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Lock;
@@ -81,6 +82,41 @@ public class PublicationService extends AbstractNiordService {
 
 
     /**
+     * Returns the publication with the given ID
+     * @param language the language of the descriptive fields to include
+     * @param publicationId the ID of the publication
+     * @return the publication with the given ID
+     */
+    public PublicationVo getPublicationDetails(String language, String publicationId) {
+
+        // First, check if the publication is already cached
+        PublicationVo publication = publications.stream()
+                .filter(p -> publicationId.equals(p.getPublicationId()))
+                .findFirst()
+                .orElse(null);
+
+
+        // If not cached here, get it from the NW-NM service
+        if (publication == null) {
+
+            publication = executeAdminRequest(
+                    getPublicationUrl(publicationId),
+                    json -> new ObjectMapper().readValue(json, PublicationVo.class));
+
+            checkRewriteRepoPath(publication);
+        }
+
+
+        if (publication == null) {
+            return null;
+        } else {
+            DataFilter filter = DataFilter.get().lang(language);
+            return publication.copy(filter);
+        }
+    }
+
+
+    /**
      * If the Niord Proxy has been initialized with a valid path to the Niord publication repository,
      * then the proxy will rewrite publications fetched from Niord and handle streaming of files.
      * @param publication the publication to rewrite
@@ -125,6 +161,16 @@ public class PublicationService extends AbstractNiordService {
     private String getActivePublicationsUrl() {
         return settings.getServer()
                 + "/rest/public/v1/publications";
+    }
+
+
+    /**
+     * Returns the url for fetching the public publications with the given ID
+     * @return the url for the publication with the given ID
+     */
+    private String getPublicationUrl(String publicationId) {
+        return settings.getServer()
+                + "/rest/public/v1/publication/" + WebUtils.encodeURIComponent(publicationId);
     }
 
 }

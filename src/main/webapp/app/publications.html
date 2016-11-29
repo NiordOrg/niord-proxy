@@ -6,17 +6,25 @@
     <div class="publication-list">
         <table style="width: 100%">
             <tr ng-repeat-start="pub in publications"  ng-if="pub.categoryHeading">
-                <td colspan="2" style="border: none">
+                <td colspan="3" style="border: none">
                     <h4 class="publication-category-heading">{{pub.categoryHeading.descs[0].name}}</h4>
                 </td>
             </tr>
             <tr ng-repeat-end class="publication-table-item">
-                <td valign="middle" align="left" nowrap>
+                <td valign="middle" align="left" width="*" nowrap>
+                    <span class="glyphicon glyphicon-file"></span>
                     {{pub.descs[0].title}}
                 </td>
-                <td valign="middle" width="*">
+                <td valign="middle">
                     <span ng-if="pub.descs[0].link">
-                        <a ng-href="{{pub.descs[0].link}}" target="_blank">Open</a>
+                        <span class="glyphicon glyphicon-download"></span>
+                        <a ng-href="{{pub.descs[0].link}}" target="_blank" translate>DOWNLOAD_PUBLICATION</a>
+                    </span>
+                </td>
+                <td valign="middle">
+                    <span ng-if="pub.type == 'MESSAGE_REPORT'">
+                        <span class="glyphicon glyphicon-th-list"></span>
+                        <a ui-sref="messages.details({ publicationId: pub.publicationId })" translate>BROWSE_PUBLICATION</a>
                     </span>
                 </td>
             </tr>

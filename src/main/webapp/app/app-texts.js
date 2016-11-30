@@ -45,7 +45,7 @@ angular.module('niord.proxy.app')
             'HIDE_ATTACHMENTS' : 'Hide attachments',
             'MSG_NOT_FOUND' : 'Message {{messageId}} not found',
             'MORE_MSGS' : ' and {{messageNo}} more messages',
-            'DOWNLOAD_PUBLICATION' : 'Download',
+            'OPEN_PUBLICATION' : 'Open',
             'BROWSE_PUBLICATION' : 'Browse',
             'REMOVE_PUBLICATION': 'Remove publication',
             'TEASER_TEXT': 'View the current<br>Notices to Mariners<br>and Navigational Warnings'
@@ -90,7 +90,7 @@ angular.module('niord.proxy.app')
             'HIDE_ATTACHMENTS' : 'Skjul vedhæftninger',
             'MSG_NOT_FOUND' : 'Meddelelse {{messageId}} ikke fundet',
             'MORE_MSGS' : ' samt {{messageNo}} andre meddelelser',
-            'DOWNLOAD_PUBLICATION' : 'Hent',
+            'OPEN_PUBLICATION' : 'Åbn',
             'BROWSE_PUBLICATION' : 'Gennemse',
             'REMOVE_PUBLICATION': 'Fjern publikation',
             'TEASER_TEXT': 'Se alle aktuelle<br>Efterretninger for Søfarende<br>samt Navigationsadvarsler'

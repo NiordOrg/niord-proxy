@@ -47,7 +47,10 @@ angular.module('niord.proxy.app')
                         $translate.use(lang);
                         $rootScope.language = lang;
                         $window.localStorage['language'] = lang;
-                        moment.locale(lang);
+                        try {
+                            moment.locale(lang);
+                        } catch (ex) {
+                        }
                     }
                 },
 

@@ -7,6 +7,7 @@
 angular.module('niord.proxy.app',
     [   'ngSanitize',
         'ui.bootstrap',
+        'ui.router',
         'pascalprecht.translate'
     ])
 

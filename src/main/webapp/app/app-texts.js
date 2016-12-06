@@ -15,6 +15,7 @@ angular.module('niord.proxy.app')
             'MENU_PRINT' : 'Print',
             'MENU_NW'  : 'Navigational Warnings',
             'MENU_NM'  : 'Notices to Mariners',
+            'MENU_DOWNLOADS'  : 'Downloads',
             'BTN_CLOSE' : 'Close',
             'GENERAL_MSGS' : 'General Messages',
             'FIELD_REFERENCES' : 'References',
@@ -46,7 +47,7 @@ angular.module('niord.proxy.app')
             'HIDE_ATTACHMENTS' : 'Hide attachments',
             'MSG_NOT_FOUND' : 'Message {{messageId}} not found',
             'MORE_MSGS' : ' and {{messageNo}} more messages',
-            'OPEN_PUBLICATION' : 'Open',
+            'OPEN_PUBLICATION' : 'Download',
             'BROWSE_PUBLICATION' : 'Browse',
             'REMOVE_PUBLICATION': 'Remove publication',
             'TEASER_TEXT': 'View the current<br>Notices to Mariners<br>and Navigational Warnings'
@@ -61,6 +62,7 @@ angular.module('niord.proxy.app')
             'MENU_PRINT' : 'Udskriv',
             'MENU_NW'  : 'Navigationsadvarsler',
             'MENU_NM'  : 'Efterretninger for søfarende',
+            'MENU_DOWNLOADS'  : 'Downloads',
             'BTN_CLOSE' : 'Luk',
             'GENERAL_MSGS' : 'Generelle Meddelelser',
             'FIELD_REFERENCES' : 'Referencer',
@@ -92,7 +94,7 @@ angular.module('niord.proxy.app')
             'HIDE_ATTACHMENTS' : 'Skjul vedhæftninger',
             'MSG_NOT_FOUND' : 'Meddelelse {{messageId}} ikke fundet',
             'MORE_MSGS' : ' samt {{messageNo}} andre meddelelser',
-            'OPEN_PUBLICATION' : 'Åbn',
+            'OPEN_PUBLICATION' : 'Download',
             'BROWSE_PUBLICATION' : 'Gennemse',
             'REMOVE_PUBLICATION': 'Fjern publikation',
             'TEASER_TEXT': 'Se alle aktuelle<br>Efterretninger for Søfarende<br>samt Navigationsadvarsler'

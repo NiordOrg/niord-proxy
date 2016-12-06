@@ -33,6 +33,7 @@
                     <a href ng-click="referenceClicked(ref.messageId)">{{ref.messageId}}</a>
                     <span ng-switch="ref.type">
                             <span ng-switch-when="REPETITION" translate>REF_REPETITION</span>
+                            <span ng-switch-when="REPETITION_NEW_TIME" translate>REF_REPETITION_NEW_TIME</span>
                             <span ng-switch-when="CANCELLATION" translate>REF_CANCELLED</span>
                             <span ng-switch-when="UPDATE" translate>REF_UPDATED</span>
                         </span>

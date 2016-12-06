@@ -105,6 +105,7 @@
                                             ${ref.messageId}
                                             <c:choose>
                                                 <c:when test="${ref.type == 'REPETITION'}"><fmt:message key="ref_repetition"/> </c:when>
+                                                <c:when test="${ref.type == 'REPETITION_NEW_TIME'}"><fmt:message key="ref_repetition_new_time"/> </c:when>
                                                 <c:when test="${ref.type == 'CANCELLATION'}"><fmt:message key="ref_cancelled"/> </c:when>
                                                 <c:when test="${ref.type == 'UPDATE'}"><fmt:message key="ref_updated"/> </c:when>
                                             </c:choose>

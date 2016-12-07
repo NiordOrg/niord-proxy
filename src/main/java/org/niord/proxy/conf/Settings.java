@@ -31,6 +31,8 @@ public class Settings {
 
     private String repoRoot;
 
+    private String analyticsTrackingId;
+
     private String[] languages;
 
     private ExecutionMode executionMode;
@@ -48,6 +50,9 @@ public class Settings {
 
         repoRoot = System.getProperty("niord-proxy.repoRootPath");
         log.info("repoRoot: " + repoRoot);
+
+        analyticsTrackingId = System.getProperty("niord-proxy.analyticsTrackingId", "");
+        log.info("analyticsTrackingId: " + analyticsTrackingId);
 
         languages = System.getProperty("niord-proxy.languages", "da,en").split(",");
         log.info("languages: " + Arrays.asList(languages));
@@ -91,5 +96,9 @@ public class Settings {
 
     public ExecutionMode getExecutionMode() {
         return executionMode;
+    }
+
+    public String getAnalyticsTrackingId() {
+        return analyticsTrackingId;
     }
 }

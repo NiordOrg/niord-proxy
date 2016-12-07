@@ -22,10 +22,17 @@ angular.module('niord.proxy.app')
 
                 /** Returns the execution mode **/
                 getExecutionMode: function () {
-                    return $http.get('/rest/app/execution-mode');
+                    return $rootScope.executionMode;
                 },
 
 
+                /** Returns the languages, as defined in the site-config.js configuration file **/
+                getLanguages: function () {
+                    return $rootScope.languages;
+                },
+
+
+                /** Init the language, e.g. from a request parameter **/
                 initLanguage: function (lang) {
                     lang = lang || $window.localStorage['language'] || 'en';
                     this.setLanguage(lang);
@@ -52,12 +59,6 @@ angular.module('niord.proxy.app')
                         } catch (ex) {
                         }
                     }
-                },
-
-
-                /** Returns the languages **/
-                getLanguages: function () {
-                    return $http.get('/rest/app/languages');
                 },
 
 

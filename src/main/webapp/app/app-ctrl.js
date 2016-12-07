@@ -12,34 +12,23 @@ angular.module('niord.proxy.app')
         function ($scope, $location, $timeout, AppService) {
             'use strict';
 
-            $scope.languages = [];
+            $scope.languages = AppService.getLanguages();
+            $scope.getLanguage = AppService.getLanguage;
+            $scope.setLanguage = AppService.setLanguage;
 
             // Check if a language has been specified via request parameters
             var requestParams = $location.search();
             AppService.initLanguage(requestParams.lang);
 
-            $scope.getLanguage = AppService.getLanguage;
-            $scope.setLanguage = AppService.setLanguage;
-
-
-            // Pre-load the languages
-            AppService.getLanguages()
-                .success(function (languages) {
-                    $scope.languages = languages;
-                });
-
 
             // Fetch the execution mode
-            AppService.getExecutionMode()
-                .success(function (mode) {
-                    $scope.mode = mode;
-                    if (mode == 'DEVELOPMENT' || mode == 'TEST') {
-                        $scope.modeText = mode == 'DEVELOPMENT' ? 'DEV' : 'TEST';
-                        $timeout(function() {
-                            $('.execution-mode').fadeIn(500);
-                        }, 200);
-                    }
-                });
+            $scope.mode  = AppService.getExecutionMode();
+            if ($scope.mode == 'DEVELOPMENT' || $scope.mode == 'TEST') {
+                $scope.modeText = $scope.mode == 'DEVELOPMENT' ? 'DEV' : 'TEST';
+                $timeout(function () {
+                    $('.execution-mode').fadeIn(500);
+                }, 200);
+            }
 
         }])
 

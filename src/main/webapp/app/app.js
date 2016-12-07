@@ -4,12 +4,15 @@
  * Define the routes of the single page application.
  */
 
+angular.module('niord.proxy.conf', []);
+
 angular.module('niord.proxy.app',
     [   'ngSanitize',
         'ui.bootstrap',
         'ui.router',
         'ui.bootstrap.datetimepicker',
-        'pascalprecht.translate'
+        'pascalprecht.translate',
+        'niord.proxy.conf'
     ])
 
     .config(['$stateProvider', '$urlRouterProvider', '$translateProvider',
@@ -48,8 +51,25 @@ angular.module('niord.proxy.app',
                     templateUrl: "/app/publications.html"
                 });
 
-        }]);
+        }])
 
+
+    .run(['$rootScope', '$window', '$location',
+        function($rootScope, $window, $location) {
+
+            // Configure Google Analytics
+            if ($rootScope.analyticsTrackingId && $rootScope.analyticsTrackingId.length > 0) {
+
+                // initialise google analytics
+                try { $window.ga('create', $rootScope.analyticsTrackingId, 'auto'); } catch (ex) {}
+
+                // track pageview on state change
+                $rootScope.$on('$stateChangeSuccess', function () {
+                    try { $window.ga('send', 'pageview', $location.path()); } catch (ex) {}
+                });
+            }
+
+        }]);
 
 
 /**

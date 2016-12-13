@@ -29,7 +29,7 @@
         <tr ng-if="msg.references && msg.references.length > 0">
             <th translate>FIELD_REFERENCES</th>
             <td>
-                <div ng-repeat="ref in msg.references">
+                <div ng-repeat="ref in msg.references" class="append-dot">
                     <a href ng-click="referenceClicked(ref.messageId)">{{ref.messageId}}</a>
                     <span ng-switch="ref.type">
                             <span ng-switch-when="REPETITION" translate>REF_REPETITION</span>
@@ -92,8 +92,7 @@
         <tr ng-if="msg.charts.length > 0">
             <th translate>FIELD_CHARTS</th>
             <td>
-                <span ng-repeat="chart in msg.charts"><span ng-if="!$first">, </span>{{chart.chartNumber}}
-                <span ng-if="chart.internationalNumber">(INT {{chart.internationalNumber}})</span></span>
+                <span render-charts="msg.charts"></span>
             </td>
         </tr>
 

@@ -1,6 +1,10 @@
 
 /** Message details classes **/
 
+.append-dot::after {
+    content: ".";
+}
+
 .message-table {
     table-layout: fixed;
     width: 100%;
@@ -162,6 +166,10 @@ table.positions td, table.positions th {
 table.positions td:nth-child(1) {
     text-align: right;
     color: darkgray;
+}
+
+ul.positions li {
+    margin-bottom: 0;
 }
 
 table.position-table td.pos-col {

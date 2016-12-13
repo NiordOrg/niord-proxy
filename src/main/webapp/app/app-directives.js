@@ -105,6 +105,40 @@ angular.module('niord.proxy.app')
 
 
     /****************************************************************
+     * Replaces the content of the element with the chart list
+     ****************************************************************/
+    .directive('renderCharts', [function () {
+        return {
+            restrict: 'A',
+            scope: {
+                renderCharts: "="
+            },
+            link: function(scope, element) {
+                scope.updateCharts = function(charts) {
+                    var result = '';
+                    if (charts && charts.length > 0) {
+                        for (var x = 0; x < charts.length; x++) {
+                            var chart = charts[x];
+                            if (x > 0) {
+                                result += ', ';
+                            }
+                            result += chart.chartNumber;
+                            if (chart.internationalNumber) {
+                                result += ' (INT ' + chart.internationalNumber + ')';
+                            }
+                        }
+                        result += '.';
+                    }
+                    element.html(result);
+                };
+
+                scope.$watchCollection("renderCharts", scope.updateCharts);
+            }
+        };
+    }])
+
+
+    /****************************************************************
      * Replaces the content of the element with the area description
      ****************************************************************/
     .directive('renderMessageArea', ['$rootScope', 'MessageService',

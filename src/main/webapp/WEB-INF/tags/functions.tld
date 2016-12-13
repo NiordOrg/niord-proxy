@@ -28,4 +28,10 @@
         <function-signature>java.util.List getAttachmentsWithDisplayType(org.niord.model.message.MessageVo,java.lang.String)</function-signature>
     </function>
 
+    <tag>
+        <name>trailingDot</name>
+        <tag-class>org.niord.proxy.web.TrailingDotJspTag</tag-class>
+        <body-content>scriptless</body-content>
+    </tag>
+
 </taglib>

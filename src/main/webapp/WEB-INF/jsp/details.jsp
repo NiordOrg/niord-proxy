@@ -102,16 +102,18 @@
                                 <td>
                                     <c:forEach var="ref" items="${msg.references}">
                                         <div>
-                                            ${ref.messageId}
-                                            <c:choose>
-                                                <c:when test="${ref.type == 'REPETITION'}"><fmt:message key="ref_repetition"/> </c:when>
-                                                <c:when test="${ref.type == 'REPETITION_NEW_TIME'}"><fmt:message key="ref_repetition_new_time"/> </c:when>
-                                                <c:when test="${ref.type == 'CANCELLATION'}"><fmt:message key="ref_cancelled"/> </c:when>
-                                                <c:when test="${ref.type == 'UPDATE'}"><fmt:message key="ref_updated"/> </c:when>
-                                            </c:choose>
-                                            <c:if test="not empty ref.descs">
-                                                - ${ref.descs[0].description}
-                                            </c:if>
+                                            <msg:trailingDot>
+                                                ${ref.messageId}
+                                                <c:choose>
+                                                    <c:when test="${ref.type == 'REPETITION'}"><fmt:message key="ref_repetition"/> </c:when>
+                                                    <c:when test="${ref.type == 'REPETITION_NEW_TIME'}"><fmt:message key="ref_repetition_new_time"/> </c:when>
+                                                    <c:when test="${ref.type == 'CANCELLATION'}"><fmt:message key="ref_cancelled"/> </c:when>
+                                                    <c:when test="${ref.type == 'UPDATE'}"><fmt:message key="ref_updated"/> </c:when>
+                                                </c:choose>
+                                                <c:if test="not empty ref.descs">
+                                                    - ${ref.descs[0].description}
+                                                </c:if>
+                                            </msg:trailingDot>
                                         </div>
                                     </c:forEach>
                                 </td>
@@ -151,9 +153,11 @@
                             <tr>
                                 <th><fmt:message key="field_charts"/></th>
                                 <td>
-                                    <c:forEach var="chart" items="${msg.charts}" varStatus="status">
-                                        ${chart.chartNumber}<c:if test="${not empty chart.internationalNumber}"> (INT ${chart.internationalNumber})</c:if><c:if test="${not status.last}">, </c:if>
-                                    </c:forEach>
+                                    <msg:trailingDot>
+                                        <c:forEach var="chart" items="${msg.charts}" varStatus="status">
+                                            ${chart.chartNumber}<c:if test="${not empty chart.internationalNumber}"> (INT ${chart.internationalNumber})</c:if><c:if test="${not status.last}">, </c:if>
+                                        </c:forEach>
+                                    </msg:trailingDot>
                                 </td>
                             </tr>
                         </c:if>

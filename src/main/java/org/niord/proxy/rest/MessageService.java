@@ -133,7 +133,7 @@ public class MessageService extends AbstractNiordService {
         language = settings.language(language);
         DataFilter filter = MESSAGE_DETAILS_FILTER.lang(language);
 
-        List<MessageVo> messages = executeAdminRequest(
+        List<MessageVo> messages = executeNiordJsonRequest(
                 getPublicationMessagesUrl(publication, language),
                 json -> new ObjectMapper().readValue(json, new TypeReference<List<MessageVo>>(){})
         );
@@ -172,7 +172,7 @@ public class MessageService extends AbstractNiordService {
         // If not cached here, get it from the NW-NM service
         if (message == null) {
 
-            message = executeAdminRequest(
+            message = executeNiordJsonRequest(
                     getMessageUrl(messageId),
                     json -> new ObjectMapper().readValue(json, MessageVo.class));
 
@@ -190,14 +190,13 @@ public class MessageService extends AbstractNiordService {
 
 
     /**
-     * If the Niord Proxy has been initialized with a valid path to the Niord message repository,
-     * then the proxy will rewrite messages fetched from Niord and handle streaming of files.
+     * Rewrite messages fetched from Niord and handle proxying of files.
      * @param message the message to rewrite
      * @return the updated message
      */
     private MessageVo checkRewriteRepoPath(MessageVo message) {
 
-        if (message != null && StringUtils.isNotBlank(settings.getRepoRoot())) {
+        if (message != null) {
             // Replace absolute links pointing to the Niord server to local links
             message.rewriteRepoPath(
                     settings.getServer() + "/rest/repo/file/",
@@ -291,7 +290,7 @@ public class MessageService extends AbstractNiordService {
     @Schedule(second = "12", minute = "*/3", hour = "*")
     public void periodicFetchMessages() {
 
-        List<MessageVo> messages = executeAdminRequest(
+        List<MessageVo> messages = executeNiordJsonRequest(
                 getActiveMessagesUrl(),
                 json -> new ObjectMapper().readValue(json, new TypeReference<List<MessageVo>>(){})
         );

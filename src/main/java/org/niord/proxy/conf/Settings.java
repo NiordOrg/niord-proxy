@@ -1,5 +1,7 @@
 package org.niord.proxy.conf;
 
+import org.apache.commons.lang.StringUtils;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -12,6 +14,12 @@ import java.util.logging.Logger;
  * The following system properties can be used to initialize the settings:
  * <ul>
  *     <li>niord-proxy.server : The full URL of the back-end Niord server</li>
+ *     <li>niord-proxy.area : Restrict to a specific area</li>
+ *     <li>niord-proxy.repoRootPath : Path to existing Niord repo or local repo copy</li>
+ *     <li>niord-proxy.repoType : either "shared" for a shared Niord repo, or "local" for a locally maintained copy</li>
+ *     <li>niord-proxy.analyticsTrackingId : The Google Analytics tracking ID</li>
+ *     <li>niord-proxy.languages : Comma-separated list of languages</li>
+ *     <li>niord-proxy.executionMode : The execution mode, either "development", "test" or "production"</li>
  * </ul>
  */
 @Singleton
@@ -20,6 +28,7 @@ public class Settings {
 
     // The possible execution modes of Niord
     public enum ExecutionMode { DEVELOPMENT, TEST, PRODUCTION }
+    public enum RepoType { LOCAL, SHARED }
 
     @Inject
     Logger log;
@@ -30,6 +39,8 @@ public class Settings {
     private String areaId;
 
     private String repoRoot;
+
+    private RepoType repoType;
 
     private String analyticsTrackingId;
 
@@ -49,12 +60,22 @@ public class Settings {
         log.info("AreaId: " + areaId);
 
         repoRoot = System.getProperty("niord-proxy.repoRootPath");
+        if (StringUtils.isBlank(repoRoot)) {
+            repoRoot = System.getProperty("user.home") + "/.niord-proxy/repo";
+        }
         log.info("repoRoot: " + repoRoot);
+
+        try {
+            repoType = RepoType.valueOf(System.getProperty("niord-proxy.repoType").toUpperCase());
+        } catch (Exception ignored) {
+            repoType = RepoType.LOCAL;
+        }
+        log.info("repoType: " + repoType);
 
         analyticsTrackingId = System.getProperty("niord-proxy.analyticsTrackingId", "");
         log.info("analyticsTrackingId: " + analyticsTrackingId);
 
-        languages = System.getProperty("niord-proxy.languages", "da,en").split(",");
+        languages = System.getProperty("niord-proxy.c", "da,en").split(",");
         log.info("languages: " + Arrays.asList(languages));
 
         try {
@@ -88,6 +109,10 @@ public class Settings {
 
     public String getRepoRoot() {
         return repoRoot;
+    }
+
+    public RepoType getRepoType() {
+        return repoType;
     }
 
     public String[] getLanguages() {

@@ -17,7 +17,6 @@ package org.niord.proxy.rest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang.StringUtils;
 import org.niord.model.DataFilter;
 import org.niord.model.publication.PublicationVo;
 import org.niord.proxy.conf.Settings;
@@ -94,7 +93,7 @@ public class PublicationService extends AbstractNiordService {
 
         language = settings.language(language);
 
-        List<PublicationVo> publications = executeAdminRequest(
+        List<PublicationVo> publications = executeNiordJsonRequest(
                 getPublicationsForDatesUrl(from, to, language),
                 json -> new ObjectMapper().readValue(json, new TypeReference<List<PublicationVo>>(){}));
 
@@ -133,7 +132,7 @@ public class PublicationService extends AbstractNiordService {
         // If not cached here, get it from the NW-NM service
         if (publication == null) {
 
-            publication = executeAdminRequest(
+            publication = executeNiordJsonRequest(
                     getPublicationUrl(publicationId),
                     json -> new ObjectMapper().readValue(json, PublicationVo.class));
 
@@ -151,14 +150,13 @@ public class PublicationService extends AbstractNiordService {
 
 
     /**
-     * If the Niord Proxy has been initialized with a valid path to the Niord publication repository,
-     * then the proxy will rewrite publications fetched from Niord and handle streaming of files.
+     * Rewrite publications fetched from Niord and handle proxying of files.
      * @param publication the publication to rewrite
      * @return the updated publication
      */
     private PublicationVo checkRewriteRepoPath(PublicationVo publication) {
 
-        if (publication != null && StringUtils.isNotBlank(settings.getRepoRoot())) {
+        if (publication != null) {
             // Replace absolute links pointing to the Niord server to local links
             publication.rewriteRepoPath(
                     settings.getServer() + "/rest/repo/file/",
@@ -176,7 +174,7 @@ public class PublicationService extends AbstractNiordService {
     @Schedule(second = "42", minute = "*/5", hour = "*")
     public void periodicFetchPublications() {
 
-        List<PublicationVo> publications = executeAdminRequest(
+        List<PublicationVo> publications = executeNiordJsonRequest(
                 getActivePublicationsUrl(),
                 json -> new ObjectMapper().readValue(json, new TypeReference<List<PublicationVo>>(){}));
 

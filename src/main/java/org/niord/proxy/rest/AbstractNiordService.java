@@ -15,6 +15,7 @@
  */
 package org.niord.proxy.rest;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.niord.proxy.conf.Settings;
 
@@ -24,11 +25,12 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Base class for services accessing the NW-NM service
+ * Base class for services accessing the Niord NW-NM service
  */
 @SuppressWarnings("unused")
 public class AbstractNiordService {
@@ -41,30 +43,18 @@ public class AbstractNiordService {
 
 
     /**
-     * Executes a Keycloak admin request and returns the result.
+     * Executes a Niord request and returns the result.
      * If an error occurs, null is returned.
      *
      * @param url the Niord URL
      * @param responseHandler the response handler
      * @return the result or null in case of an error
      */
-    <R> R executeAdminRequest(String url, NiordResponseHandler<R> responseHandler) {
+    <R> R executeNiordJsonRequest(String url, NiordJsonResponseHandler<R> responseHandler) {
         long t0 = System.currentTimeMillis();
 
         try {
-            HttpURLConnection con = newHttpUrlConnection(url);
-
-            int status = con.getResponseCode();
-            if (status == HttpURLConnection.HTTP_MOVED_TEMP
-                    || status == HttpURLConnection.HTTP_MOVED_PERM
-                    || status == HttpURLConnection.HTTP_SEE_OTHER) {
-
-                // get redirect url from "location" header field
-                String redirectUrl = con.getHeaderField("Location");
-
-                // open the new connection again
-                con = newHttpUrlConnection(redirectUrl);
-            }
+            HttpURLConnection con = createHttpUrlConnection(url);
 
             try (InputStream is = con.getInputStream()) {
 
@@ -91,6 +81,67 @@ public class AbstractNiordService {
 
 
     /**
+     * Fetches a file from Niord and saves it in the given path.
+     * Returns null if the file cannot be fetched
+     *
+     * @param url the Niord URL
+     * @param path the path to save the file in
+     * @return the result or null in case of an error
+     */
+    public Path fetchNiordFile(String url, Path path) {
+        long t0 = System.currentTimeMillis();
+
+        try {
+            HttpURLConnection con = createHttpUrlConnection(url);
+
+            try (InputStream is = con.getInputStream()) {
+                FileUtils.copyInputStreamToFile(is, path.toFile());
+            }
+
+            log.log(Level.INFO, String.format(
+                    "Saved Niord file %s to %s in %s ms",
+                    url,
+                    path.toAbsolutePath(),
+                    System.currentTimeMillis() - t0));
+
+            return path;
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, String.format(
+                    "Failed fetching Niord file %s. Error: %s",
+                    url,
+                    e.getMessage()));
+            return null;
+        }
+    }
+
+
+    /**
+     * Creates a HTTP connection to the given URL and handles redirects.
+     * @param url the URL
+     * @return a HTTP connection to the given URL and handles redirects.
+     */
+    HttpURLConnection createHttpUrlConnection(String url) throws IOException {
+
+        HttpURLConnection con = newHttpUrlConnection(url);
+
+        int status = con.getResponseCode();
+        if (status == HttpURLConnection.HTTP_MOVED_TEMP
+                || status == HttpURLConnection.HTTP_MOVED_PERM
+                || status == HttpURLConnection.HTTP_SEE_OTHER) {
+
+            // get redirect url from "location" header field
+            String redirectUrl = con.getHeaderField("Location");
+
+            // open the new connection again
+            con = newHttpUrlConnection(redirectUrl);
+        }
+
+        return con;
+    }
+
+
+    /**
      * Creates a new connection to the given URL
      * @param url the URL
      * @return the new HTTP URL connection
@@ -105,9 +156,9 @@ public class AbstractNiordService {
 
 
     /**
-     * Interface that is passed along to the executeNiordRequest() function and handles the response
+     * Interface that is passed along to the executeNiordJsonRequest() function and handles the response
      */
-    interface NiordResponseHandler<R> {
+    interface NiordJsonResponseHandler<R> {
         R execute(String json) throws IOException;
     }
 

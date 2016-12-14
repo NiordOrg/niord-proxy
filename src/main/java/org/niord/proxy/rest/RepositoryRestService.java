@@ -17,10 +17,13 @@ package org.niord.proxy.rest;
 
 import org.apache.commons.lang.StringUtils;
 import org.niord.proxy.conf.Settings;
+import org.niord.proxy.util.WebUtils;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -44,9 +47,10 @@ import java.util.logging.Logger;
  */
 @javax.ws.rs.Path("/repo")
 @Singleton
+@Startup
 @Lock(LockType.READ)
 @SuppressWarnings("unused")
-public class RepositoryRestService {
+public class RepositoryRestService extends AbstractNiordService {
 
     @Context
     ServletContext servletContext;
@@ -64,17 +68,32 @@ public class RepositoryRestService {
 
     int cacheTimeout = 5;
 
+
+    /**
+     * Initializes the repository
+     */
+    @PostConstruct
+    public void init() throws IOException {
+
+        repoRoot = Paths.get(settings.getRepoRoot());
+
+        // Create the repo root directory
+        if (!Files.exists(repoRoot)) {
+            try {
+                Files.createDirectories(getRepoRoot());
+            } catch (IOException e) {
+                log.log(Level.SEVERE, "Error creating repository dir: " + repoRoot, e);
+                throw e;
+            }
+        }
+    }
+
+
     /**
      * Returns the repository root
      * @return the repository root
      */
     public Path getRepoRoot() {
-        if (repoRoot == null && StringUtils.isNotBlank(settings.getRepoRoot())) {
-            Path path = Paths.get(settings.getRepoRoot());
-            if (Files.isDirectory(path)) {
-                repoRoot = path;
-            }
-        }
         return repoRoot;
     }
 
@@ -85,8 +104,7 @@ public class RepositoryRestService {
      * @return the repository file with the given path
      */
     public Path getRepoFile(String path) {
-        Path repoRoot = getRepoRoot();
-        if (StringUtils.isBlank(path) || repoRoot == null) {
+        if (StringUtils.isBlank(path)) {
             return null;
         }
 
@@ -113,7 +131,22 @@ public class RepositoryRestService {
 
         Path f = getRepoFile(path);
 
-        if (f == null || Files.notExists(f) || Files.isDirectory(f)) {
+        if (f == null || Files.isDirectory(f)) {
+            log.log(Level.WARNING, "Failed streaming file: " + f);
+            return Response
+                    .status(HttpServletResponse.SC_NOT_FOUND)
+                    .entity("File not found: " + path)
+                    .build();
+        }
+
+        // When a locally maintained repository is used, fetch the file from Niord
+        if (settings.getRepoType() == Settings.RepoType.LOCAL && Files.notExists(f)) {
+            f = fetchNiordFile(settings.getServer() + "/rest/repo/file/" + WebUtils.encodeURIComponent(path), f);
+        }
+
+
+        // Check if the file exits
+        if (f == null || Files.notExists(f) ) {
             log.log(Level.WARNING, "Failed streaming file: " + f);
             return Response
                     .status(HttpServletResponse.SC_NOT_FOUND)
@@ -144,4 +177,5 @@ public class RepositoryRestService {
                 .tag(etag)
                 .build();
     }
+
 }

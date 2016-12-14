@@ -141,8 +141,8 @@ angular.module('niord.proxy.app')
     /****************************************************************
      * Replaces the content of the element with the area description
      ****************************************************************/
-    .directive('renderMessageArea', ['$rootScope', 'MessageService',
-        function ($rootScope, MessageService) {
+    .directive('renderMessageArea', ['$rootScope', 'MessageService', 'AppService',
+        function ($rootScope, MessageService, AppService) {
         return {
             restrict: 'A',
             scope: {
@@ -166,7 +166,7 @@ angular.module('niord.proxy.app')
                     while (area) {
                         if (area.id == -999999) {
                             // Special "General" area used for messages without an assigned area
-                            result = prepend(MessageService.translate('GENERAL_MSGS'), result);
+                            result = prepend(AppService.translate('GENERAL_MSGS'), result);
                         } else {
                             var desc = MessageService.desc(area);
                             var areaName = (desc && desc.name) ? desc.name : '';
@@ -249,8 +249,8 @@ angular.module('niord.proxy.app')
      *
      * In the former case, the map will be interactive, i.e. with tooltip and clickable features. Not so in the latter case.
      */
-    .directive('messageMap', ['$rootScope', '$location', '$timeout', 'MapService', 'MessageService',
-        function ($rootScope, $location, $timeout, MapService, MessageService) {
+    .directive('messageMap', ['$rootScope', '$location', '$timeout', 'MapService', 'MessageService', 'AppService',
+        function ($rootScope, $location, $timeout, MapService, MessageService, AppService) {
             'use strict';
 
             return {
@@ -586,7 +586,7 @@ angular.module('niord.proxy.app')
                             }
                             if (messages.length > maxMessageNo) {
                                 html += '<div class="compact-message-list" style="text-align: center">';
-                                html += MessageService.translate('MORE_MSGS', { 'messageNo': messages.length - maxMessageNo});
+                                html += AppService.translate('MORE_MSGS', { 'messageNo': messages.length - maxMessageNo});
                                 html += '</div>';
                             }
 

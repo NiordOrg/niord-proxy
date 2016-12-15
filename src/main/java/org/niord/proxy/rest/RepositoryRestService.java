@@ -73,7 +73,7 @@ public class RepositoryRestService extends AbstractNiordService {
      * Initializes the repository
      */
     @PostConstruct
-    public void init() throws IOException {
+    public void init() {
 
         repoRoot = Paths.get(settings.getRepoRoot());
 
@@ -83,7 +83,6 @@ public class RepositoryRestService extends AbstractNiordService {
                 Files.createDirectories(getRepoRoot());
             } catch (IOException e) {
                 log.log(Level.SEVERE, "Error creating repository dir: " + repoRoot, e);
-                throw e;
             }
         }
     }

@@ -50,7 +50,12 @@ angular.module('niord.proxy.app')
             'OPEN_PUBLICATION' : 'Download',
             'BROWSE_PUBLICATION' : 'Browse',
             'REMOVE_PUBLICATION': 'Remove publication',
-            'TEASER_TEXT': 'View the current<br>Notices to Mariners<br>and Navigational Warnings'
+            'TEASER_TEXT': 'View the current<br>Notices to Mariners<br>and Navigational Warnings',
+            'FOOTER_COPYRIGHT' : '&copy; 2016 EfficienSea 2',
+            'FOOTER_LINK' : 'http://efficiensea2.org',
+            'FOOTER_LINK2' : 'http://www.soefartsstyrelsen.dk/',
+            'FOOTER_DISCLAIMER' : 'Disclaimer',
+            'FOOTER_COOKIES' : 'Cookies'
         });
 
         $translateProvider.translations('da', {
@@ -97,7 +102,12 @@ angular.module('niord.proxy.app')
             'OPEN_PUBLICATION' : 'Download',
             'BROWSE_PUBLICATION' : 'Gennemse',
             'REMOVE_PUBLICATION': 'Fjern publikation',
-            'TEASER_TEXT': 'Se alle aktuelle<br>Efterretninger for Søfarende<br>samt Navigationsadvarsler'
+            'TEASER_TEXT': 'Se alle aktuelle<br>Efterretninger for Søfarende<br>samt Navigationsadvarsler',
+            'FOOTER_COPYRIGHT' : '&copy; 2016 EfficienSea 2',
+            'FOOTER_LINK' : 'http://efficiensea2.org',
+            'FOOTER_LINK2' : 'http://www.soefartsstyrelsen.dk/',
+            'FOOTER_DISCLAIMER' : 'Ansvarsfraskrivelse',
+            'FOOTER_COOKIES' : 'Cookie Politik'
         });
 
         $translateProvider.preferredLanguage('en');

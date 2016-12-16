@@ -5,9 +5,9 @@
 angular.module('niord.proxy.app')
 
 
-    /**********************************************************************
-     * Controller for common functionality of the main menu
-     **********************************************************************/
+/**********************************************************************
+ * Controller for common functionality of the main menu
+ **********************************************************************/
     .controller('AppCtrl', ['$scope', '$location', '$timeout', 'AppService',
         function ($scope, $location, $timeout, AppService) {
             'use strict';
@@ -22,7 +22,7 @@ angular.module('niord.proxy.app')
 
 
             // Fetch the execution mode
-            $scope.mode  = AppService.getExecutionMode();
+            $scope.mode = AppService.getExecutionMode();
             if ($scope.mode == 'DEVELOPMENT' || $scope.mode == 'TEST') {
                 $scope.modeText = $scope.mode == 'DEVELOPMENT' ? 'DEV' : 'TEST';
                 $timeout(function () {
@@ -181,7 +181,7 @@ angular.module('niord.proxy.app')
                             // Use a special "General" heading for messages without an area
                             if (lastAreaId != -999999) {
                                 lastAreaId = -999999;
-                                msg.areaHeading =  { id: -999999 };
+                                msg.areaHeading = {id: -999999};
                             }
                         }
                     }
@@ -208,7 +208,7 @@ angular.module('niord.proxy.app')
                     if ($scope.params.mainTypes.NM) {
                         p += '&mainType=NM';
                     }
-                    var areas =  $scope.params.subAreas ? $scope.params.subAreas : [];
+                    var areas = $scope.params.subAreas ? $scope.params.subAreas : [];
                     var selectedAreas = 0;
                     for (var x = 0; x < areas.length; x++) {
                         if (areas[x].selected) {
@@ -293,7 +293,7 @@ angular.module('niord.proxy.app')
 
 
             // Navigate to the previous message in the message list
-            $scope.selectPrev = function() {
+            $scope.selectPrev = function () {
                 if ($scope.pushedMessageIds.length == 1 && $scope.index > 0) {
                     $scope.index--;
                     $scope.pushedMessageIds[0] = $scope.messages[$scope.index];
@@ -303,7 +303,7 @@ angular.module('niord.proxy.app')
 
 
             // Navigate to the next message in the message list
-            $scope.selectNext = function() {
+            $scope.selectNext = function () {
                 if ($scope.pushedMessageIds.length == 1 && $scope.index >= 0 && $scope.index < $scope.messages.length - 1) {
                     $scope.index++;
                     $scope.pushedMessageIds[0] = $scope.messages[$scope.index];
@@ -331,19 +331,19 @@ angular.module('niord.proxy.app')
             // Creates a PDF for the current search result
             $scope.pdf = function () {
                 var params = 'messageId=' + encodeURIComponent($scope.currentMessageId())
-                        + '&language=' + $rootScope.language;
+                    + '&language=' + $rootScope.language;
                 $window.open('/details.pdf?' + params, '_blank');
             };
 
 
             // Return the currently diisplayed message id
-            $scope.currentMessageId = function() {
+            $scope.currentMessageId = function () {
                 return $scope.pushedMessageIds[$scope.pushedMessageIds.length - 1];
             };
 
 
             // Load the message details for the given message id
-            $scope.loadMessageDetails = function() {
+            $scope.loadMessageDetails = function () {
 
                 MessageService.details($scope.currentMessageId())
                     .success(function (data) {
@@ -390,8 +390,8 @@ angular.module('niord.proxy.app')
 
             $scope.datePickerConfig = {
                 dropdownSelector: '#date',
-                startView:'day',
-                minView:'day'
+                startView: 'day',
+                minView: 'day'
             };
 
 
@@ -439,5 +439,29 @@ angular.module('niord.proxy.app')
                 }
             };
 
-        }]);
+        }])
 
+
+
+
+    /**
+     * Controller handling cookies and disclaimer dialogs
+     */
+    .controller('FooterCtrl', ['$scope', '$uibModal',
+        function ($scope, $uibModal) {
+            'use strict';
+
+            $scope.cookiesDlg = function () {
+                $uibModal.open({
+                    templateUrl: '/app/cookies.html',
+                    size: 'lg'
+                });
+            };
+
+            $scope.disclaimerDlg = function () {
+                $uibModal.open({
+                    templateUrl: '/app/disclaimer.html',
+                    size: 'lg'
+                });
+            }
+        }]);

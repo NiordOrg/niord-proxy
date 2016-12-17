@@ -203,7 +203,7 @@ public class MessageDetailsServlet extends HttpServlet {
                     })
                     .collect(Collectors.toList());
 
-            if (areaNames != null) {
+            if (!areaNames.isEmpty()) {
                 space(txt).append(bundle.getString("filter_in_areas")).append(" ");
                 for (int x = 0; x < areaNames.size(); x++) {
                     if (x > 0 && x == areaNames.size() - 1) {

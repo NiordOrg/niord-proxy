@@ -568,6 +568,7 @@ angular.module('niord.proxy.app')
                             if (messages.length >= 1) {
                                 $timeout(function() { info.tooltip('hide'); });
                                 MessageService.detailsDialog(messages[0].id, messages);
+                                scope.$$phase || scope.$apply();
                             }
                         });
 

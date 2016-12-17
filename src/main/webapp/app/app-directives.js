@@ -88,14 +88,14 @@ angular.module('niord.proxy.app')
         return {
             restrict: 'E',
             scope: {
-                msg:       "=",
-                showBlank: "="
+                msg:        "=",
+                showStatus: "="
             },
             link: function(scope, element) {
 
                 /** Updates the label based on the current status and short ID **/
                 function updateIdLabel() {
-                    element.html(MessageService.messageIdLabelHtml(scope.msg, scope.showBlank));
+                    element.html(MessageService.messageIdLabelHtml(scope.msg, scope.showStatus));
                 }
 
                 scope.$watch('[msg.shortId, msg.mainType, msg.type]', updateIdLabel, true);
@@ -578,7 +578,7 @@ angular.module('niord.proxy.app')
                             for (var x = 0; x < Math.min(messages.length, maxMessageNo); x++) {
                                 var msg = messages[x];
                                 html += '<div class="compact-message-list">';
-                                html += MessageService.messageIdLabelHtml(msg, true);
+                                html += MessageService.messageIdLabelHtml(msg);
                                 if (msg.descs && msg.descs.length > 0) {
                                     html += '    <strong ng-if="msg.descs">' + msg.descs[0].title + '</strong>';
                                 }

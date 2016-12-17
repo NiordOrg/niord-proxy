@@ -19,7 +19,7 @@
         </div>
         <div ng-repeat="msg in generalMessages" class="compact-message-list"
              message-details-link="msg.id" messages="messages">
-            <message-id-badge msg="msg" show-blank="true"></message-id-badge>
+            <message-id-badge msg="msg" show-status="true"></message-id-badge>
             <strong ng-if="msg.descs">{{msg.descs[0].title}}</strong>
         </div>
     </div>

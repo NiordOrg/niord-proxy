@@ -259,12 +259,13 @@ angular.module('niord.proxy.app')
                 transclude: true,
                 templateUrl: '/app/render-message-map.html',
                 scope: {
-                    messages:   '=?',
-                    message:    '=?',
-                    fitExtent:  '=',
-                    maxZoom:    '@',
-                    osm:        '@',
-                    readOnly:   '='
+                    messages:       '=?',
+                    message:        '=?',
+                    fitExtent:      '=',
+                    showGeneral:    '=',
+                    maxZoom:        '@',
+                    osm:            '@',
+                    readOnly:       '='
                 },
 
                 link: function (scope, element, attrs) {

@@ -56,9 +56,13 @@
     </div>
 </c:if>
 
-
 <div class="message-details-list">
-<table class="message-table">
+
+    <c:if test="${fn:length(searchText) > 0}">
+        <div class="message-search-text">${searchText}</div>
+    </c:if>
+
+    <table class="message-table">
 
     <c:set var="areaHeadingId" value="${-9999}"/>
     <c:forEach var="msg" items="${messages}">
@@ -192,7 +196,7 @@
             </td>
         </tr>
     </c:forEach>
-</table>
+    </table>
 </div>
 
 <!-- Render separate-page attachments -->

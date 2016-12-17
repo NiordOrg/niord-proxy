@@ -17,6 +17,7 @@ package org.niord.proxy.web;
 
 import com.itextpdf.text.DocumentException;
 import org.apache.commons.lang.StringUtils;
+import org.niord.model.message.AreaDescVo;
 import org.niord.model.message.MainType;
 import org.niord.model.message.MessageVo;
 import org.niord.proxy.conf.Settings;
@@ -40,11 +41,13 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -99,9 +102,11 @@ public class MessageDetailsServlet extends HttpServlet {
         try {
             // Get the messages in the given language for the requested provider
             List<MessageVo> messages = getMessages(request, language);
+            String searchText = getSearchText(request, language);
 
             // Register the attributes to be used on the JSP page
             request.setAttribute("messages", messages);
+            request.setAttribute("searchText", searchText);
             request.setAttribute("lang", language);
             request.setAttribute("languages", Arrays.asList(settings.getLanguages()));
             request.setAttribute("locale", locale);
@@ -119,7 +124,6 @@ public class MessageDetailsServlet extends HttpServlet {
             throw new ServletException("Error generating file " + request.getServletPath(), e);
         }
     }
-
 
     /** Gets the messages for the given search criteria **/
     List<MessageVo> getMessages(HttpServletRequest request, String language) throws Exception {
@@ -155,6 +159,81 @@ public class MessageDetailsServlet extends HttpServlet {
         }
 
         return messageService.getMessages(language, mainTypes, areaIds, wkt, active);
+    }
+
+
+    /** Formats the search criteria textually */
+    private String getSearchText(HttpServletRequest request, String language) {
+
+        // A specific message was requested
+        if (StringUtils.isNotBlank(request.getParameter("messageId"))) {
+            return "";
+        }
+
+        // Look up the resource bundle
+        Locale locale = new Locale(language);
+        ResourceBundle bundle = ResourceBundle.getBundle("MessageDetails", locale);
+
+        StringBuilder txt = new StringBuilder();
+        String and = bundle.getString("filter_and");
+
+        if (StringUtils.isNotBlank(request.getParameter("active")) && Boolean.valueOf(request.getParameter("active"))) {
+            txt.append(bundle.getString("filter_active")).append(" ");
+        }
+
+
+        String[] mainTypes =  request.getParameterValues("mainType");
+        if (mainTypes != null && mainTypes.length == 1) {
+            txt.append(bundle.getString("filter_type_" + mainTypes[0].toLowerCase()));
+        } else {
+            txt.append(bundle.getString("filter_type_nm")).append(and).append(bundle.getString("filter_type_nw"));
+        }
+
+        if (StringUtils.isNotBlank(request.getParameter("areaId"))) {
+
+            List<String> areaNames = Arrays.stream(request.getParameterValues("areaId"))
+                    .map(Integer::valueOf)
+                    .map(id -> messageService.getArea(id))
+                    .filter(area -> area != null && area.getDescs() != null)
+                    .map(area -> {
+                        AreaDescVo desc = area.getDesc(language) != null
+                                ? area.getDesc(language)
+                                : area.getDescs().get(0);
+                        return desc.getName();
+                    })
+                    .collect(Collectors.toList());
+
+            if (areaNames != null) {
+                space(txt).append(bundle.getString("filter_in_areas")).append(" ");
+                for (int x = 0; x < areaNames.size(); x++) {
+                    if (x > 0 && x == areaNames.size() - 1) {
+                        txt.append(and);
+                    } else if (x > 0) {
+                        txt.append(", ");
+                    }
+                    txt.append(areaNames.get(x));
+                }
+            }
+        }
+
+        SimpleDateFormat format = new SimpleDateFormat(bundle.getString("filter_date_format"), locale);
+        space(txt).append(format.format(new Date()));
+
+
+        // NB: WKT is actually not currently used by the client - skip it for now
+
+
+
+        return txt.toString();
+    }
+
+
+    /** Utility function that appends a space to non-empty strings **/
+    private StringBuilder space(StringBuilder str) {
+        if (str.length() > 0) {
+            str.append(" ");
+        }
+        return str;
     }
 
 

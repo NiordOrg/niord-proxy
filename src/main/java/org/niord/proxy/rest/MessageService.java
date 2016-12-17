@@ -368,6 +368,25 @@ public class MessageService extends AbstractNiordService {
 
 
     /**
+     * Returns the area with the given ID, if the area is one of the cached area groups
+     * @param areaId the ID of the area
+     * @return the area with the given ID
+     */
+    public AreaVo getArea(Integer areaId) {
+        for (AreaVo area : getAreaGroups()) {
+            // Check the area or any of its parent areas
+            do {
+                if (Objects.equals(area.getId(), areaId)) {
+                    return area;
+                }
+                area = area.getParent();
+            } while (area != null);
+        }
+        return null;
+    }
+
+
+    /**
      * Returns the url for fetching the list of active messages sorted by area
      * @return the list of active messages sorted by area
      */

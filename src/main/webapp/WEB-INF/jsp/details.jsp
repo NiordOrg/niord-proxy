@@ -46,7 +46,14 @@
                     <fmt:formatDate value="${now}" type="both" dateStyle="long" timeStyle="medium"/>
                 </td>
                 <td width="40%" align="center" valign="middle">
-                    <img src="/img/logo.png" style="height: 1cm">
+                    <c:choose>
+                        <c:when test="${language == 'da'}">
+                            <img src="/img/logo-da.png" style="height: 1cm">
+                        </c:when>
+                        <c:otherwise>
+                            <img src="/img/logo.png" style="height: 1cm">
+                        </c:otherwise>
+                    </c:choose>
                 </td>
                 <td width="30%" align="right" valign="bottom">
                     <fmt:message key="page"/> <span id="pagenumber"/>&nbsp;/&nbsp;<span id="pagecount"/>

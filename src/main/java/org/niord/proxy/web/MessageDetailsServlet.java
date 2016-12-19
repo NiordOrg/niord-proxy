@@ -109,6 +109,7 @@ public class MessageDetailsServlet extends HttpServlet {
             request.setAttribute("searchText", searchText);
             request.setAttribute("lang", language);
             request.setAttribute("languages", Arrays.asList(settings.getLanguages()));
+            request.setAttribute("language", language);
             request.setAttribute("locale", locale);
             request.setAttribute("now", new Date());
             request.setAttribute("pdf", pdf);

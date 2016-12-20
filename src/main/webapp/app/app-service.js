@@ -34,7 +34,14 @@ angular.module('niord.proxy.app')
 
                 /** Init the language, e.g. from a request parameter **/
                 initLanguage: function (lang) {
-                    lang = lang || $window.localStorage['language'] || 'en';
+                    lang = lang || $window.localStorage['language'];
+                    if (lang === undefined && $rootScope.languages && $rootScope.languages.length > 0) {
+                        lang = $rootScope.languages[0];
+                    }
+                    if (lang === undefined) {
+                        lang = 'en';
+
+                    }
                     this.setLanguage(lang);
                 },
 

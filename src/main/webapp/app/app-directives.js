@@ -139,6 +139,37 @@ angular.module('niord.proxy.app')
 
 
     /****************************************************************
+     * Renders the type and description of a reference
+     ****************************************************************/
+    .directive('renderReferenceType', [ '$rootScope', 'AppService',
+        function ($rootScope, AppService) {
+            return {
+                restrict: 'E',
+                scope: {
+                    ref:    "="
+                },
+                link: function(scope, element) {
+                    var result = '';
+                    switch (scope.ref.type) {
+                        case 'REPETITION':
+                        case 'REPETITION_NEW_TIME':
+                        case 'CANCELLATION':
+                        case 'UPDATE':
+                            result += ' ' + AppService.translate('REF_' + scope.ref.type);
+                    }
+                    if (scope.ref.descs && scope.ref.descs.length > 0 && scope.ref.descs[0].description) {
+                        result += ' - ' + scope.ref.descs[0].description;
+                    }
+                    if (result.length > 0 && result.charAt(result.length-1) != '.') {
+                        result += '.';
+                    }
+                    element.html(result);
+                }
+            };
+        }])
+
+
+    /****************************************************************
      * Replaces the content of the element with the area description
      ****************************************************************/
     .directive('renderMessageArea', ['$rootScope', 'MessageService', 'AppService',

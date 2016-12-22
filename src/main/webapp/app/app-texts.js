@@ -96,7 +96,7 @@ angular.module('niord.proxy.app')
             'ACTIVE_NOW' : 'Aktive nu',
             'SHOW_ATTACHMENTS' : 'Vis vedhæftninger',
             'HIDE_ATTACHMENTS' : 'Skjul vedhæftninger',
-            'MSG_NOT_FOUND' : 'Meddelelse {{messageId}} er ikke tilgængelig',
+            'MSG_NOT_FOUND' : 'Meddelelse {{messageId}} er ikke tilg&aelig;ngelig',
             'MORE_MSGS' : ' samt {{messageNo}} andre meddelelser',
             'OPEN_PUBLICATION' : 'Download',
             'BROWSE_PUBLICATION' : 'Gennemse',

@@ -16,8 +16,6 @@
 
 package org.niord.proxy.web;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -27,10 +25,6 @@ import javax.ws.rs.Produces;
  */
 @Path("/monitor")
 public class MonitorRestService {
-
-    @Inject
-    protected EntityManager em;
-
 
     /** Can be used to see if Niord is running at all **/
     @GET

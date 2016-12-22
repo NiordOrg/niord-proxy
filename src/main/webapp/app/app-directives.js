@@ -160,7 +160,7 @@ angular.module('niord.proxy.app')
                     if (scope.ref.descs && scope.ref.descs.length > 0 && scope.ref.descs[0].description) {
                         result += ' - ' + scope.ref.descs[0].description;
                     }
-                    if (result.length > 0 && result.charAt(result.length-1) != '.') {
+                    if (result.length == 0 || result.charAt(result.length-1) != '.') {
                         result += '.';
                     }
                     element.html(result);

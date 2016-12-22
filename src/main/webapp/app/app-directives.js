@@ -149,6 +149,11 @@ angular.module('niord.proxy.app')
                     ref:    "="
                 },
                 link: function(scope, element) {
+
+                    function endsWithDot(str) {
+                        return str && str.length > 0 && str.charAt(str.length-1) == '.';
+                    }
+
                     var result = '';
                     switch (scope.ref.type) {
                         case 'REPETITION':
@@ -160,7 +165,8 @@ angular.module('niord.proxy.app')
                     if (scope.ref.descs && scope.ref.descs.length > 0 && scope.ref.descs[0].description) {
                         result += ' - ' + scope.ref.descs[0].description;
                     }
-                    if (result.length == 0 || result.charAt(result.length-1) != '.') {
+                    if ((result.length == 0 && !endsWithDot(scope.ref.messageId)) ||
+                        (result.length > 0 && !endsWithDot(result))) {
                         result += '.';
                     }
                     element.html(result);

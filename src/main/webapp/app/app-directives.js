@@ -404,27 +404,6 @@ angular.module('niord.proxy.app')
                     });
 
 
-                    // Construct the NW layer
-                    var nwLayer = new ol.layer.Vector({
-                        source: new ol.source.Vector({
-                            features: new ol.Collection(),
-                            wrapX: false
-                        }),
-                        style: function(feature) {
-                            var featureStyle = null;
-                            if (feature.get('parentFeatureIds')) {
-                                featureStyle = bufferedStyle;
-                            } else if (scope.detailsMap) {
-                                featureStyle = messageDetailsStyle;
-                            } else {
-                              featureStyle = nwStyle;
-                            }
-                            return [ featureStyle ];
-                        }
-                    });
-                    nwLayer.setVisible(true);
-                    layers.push(nwLayer);
-
                     // Construct the NM layer
                     var nmLayer = new ol.layer.Vector({
                         source: new ol.source.Vector({
@@ -445,6 +424,28 @@ angular.module('niord.proxy.app')
                     });
                     nmLayer.setVisible(true);
                     layers.push(nmLayer);
+
+
+                    // Construct the NW layer
+                    var nwLayer = new ol.layer.Vector({
+                        source: new ol.source.Vector({
+                            features: new ol.Collection(),
+                            wrapX: false
+                        }),
+                        style: function(feature) {
+                            var featureStyle = null;
+                            if (feature.get('parentFeatureIds')) {
+                                featureStyle = bufferedStyle;
+                            } else if (scope.detailsMap) {
+                                featureStyle = messageDetailsStyle;
+                            } else {
+                                featureStyle = nwStyle;
+                            }
+                            return [ featureStyle ];
+                        }
+                    });
+                    nwLayer.setVisible(true);
+                    layers.push(nwLayer);
 
 
                     /*********************************/

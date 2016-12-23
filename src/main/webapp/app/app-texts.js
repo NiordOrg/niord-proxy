@@ -53,7 +53,7 @@ angular.module('niord.proxy.app')
             'OPEN_PUBLICATION' : 'Download',
             'BROWSE_PUBLICATION' : 'Browse',
             'REMOVE_PUBLICATION': 'Remove publication',
-            'TEASER_TEXT': 'View the current<br>Notices to Mariners<br>and Navigational Warnings'
+            'TEASER_TEXT': 'Click the map for<br>Notices to Mariners<br>and Navigational Warnings'
         });
 
         $translateProvider.translations('da', {
@@ -103,7 +103,7 @@ angular.module('niord.proxy.app')
             'OPEN_PUBLICATION' : 'Download',
             'BROWSE_PUBLICATION' : 'Gennemse',
             'REMOVE_PUBLICATION': 'Fjern publikation',
-            'TEASER_TEXT': 'Se alle aktuelle<br>Efterretninger for Søfarende<br>samt Navigationsadvarsler'
+            'TEASER_TEXT': 'Klik på kortet for aktuelle<br>Efterretninger for Søfarende<br>samt Navigationsadvarsler'
         });
 
         $translateProvider.preferredLanguage('en');

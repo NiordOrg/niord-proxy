@@ -296,18 +296,18 @@ angular.module('niord.proxy.app')
                 transclude: true,
                 templateUrl: '/app/render-message-map.html',
                 scope: {
-                    messages:       '=?',
-                    message:        '=?',
-                    fitExtent:      '=',
-                    showGeneral:    '=',
-                    maxZoom:        '@',
-                    osm:            '@',
-                    readOnly:       '='
+                    messages:           '=?',
+                    message:            '=?',
+                    fitExtent:          '=',
+                    showNoPosMessages:  '=',
+                    maxZoom:            '@',
+                    osm:                '@',
+                    readOnly:           '='
                 },
 
                 link: function (scope, element, attrs) {
 
-                    scope.generalMessages = []; // Messages with no geometry
+                    scope.noPosMessages = []; // Messages with no geometry
                     scope.layerSwitcherLayers = [];
                     scope.language = $rootScope.language;
 
@@ -673,7 +673,7 @@ angular.module('niord.proxy.app')
                         // Reset layers
                         nwLayer.getSource().clear();
                         nmLayer.getSource().clear();
-                        scope.generalMessages.length = 0;
+                        scope.noPosMessages.length = 0;
 
                         // Update the NW-NM message layers
                         for (var x = 0; x < messages.length; x++) {
@@ -690,7 +690,7 @@ angular.module('niord.proxy.app')
                                     }
                                 });
                             } else {
-                                scope.generalMessages.push(messages[x]);
+                                scope.noPosMessages.push(messages[x]);
                             }
                         }
                     }

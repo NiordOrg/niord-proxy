@@ -88,14 +88,14 @@ angular.module('niord.proxy.app')
         return {
             restrict: 'E',
             scope: {
-                msg:       "=",
-                showBlank: "="
+                msg:        "=",
+                showStatus: "="
             },
             link: function(scope, element) {
 
                 /** Updates the label based on the current status and short ID **/
                 function updateIdLabel() {
-                    element.html(MessageService.messageIdLabelHtml(scope.msg, scope.showBlank));
+                    element.html(MessageService.messageIdLabelHtml(scope.msg, scope.showStatus));
                 }
 
                 scope.$watch('[msg.shortId, msg.mainType, msg.type]', updateIdLabel, true);
@@ -136,6 +136,43 @@ angular.module('niord.proxy.app')
             }
         };
     }])
+
+
+    /****************************************************************
+     * Renders the type and description of a reference
+     ****************************************************************/
+    .directive('renderReferenceType', [ '$rootScope', 'AppService',
+        function ($rootScope, AppService) {
+            return {
+                restrict: 'E',
+                scope: {
+                    ref:    "="
+                },
+                link: function(scope, element) {
+
+                    function endsWithDot(str) {
+                        return str && str.length > 0 && str.charAt(str.length-1) == '.';
+                    }
+
+                    var result = '';
+                    switch (scope.ref.type) {
+                        case 'REPETITION':
+                        case 'REPETITION_NEW_TIME':
+                        case 'CANCELLATION':
+                        case 'UPDATE':
+                            result += ' ' + AppService.translate('REF_' + scope.ref.type);
+                    }
+                    if (scope.ref.descs && scope.ref.descs.length > 0 && scope.ref.descs[0].description) {
+                        result += ' - ' + scope.ref.descs[0].description;
+                    }
+                    if ((result.length == 0 && !endsWithDot(scope.ref.messageId)) ||
+                        (result.length > 0 && !endsWithDot(result))) {
+                        result += '.';
+                    }
+                    element.html(result);
+                }
+            };
+        }])
 
 
     /****************************************************************
@@ -259,12 +296,13 @@ angular.module('niord.proxy.app')
                 transclude: true,
                 templateUrl: '/app/render-message-map.html',
                 scope: {
-                    messages:   '=?',
-                    message:    '=?',
-                    fitExtent:  '=',
-                    maxZoom:    '@',
-                    osm:        '@',
-                    readOnly:   '='
+                    messages:       '=?',
+                    message:        '=?',
+                    fitExtent:      '=',
+                    showGeneral:    '=',
+                    maxZoom:        '@',
+                    osm:            '@',
+                    readOnly:       '='
                 },
 
                 link: function (scope, element, attrs) {
@@ -567,6 +605,7 @@ angular.module('niord.proxy.app')
                             if (messages.length >= 1) {
                                 $timeout(function() { info.tooltip('hide'); });
                                 MessageService.detailsDialog(messages[0].id, messages);
+                                scope.$$phase || scope.$apply();
                             }
                         });
 
@@ -578,7 +617,7 @@ angular.module('niord.proxy.app')
                             for (var x = 0; x < Math.min(messages.length, maxMessageNo); x++) {
                                 var msg = messages[x];
                                 html += '<div class="compact-message-list">';
-                                html += MessageService.messageIdLabelHtml(msg, true);
+                                html += MessageService.messageIdLabelHtml(msg);
                                 if (msg.descs && msg.descs.length > 0) {
                                     html += '    <strong ng-if="msg.descs">' + msg.descs[0].title + '</strong>';
                                 }

@@ -19,7 +19,8 @@
                             <div class="dropdown">
                                 <a class="dropdown-toggle" id="date" role="button" data-toggle="dropdown" data-target="#">
                                     <div class="input-group">
-                                        <input type="text" class="form-control input-sm calendar" style="height: 28px;"
+                                        <input type="text" class="form-control input-sm calendar" style="height: 28px; cursor: pointer"
+                                               placeholder="{{ 'ACTIVE_DATE' | translate}}"
                                                value="{{params.date | formatDate:'ll'}}" readonly="readonly">
                                         <span class="input-group-addon calendar">
                                             <i class="glyphicon glyphicon-calendar"></i>

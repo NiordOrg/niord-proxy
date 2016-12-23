@@ -46,7 +46,14 @@
                     <fmt:formatDate value="${now}" type="both" dateStyle="long" timeStyle="medium"/>
                 </td>
                 <td width="40%" align="center" valign="middle">
-                    <img src="/img/logo.png" style="height: 1cm">
+                    <c:choose>
+                        <c:when test="${language == 'da'}">
+                            <img src="/img/logo-da.png" style="height: 1cm">
+                        </c:when>
+                        <c:otherwise>
+                            <img src="/img/logo.png" style="height: 1cm">
+                        </c:otherwise>
+                    </c:choose>
                 </td>
                 <td width="30%" align="right" valign="bottom">
                     <fmt:message key="page"/> <span id="pagenumber"/>&nbsp;/&nbsp;<span id="pagecount"/>
@@ -56,9 +63,13 @@
     </div>
 </c:if>
 
-
 <div class="message-details-list">
-<table class="message-table">
+
+    <c:if test="${fn:length(searchText) > 0}">
+        <div class="message-search-text">${searchText}</div>
+    </c:if>
+
+    <table class="message-table">
 
     <c:set var="areaHeadingId" value="${-9999}"/>
     <c:forEach var="msg" items="${messages}">
@@ -107,8 +118,8 @@
                                                 <c:choose>
                                                     <c:when test="${ref.type == 'REPETITION'}"><fmt:message key="ref_repetition"/> </c:when>
                                                     <c:when test="${ref.type == 'REPETITION_NEW_TIME'}"><fmt:message key="ref_repetition_new_time"/> </c:when>
-                                                    <c:when test="${ref.type == 'CANCELLATION'}"><fmt:message key="ref_cancelled"/> </c:when>
-                                                    <c:when test="${ref.type == 'UPDATE'}"><fmt:message key="ref_updated"/> </c:when>
+                                                    <c:when test="${ref.type == 'CANCELLATION'}"><fmt:message key="ref_cancellation"/> </c:when>
+                                                    <c:when test="${ref.type == 'UPDATE'}"><fmt:message key="ref_update"/> </c:when>
                                                 </c:choose>
                                                 <c:if test="not empty ref.descs">
                                                     - ${ref.descs[0].description}
@@ -192,7 +203,7 @@
             </td>
         </tr>
     </c:forEach>
-</table>
+    </table>
 </div>
 
 <!-- Render separate-page attachments -->

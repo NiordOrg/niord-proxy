@@ -34,7 +34,14 @@ angular.module('niord.proxy.app')
 
                 /** Init the language, e.g. from a request parameter **/
                 initLanguage: function (lang) {
-                    lang = lang || $window.localStorage['language'] || 'en';
+                    lang = lang || $window.localStorage['language'];
+                    if (lang === undefined && $rootScope.languages && $rootScope.languages.length > 0) {
+                        lang = $rootScope.languages[0];
+                    }
+                    if (lang === undefined) {
+                        lang = 'en';
+
+                    }
                     this.setLanguage(lang);
                 },
 
@@ -128,20 +135,36 @@ angular.module('niord.proxy.app')
 
 
                 /** Generate the HTML to display as a message ID badge **/
-                messageIdLabelHtml : function (msg, showBlank) {
-                    var shortId = msg && msg.shortId ? msg.shortId : undefined;
-                    var messageClass = msg.mainType == 'NW' ? 'label-message-nw' : 'label-message-nm';
-                    if (msg && !shortId && showBlank) {
-                        shortId = msg.type ? AppService.translate('TYPE_' + msg.type) + ' ' : '';
-                        shortId += msg.mainType ? AppService.translate('MAIN_TYPE_' + msg.mainType) : '';
+                messageIdLabelHtml : function (msg, showStatus) {
+
+                    if (!msg) {
+                        return '';
                     }
+
+                    var label = msg.shortId ? msg.shortId : undefined;
+                    var messageClass = msg.mainType == 'NW' ? 'label-message-nw' : 'label-message-nm';
+
+                    // If no shortId is defined, show the message type instead
+                    if (!label) {
+                        label = msg.type ? AppService.translate('TYPE_' + msg.type) + ' ' : '';
+                        label += msg.mainType ? AppService.translate('MAIN_TYPE_' + msg.mainType) : '';
+                    }
+                    label = '<span class="' + messageClass + '">' + label + '</span>';
+
+                    // If requested, show cancelled and expired status of the message
+                    if (showStatus && (msg.status == 'EXPIRED' || msg.status == 'CANCELLED')) {
+                        label += '<span class="label-message-status">'
+                            + AppService.translate('STATUS_' + msg.status)
+                            + '</span>';
+                    }
+
+                    // For NM T&P add a suffix
                     var suffix = '';
-                    if (msg && (msg.type == 'TEMPORARY_NOTICE' || msg.type == 'PRELIMINARY_NOTICE')) {
+                    if (msg.type == 'TEMPORARY_NOTICE' || msg.type == 'PRELIMINARY_NOTICE') {
                         suffix = msg.type == 'TEMPORARY_NOTICE' ? '&nbsp; (T)' : '&nbsp; (P)';
                     }
-                    return shortId
-                        ? '<span class="' + messageClass + '">' + shortId + '</span>' + suffix
-                        : '';
+
+                    return label + suffix;
                 },
 
                 /** Returns the features associated with a message **/

@@ -40,8 +40,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -55,6 +57,12 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class MessageService extends AbstractNiordService {
 
+    /**
+     * General messages, i.e. message without an associated area, will be assigned a virtual
+     * "General" area for each root area in the active message list, i.e. Denmark -> General, Greenland -> General, etc.
+     */
+    public static final AreaVo GENERAL_AREA = new AreaVo();
+
     public static final DataFilter MESSAGE_DETAILS_FILTER =
             DataFilter.get().fields("Message.details", "Message.geometry", "Area.parent", "Category.parent");
 
@@ -66,12 +74,23 @@ public class MessageService extends AbstractNiordService {
 
     private List<MessageVo> messages = new ArrayList<>();
     private Map<String, List<Geometry>> geometries = new HashMap<>();
-    private List<AreaVo> areaGroups = new ArrayList<>();
+    private AreaGroups areaGroups = new AreaGroups();
 
 
     /** Initialize the service **/
     @PostConstruct
     private void init() {
+
+        // Update the "General" area with a unique ID and localized name
+        GENERAL_AREA.setId(-999999);
+        Arrays.stream(settings.getLanguages()).forEach(lang -> {
+            // Look up the resource bundle
+            Locale locale = new Locale(lang);
+            ResourceBundle bundle = ResourceBundle.getBundle("MessageDetails", locale);
+            GENERAL_AREA.checkCreateDesc(lang).setName(bundle.getString("general_msgs"));
+        });
+
+
         // Fetch messages from the NW-NM service
         periodicFetchMessages();
     }
@@ -84,7 +103,7 @@ public class MessageService extends AbstractNiordService {
 
 
     /** Returns the message area groups **/
-    public List<AreaVo> getAreaGroups() {
+    public AreaGroups getAreaGroups() {
         return areaGroups;
     }
 
@@ -334,19 +353,60 @@ public class MessageService extends AbstractNiordService {
         });
 
 
-        // Update the area groups by picking the second parent-most area of each message and filter out duplicates
-        List<AreaVo> areaGroups = new ArrayList<>();
+        // Construct the area groups
+        AreaGroups areaGroups = new AreaGroups();
+
+        // First, compute the root areas
         messages.stream()
                 .filter(m -> m.getAreas() != null && !m.getAreas().isEmpty())
-                .map(m -> m.getAreas().get(0))
-                .map(a -> getParentAreaAtLevel(a, 1))
+                .flatMap(m -> m.getAreas().stream())
                 .forEach(a -> {
-                    AreaVo lastArea = areaGroups.isEmpty() ? null : areaGroups.get(areaGroups.size() - 1);
-                    if (lastArea == null || !Objects.equals(lastArea.getId(), a.getId())) {
-                        areaGroups.add(a);
+                    AreaVo rootArea = getParentAreaAtLevel(a, 0);
+
+                    // Add the root area to the area-groups, if it is not already present
+                    if (areaGroups.getRootAreas().stream().noneMatch(ra -> Objects.equals(ra.getId(), rootArea.getId()))) {
+                        areaGroups.getRootAreas().add(rootArea);
                     }
                 });
 
+
+        // If there are any general messages present (messages without an area), add a virtual "General"
+        // area to each root area: Denmark -> General, Greenland -> General, etc.
+        List<MessageVo> generalMessages = messages.stream()
+                .filter(m -> m.getAreas() == null || m.getAreas().isEmpty())
+                .collect(Collectors.toList());
+
+        if (!generalMessages.isEmpty()) {
+            areaGroups.getRootAreas().forEach(ra -> {
+                AreaVo area = GENERAL_AREA.copy(DataFilter.get());
+                area.setParent(ra);
+                generalMessages.forEach(m -> {
+                    if (m.getAreas() == null) {
+                        m.setAreas(new ArrayList<>());
+                    }
+                    m.getAreas().add(area);
+                });
+            });
+        }
+
+        // For each root area, add the list of sub-areas to the area group
+        messages.stream()
+                .filter(m -> m.getAreas() != null && !m.getAreas().isEmpty())
+                .flatMap(m -> m.getAreas().stream())
+                .forEach(a -> {
+                    AreaVo area = getParentAreaAtLevel(a, 1);
+
+                    // Add the area itself, if it is not already present
+                    if (area.getParent() != null) {
+                        AreaVo rootArea = area.getParent();
+                        List<AreaVo> subAreas = areaGroups.getSubAreas()
+                                .computeIfAbsent(rootArea.getId(), k -> new ArrayList<>());
+                        if (subAreas.stream().noneMatch(sa -> Objects.equals(sa.getId(), area.getId()))) {
+                            AreaVo areaCopy = area.copy(DataFilter.get()); // Strip parent
+                            subAreas.add(areaCopy);
+                        }
+                    }
+                });
 
 
         // Ready to update our local fields
@@ -367,22 +427,30 @@ public class MessageService extends AbstractNiordService {
     }
 
 
+
     /**
      * Returns the area with the given ID, if the area is one of the cached area groups
      * @param areaId the ID of the area
      * @return the area with the given ID
      */
     public AreaVo getArea(Integer areaId) {
-        for (AreaVo area : getAreaGroups()) {
-            // Check the area or any of its parent areas
-            do {
-                if (Objects.equals(area.getId(), areaId)) {
-                    return area;
-                }
-                area = area.getParent();
-            } while (area != null);
-        }
-        return null;
+        return messages.stream()
+                .filter(m -> m.getAreas() != null && !m.getAreas().isEmpty())
+                .flatMap(m -> m.getAreas().stream())
+                .map(a -> {
+                    AreaVo area = a;
+                    // Check the area or any of its parent areas
+                    do {
+                        if (Objects.equals(area.getId(), areaId)) {
+                            return area;
+                        }
+                        area = area.getParent();
+                    } while (area != null);
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
     }
 
 

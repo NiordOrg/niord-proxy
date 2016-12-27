@@ -201,14 +201,9 @@ angular.module('niord.proxy.app')
                     var result = '';
                     var area = scope.renderMessageArea;
                     while (area) {
-                        if (area.id == -999999) {
-                            // Special "General" area used for messages without an assigned area
-                            result = prepend(AppService.translate('GENERAL_MSGS'), result);
-                        } else {
-                            var desc = MessageService.desc(area);
-                            var areaName = (desc && desc.name) ? desc.name : '';
-                            result = prepend(areaName, result);
-                        }
+                        var desc = MessageService.desc(area);
+                        var areaName = (desc && desc.name) ? desc.name : '';
+                        result = prepend(areaName, result);
                         area = scope.lineage ? area.parent : null;
                     }
                     element.html(result);

@@ -1,4 +1,16 @@
 <!DOCTYPE html>
+<script>
+    //redirects to errorpage if using IE8 or lower
+    if (/MSIE (\d+\.\d+);/.test(navigator.userAgent))
+    {
+        var ieversion=new Number(RegExp.$1);
+        if (ieversion<=8)
+        {
+            window.location = "http://www.google.dk";
+        }
+    }
+</script>
+
 <html data-framework="angularjs" ng-app="niord.proxy.app">
 <head>
     <meta charset="utf-8" />

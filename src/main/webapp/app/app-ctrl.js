@@ -442,25 +442,25 @@ angular.module('niord.proxy.app')
         }])
 
 
-
-
     /**
      * Controller handling cookies and disclaimer dialogs
      */
-    .controller('FooterCtrl', ['$scope', '$uibModal',
-        function ($scope, $uibModal) {
+    .controller('FooterCtrl', ['$scope', '$uibModal','AppService',
+        function ($scope, $uibModal, AppService) {
             'use strict';
 
             $scope.cookiesDlg = function () {
+                var lang = AppService.getLanguage();
                 $uibModal.open({
-                    templateUrl: '/app/cookies.html',
+                    templateUrl: '/app/dialogs/cookies_'+lang+'.html',
                     size: 'lg'
                 });
             };
 
             $scope.disclaimerDlg = function () {
+                var lang = AppService.getLanguage();
                 $uibModal.open({
-                    templateUrl: '/app/disclaimer.html',
+                    templateUrl: '/app/dialogs/disclaimer_'+lang+'.html',
                     size: 'lg'
                 });
             }

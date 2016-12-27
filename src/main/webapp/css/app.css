@@ -133,7 +133,7 @@ footer {
 
 .message-details-list {
     font-size: 11px;
-    margin: 100px auto 10px auto;
+    margin: 100px auto 40px auto;
     max-width: 820px;
     padding: 0 10px;
 }
@@ -497,7 +497,7 @@ footer {
 
 .publication-list {
     font-size: 11px;
-    margin: 80px auto 10px auto;
+    margin: 80px auto 40px auto;
     max-width: 820px;
     padding: 0 10px;
 }

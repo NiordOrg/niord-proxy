@@ -55,9 +55,7 @@ angular.module('niord.proxy.app')
             'BROWSE_PUBLICATION' : 'Browse',
             'REMOVE_PUBLICATION': 'Remove publication',
             'TEASER_TEXT': 'Click the map for<br>Notices to Mariners<br>and Navigational Warnings',
-            'FOOTER_COPYRIGHT' : '&copy; 2016 EfficienSea 2',
-            'FOOTER_LINK' : 'http://efficiensea2.org',
-            'FOOTER_LINK2' : 'http://www.soefartsstyrelsen.dk/',
+            'FOOTER_COPYRIGHT' : '&copy; 2017 Danish Maritime Authority',
             'FOOTER_DISCLAIMER' : 'Disclaimer',
             'FOOTER_COOKIES' : 'Cookies'
         });
@@ -111,9 +109,7 @@ angular.module('niord.proxy.app')
             'BROWSE_PUBLICATION' : 'Gennemse',
             'REMOVE_PUBLICATION': 'Fjern publikation',
             'TEASER_TEXT': 'Klik på kortet for aktuelle<br>Efterretninger for Søfarende<br>samt Navigationsadvarsler',
-            'FOOTER_COPYRIGHT' : '&copy; 2016 EfficienSea 2',
-            'FOOTER_LINK' : 'http://efficiensea2.org',
-            'FOOTER_LINK2' : 'http://www.soefartsstyrelsen.dk/',
+            'FOOTER_COPYRIGHT' : '&copy; 2017 Søfartsstyrelsen',
             'FOOTER_DISCLAIMER' : 'Ansvarsfraskrivelse',
             'FOOTER_COOKIES' : 'Cookie Politik'
         });

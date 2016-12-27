@@ -13,39 +13,6 @@ body {
     font-size: 12px;
 }
 
-footer {
-    margin-top: 0;
-    text-align: center;
-    display: block;
-    position: running(footer);
-    padding-top: 5px;
-    color: #666;
-}
-.footer {
-    padding: 10px 30px;
-    border-radius: 0;
-    background: rgb(34, 34, 34) linear-gradient(rgb(24, 24, 24) 0px, rgb(16, 16, 16) 100%);
-}
-
-.footer a {
-    color: #666;
-    font-size: 12px;
-    text-decoration: none;
-}
-
-.footer-left {
-    padding-top: 7px;
-    text-align: center;
-}
-
-.footer-center {
-    text-align: center;
-}
-
-.footer-right {
-    padding-top: 7px;
-    text-align: center;
-}
 h1 {
     font-size: 24px;
     text-align: center;
@@ -72,6 +39,61 @@ h4 {
     float: none;
     margin-left: auto;
     margin-right: auto;
+}
+
+/** Footer **/
+
+footer {
+    margin-top: 0;
+    text-align: center;
+    display: block;
+    position: running(footer);
+    padding-top: 5px;
+    color: lightgray;
+}
+
+.footer {
+    padding: 10px 30px;
+    border-radius: 0;
+    background-color: #444444;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#444444), to(#555555));
+    background: -webkit-linear-gradient(top, #444444, #555555);
+    background: -moz-linear-gradient(top, #444444, #555555);
+    background: -ms-linear-gradient(top, #444444, #555555);
+}
+
+.footer a {
+    color: lightgray;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.footer-left {
+    padding-top: 7px;
+    text-align: center;
+}
+
+.footer-center {
+    text-align: center;
+}
+
+.footer-right {
+    padding-top: 7px;
+    text-align: center;
+}
+
+@media (min-width: 800px) {
+    .footer-left {
+        text-align: left;
+    }
+    .footer-right {
+        text-align: right;
+    }
+}
+
+.footer img {
+    -webkit-filter: drop-shadow(2px 2px 2px #333);
+    filter:         drop-shadow(2px 2px 2px #333);
 }
 
 /** Disable modal dialog animation **/

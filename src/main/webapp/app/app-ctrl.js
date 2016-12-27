@@ -405,5 +405,30 @@ angular.module('niord.proxy.app')
                 }
             };
 
+        }])
+
+
+
+
+    /**
+     * Controller handling cookies and disclaimer dialogs
+     */
+    .controller('FooterCtrl', ['$scope', '$uibModal',
+        function ($scope, $uibModal) {
+            'use strict';
+
+            $scope.cookiesDlg = function () {
+                $uibModal.open({
+                    templateUrl: '/app/cookies.html',
+                    size: 'lg'
+                });
+            };
+
+            $scope.disclaimerDlg = function () {
+                $uibModal.open({
+                    templateUrl: '/app/disclaimer.html',
+                    size: 'lg'
+                });
+            }
         }]);
 

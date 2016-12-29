@@ -48,21 +48,23 @@ public class TldFunctions {
 
 
     /**
-     * Returns the area lineage to display for an area. If areaHeading is defined
-     * this is excluded from the lineage.
+     * Returns the area to display for a message. If lineage is set to true,
+     * the area lineage is emitted
      * @param area the area
-     * @param areaHeading the current area heading
-     * @return the area lineage to display for an area
+     * @param lineage if the area lineage should be emitted
+     * @return the area display for a message
      */
-    public static String getAreaLineage(AreaVo area, AreaVo areaHeading) {
+    public static String renderMessageArea(AreaVo area, boolean lineage) {
         String result = "";
-        for (; area != null && (areaHeading == null || !areaHeading.getId().equals(area.getId())); area = area.getParent()) {
-            if (!area.getDescs().isEmpty()) {
+        while (area != null) {
+            if (area.getDescs() != null && !area.getDescs().isEmpty()) {
                 if (result.length() > 0) {
                     result = " - " + result;
                 }
                 result = area.getDescs().get(0).getName() + result;
             }
+
+            area = lineage ? area.getParent() : null;
         }
         return result;
     }

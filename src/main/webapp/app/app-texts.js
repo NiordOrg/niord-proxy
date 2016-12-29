@@ -18,6 +18,7 @@ angular.module('niord.proxy.app')
             'MENU_DOWNLOADS'  : 'Downloads',
             'BTN_CLOSE' : 'Close',
             'GENERAL_MSGS' : 'General Messages',
+            'NO_POS_MSGS' : 'Messages without Positions',
             'FIELD_REFERENCES' : 'References',
             'FIELD_ATTACHMENTS' : 'Attachments',
             'FIELD_CHARTS' : 'Charts',
@@ -53,10 +54,8 @@ angular.module('niord.proxy.app')
             'OPEN_PUBLICATION' : 'Download',
             'BROWSE_PUBLICATION' : 'Browse',
             'REMOVE_PUBLICATION': 'Remove publication',
-            'TEASER_TEXT': 'View the current<br>Notices to Mariners<br>and Navigational Warnings',
-            'FOOTER_COPYRIGHT' : '&copy; 2016 EfficienSea 2',
-            'FOOTER_LINK' : 'http://efficiensea2.org',
-            'FOOTER_LINK2' : 'http://www.soefartsstyrelsen.dk/',
+            'TEASER_TEXT': 'Click the map for<br>Notices to Mariners<br>and Navigational Warnings',
+            'FOOTER_COPYRIGHT' : '&copy; 2017 Danish Maritime Authority',
             'FOOTER_DISCLAIMER' : 'Disclaimer',
             'FOOTER_COOKIES' : 'Cookies'
         });
@@ -73,6 +72,7 @@ angular.module('niord.proxy.app')
             'MENU_DOWNLOADS'  : 'Downloads',
             'BTN_CLOSE' : 'Luk',
             'GENERAL_MSGS' : 'Generelle Meddelelser',
+            'NO_POS_MSGS' : 'Meddelelser uden positioner',
             'FIELD_REFERENCES' : 'Referencer',
             'FIELD_ATTACHMENTS' : 'Vedhæftninger',
             'FIELD_CHARTS' : 'Søkort',
@@ -108,10 +108,8 @@ angular.module('niord.proxy.app')
             'OPEN_PUBLICATION' : 'Download',
             'BROWSE_PUBLICATION' : 'Gennemse',
             'REMOVE_PUBLICATION': 'Fjern publikation',
-            'TEASER_TEXT': 'Se alle aktuelle<br>Efterretninger for Søfarende<br>samt Navigationsadvarsler',
-            'FOOTER_COPYRIGHT' : '&copy; 2016 EfficienSea 2',
-            'FOOTER_LINK' : 'http://efficiensea2.org',
-            'FOOTER_LINK2' : 'http://www.soefartsstyrelsen.dk/',
+            'TEASER_TEXT': 'Klik på kortet for aktuelle<br>Efterretninger for Søfarende<br>samt Navigationsadvarsler',
+            'FOOTER_COPYRIGHT' : '&copy; 2017 Søfartsstyrelsen',
             'FOOTER_DISCLAIMER' : 'Ansvarsfraskrivelse',
             'FOOTER_COOKIES' : 'Cookie Politik'
         });

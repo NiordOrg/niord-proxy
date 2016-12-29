@@ -42,6 +42,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -52,6 +53,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import static org.niord.proxy.rest.MessageService.GENERAL_AREA;
 
 /**
  * Servlet used for generating either a HTML details page
@@ -182,7 +185,16 @@ public class MessageDetailsServlet extends HttpServlet {
             txt.append(bundle.getString("filter_active")).append(" ");
         }
 
+        // If only the virtual "General" area has been selected, prepend it to the main types
+        List<Integer> areaIds = StringUtils.isNotBlank(request.getParameter("areaId"))
+                ? Arrays.stream(request.getParameterValues("areaId")).map(Integer::valueOf).collect(Collectors.toList())
+                : new ArrayList<>();
+        if (areaIds.contains(GENERAL_AREA.getId()) && areaIds.size() == 1) {
+            space(txt).append(bundle.getString("filter_general")).append(" ");
+            areaIds.remove(GENERAL_AREA.getId());
+        }
 
+        // Add the selected main types
         String[] mainTypes =  request.getParameterValues("mainType");
         if (mainTypes != null && mainTypes.length == 1) {
             txt.append(bundle.getString("filter_type_" + mainTypes[0].toLowerCase()));
@@ -190,10 +202,12 @@ public class MessageDetailsServlet extends HttpServlet {
             txt.append(bundle.getString("filter_type_nm")).append(and).append(bundle.getString("filter_type_nw"));
         }
 
-        if (StringUtils.isNotBlank(request.getParameter("areaId"))) {
+        if (!areaIds.isEmpty()) {
 
-            List<String> areaNames = Arrays.stream(request.getParameterValues("areaId"))
-                    .map(Integer::valueOf)
+            // Treat general area separately
+            boolean generalArea = areaIds.remove(GENERAL_AREA.getId());
+
+            List<String> areaNames = areaIds.stream()
                     .map(id -> messageService.getArea(id))
                     .filter(area -> area != null && area.getDescs() != null)
                     .map(area -> {
@@ -214,6 +228,12 @@ public class MessageDetailsServlet extends HttpServlet {
                     }
                     txt.append(areaNames.get(x));
                 }
+            }
+
+            if (generalArea) {
+                space(txt).append(bundle.getString("filter_plus"))
+                        .append(" ")
+                        .append(bundle.getString("general_msgs").toLowerCase());
             }
         }
 

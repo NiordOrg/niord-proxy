@@ -79,7 +79,7 @@
             <c:set var="areaHeadingId" value="${areaHeading.id}"/>
             <tr style="page-break-after: avoid;">
                 <td>
-                    <h4 class="message-area-heading">${msg:areaLineage(areaHeading, null)}</h4>
+                    <h4 class="message-area-heading">${msg:renderMessageArea(areaHeading, false)}</h4>
                 </td>
             </tr>
         </c:if>

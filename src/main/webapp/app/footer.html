@@ -1,10 +1,13 @@
 <footer class="footer container-fluid">
     <div class="row">
         <div class="col-sm-4 footer-left">
-            <a href="{{'FOOTER_LINK' | translate}}" translate>FOOTER_COPYRIGHT</a>
+            <a href="http://www.soefartsstyrelsen.dk/" translate>FOOTER_COPYRIGHT</a>
         </div>
         <div class="col-sm-4 footer-center">
-            <a href="{{'FOOTER_LINK2' | translate}}" target="_blank"><img src="/img/logo.png" height="34"/></a>
+            <a href="http://www.soefartsstyrelsen.dk/" target="_blank" ng-switch="language">
+                <img ng-switch-when="da" src="/img/logo-da.png" height="34"/>
+                <img ng-switch-default src="/img/logo.png" height="34"/>
+            </a>
         </div>
         <div ng-controller="FooterCtrl" class="col-sm-4 footer-right">
             <a href ng-click="disclaimerDlg()" translate>FOOTER_DISCLAIMER</a>

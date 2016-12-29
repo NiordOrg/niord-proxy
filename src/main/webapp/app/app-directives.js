@@ -201,14 +201,9 @@ angular.module('niord.proxy.app')
                     var result = '';
                     var area = scope.renderMessageArea;
                     while (area) {
-                        if (area.id == -999999) {
-                            // Special "General" area used for messages without an assigned area
-                            result = prepend(AppService.translate('GENERAL_MSGS'), result);
-                        } else {
-                            var desc = MessageService.desc(area);
-                            var areaName = (desc && desc.name) ? desc.name : '';
-                            result = prepend(areaName, result);
-                        }
+                        var desc = MessageService.desc(area);
+                        var areaName = (desc && desc.name) ? desc.name : '';
+                        result = prepend(areaName, result);
                         area = scope.lineage ? area.parent : null;
                     }
                     element.html(result);
@@ -296,18 +291,18 @@ angular.module('niord.proxy.app')
                 transclude: true,
                 templateUrl: '/app/render-message-map.html',
                 scope: {
-                    messages:       '=?',
-                    message:        '=?',
-                    fitExtent:      '=',
-                    showGeneral:    '=',
-                    maxZoom:        '@',
-                    osm:            '@',
-                    readOnly:       '='
+                    messages:           '=?',
+                    message:            '=?',
+                    fitExtent:          '=',
+                    showNoPosMessages:  '=',
+                    maxZoom:            '@',
+                    osm:                '@',
+                    readOnly:           '='
                 },
 
                 link: function (scope, element, attrs) {
 
-                    scope.generalMessages = []; // Messages with no geometry
+                    scope.noPosMessages = []; // Messages with no geometry
                     scope.layerSwitcherLayers = [];
                     scope.language = $rootScope.language;
 
@@ -404,27 +399,6 @@ angular.module('niord.proxy.app')
                     });
 
 
-                    // Construct the NW layer
-                    var nwLayer = new ol.layer.Vector({
-                        source: new ol.source.Vector({
-                            features: new ol.Collection(),
-                            wrapX: false
-                        }),
-                        style: function(feature) {
-                            var featureStyle = null;
-                            if (feature.get('parentFeatureIds')) {
-                                featureStyle = bufferedStyle;
-                            } else if (scope.detailsMap) {
-                                featureStyle = messageDetailsStyle;
-                            } else {
-                              featureStyle = nwStyle;
-                            }
-                            return [ featureStyle ];
-                        }
-                    });
-                    nwLayer.setVisible(true);
-                    layers.push(nwLayer);
-
                     // Construct the NM layer
                     var nmLayer = new ol.layer.Vector({
                         source: new ol.source.Vector({
@@ -445,6 +419,28 @@ angular.module('niord.proxy.app')
                     });
                     nmLayer.setVisible(true);
                     layers.push(nmLayer);
+
+
+                    // Construct the NW layer
+                    var nwLayer = new ol.layer.Vector({
+                        source: new ol.source.Vector({
+                            features: new ol.Collection(),
+                            wrapX: false
+                        }),
+                        style: function(feature) {
+                            var featureStyle = null;
+                            if (feature.get('parentFeatureIds')) {
+                                featureStyle = bufferedStyle;
+                            } else if (scope.detailsMap) {
+                                featureStyle = messageDetailsStyle;
+                            } else {
+                                featureStyle = nwStyle;
+                            }
+                            return [ featureStyle ];
+                        }
+                    });
+                    nwLayer.setVisible(true);
+                    layers.push(nwLayer);
 
 
                     /*********************************/
@@ -672,7 +668,7 @@ angular.module('niord.proxy.app')
                         // Reset layers
                         nwLayer.getSource().clear();
                         nmLayer.getSource().clear();
-                        scope.generalMessages.length = 0;
+                        scope.noPosMessages.length = 0;
 
                         // Update the NW-NM message layers
                         for (var x = 0; x < messages.length; x++) {
@@ -689,7 +685,7 @@ angular.module('niord.proxy.app')
                                     }
                                 });
                             } else {
-                                scope.generalMessages.push(messages[x]);
+                                scope.noPosMessages.push(messages[x]);
                             }
                         }
                     }

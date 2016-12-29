@@ -17,9 +17,9 @@
     </function>
 
     <function>
-        <name>areaLineage</name>
+        <name>renderMessageArea</name>
         <function-class>org.niord.proxy.web.TldFunctions</function-class>
-        <function-signature>java.lang.String getAreaLineage(org.niord.model.message.AreaVo, org.niord.model.message.AreaVo)</function-signature>
+        <function-signature>java.lang.String renderMessageArea(org.niord.model.message.AreaVo, boolean)</function-signature>
     </function>
 
     <function>

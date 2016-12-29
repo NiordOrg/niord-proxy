@@ -5,9 +5,9 @@
 angular.module('niord.proxy.app')
 
 
-/**********************************************************************
- * Controller for common functionality of the main menu
- **********************************************************************/
+    /**********************************************************************
+     * Controller for common functionality of the main menu
+     **********************************************************************/
     .controller('AppCtrl', ['$scope', '$location', '$timeout', 'AppService',
         function ($scope, $location, $timeout, AppService) {
             'use strict';
@@ -22,7 +22,7 @@ angular.module('niord.proxy.app')
 
 
             // Fetch the execution mode
-            $scope.mode = AppService.getExecutionMode();
+            $scope.mode  = AppService.getExecutionMode();
             if ($scope.mode == 'DEVELOPMENT' || $scope.mode == 'TEST') {
                 $scope.modeText = $scope.mode == 'DEVELOPMENT' ? 'DEV' : 'TEST';
                 $timeout(function () {
@@ -44,8 +44,10 @@ angular.module('niord.proxy.app')
             $scope.publication = undefined;
             $scope.modeText = '';
             $scope.messages = [];
-            $scope.areas = [];
-            $scope.rootAreas = []; // All root areas
+            $scope.areaGroups = {
+                rootAreas: [],
+                subAreas: {}
+            };
             var storage = $window.localStorage;
 
             // Check if a root area has been specified via request parameters
@@ -92,31 +94,9 @@ angular.module('niord.proxy.app')
                 MessageService.getAreaGroups()
                     .success(function (areaGroups) {
 
-                        $scope.areas = areaGroups;
-
-                        $scope.rootAreas.length = 0;
-                        $scope.params.rootArea = undefined;
-                        var prevRootArea = undefined;
-                        for (var x = 0; x < $scope.areas.length; x++) {
-                            var area = $scope.areas[x];
-                            var rootArea = MessageService.rootArea(area);
-                            if (!prevRootArea || rootArea.id != prevRootArea.id) {
-                                $scope.rootAreas.push(rootArea);
-                                prevRootArea = rootArea;
-                            }
-                        }
-
-                        // Set the currently selected root area to the one registered in the local-storage
-                        if ($scope.rootAreas.length > 0) {
-                            angular.forEach($scope.rootAreas, function (rootArea) {
-                                if ('' + rootArea.id == initRootAreaId) {
-                                    $scope.params.rootArea = rootArea;
-                                }
-                            });
-                            if (!$scope.params.rootArea) {
-                                $scope.params.rootArea = $scope.rootAreas[0];
-                            }
-                            $scope.updateSubAreas();
+                        $scope.areaGroups = areaGroups;
+                        if ($scope.areaGroups.rootAreas.length > 0) {
+                            $scope.updateRootArea($scope.areaGroups.rootAreas[0]);
                         }
 
                         // Ready to load messages
@@ -129,18 +109,10 @@ angular.module('niord.proxy.app')
             }
 
 
-            // Update the list of sub-areas of the currently selected root area
-            $scope.updateSubAreas = function () {
-                $scope.params.subAreas.length = 0;
-                if ($scope.params.rootArea) {
-                    var rootId = $scope.params.rootArea.id;
-                    for (var x = 0; x < $scope.areas.length; x++) {
-                        var area = $scope.areas[x];
-                        if (area.parent && MessageService.rootArea(area).id == rootId) {
-                            $scope.params.subAreas.push(area);
-                        }
-                    }
-                }
+            // Update the currently selected root area
+            $scope.updateRootArea = function (rootArea) {
+                $scope.params.rootArea = rootArea;
+                $scope.params.subAreas = $scope.areaGroups.subAreas[rootArea.id] || [];
             };
 
 
@@ -177,12 +149,6 @@ angular.module('niord.proxy.app')
                                     msg.areaHeading = area;
                                 }
                             }
-                        } else {
-                            // Use a special "General" heading for messages without an area
-                            if (lastAreaId != -999999) {
-                                lastAreaId = -999999;
-                                msg.areaHeading = {id: -999999};
-                            }
                         }
                     }
                 }
@@ -208,7 +174,7 @@ angular.module('niord.proxy.app')
                     if ($scope.params.mainTypes.NM) {
                         p += '&mainType=NM';
                     }
-                    var areas = $scope.params.subAreas ? $scope.params.subAreas : [];
+                    var areas =  $scope.params.subAreas ? $scope.params.subAreas : [];
                     var selectedAreas = 0;
                     for (var x = 0; x < areas.length; x++) {
                         if (areas[x].selected) {
@@ -293,7 +259,7 @@ angular.module('niord.proxy.app')
 
 
             // Navigate to the previous message in the message list
-            $scope.selectPrev = function () {
+            $scope.selectPrev = function() {
                 if ($scope.pushedMessageIds.length == 1 && $scope.index > 0) {
                     $scope.index--;
                     $scope.pushedMessageIds[0] = $scope.messages[$scope.index];
@@ -303,7 +269,7 @@ angular.module('niord.proxy.app')
 
 
             // Navigate to the next message in the message list
-            $scope.selectNext = function () {
+            $scope.selectNext = function() {
                 if ($scope.pushedMessageIds.length == 1 && $scope.index >= 0 && $scope.index < $scope.messages.length - 1) {
                     $scope.index++;
                     $scope.pushedMessageIds[0] = $scope.messages[$scope.index];
@@ -331,19 +297,19 @@ angular.module('niord.proxy.app')
             // Creates a PDF for the current search result
             $scope.pdf = function () {
                 var params = 'messageId=' + encodeURIComponent($scope.currentMessageId())
-                    + '&language=' + $rootScope.language;
+                        + '&language=' + $rootScope.language;
                 $window.open('/details.pdf?' + params, '_blank');
             };
 
 
             // Return the currently diisplayed message id
-            $scope.currentMessageId = function () {
+            $scope.currentMessageId = function() {
                 return $scope.pushedMessageIds[$scope.pushedMessageIds.length - 1];
             };
 
 
             // Load the message details for the given message id
-            $scope.loadMessageDetails = function () {
+            $scope.loadMessageDetails = function() {
 
                 MessageService.details($scope.currentMessageId())
                     .success(function (data) {
@@ -390,8 +356,8 @@ angular.module('niord.proxy.app')
 
             $scope.datePickerConfig = {
                 dropdownSelector: '#date',
-                startView: 'day',
-                minView: 'day'
+                startView:'day',
+                minView:'day'
             };
 
 
@@ -465,3 +431,4 @@ angular.module('niord.proxy.app')
                 });
             }
         }]);
+

@@ -110,8 +110,8 @@ angular.module('niord.proxy.app')
             'REMOVE_PUBLICATION': 'Fjern publikation',
             'TEASER_TEXT': 'Klik på kortet for aktuelle<br>Efterretninger for Søfarende<br>samt Navigationsadvarsler',
             'FOOTER_COPYRIGHT' : '&copy; 2017 Søfartsstyrelsen',
-            'FOOTER_DISCLAIMER' : 'Ansvarsfraskrivelse',
-            'FOOTER_COOKIES' : 'Cookie Politik'
+            'FOOTER_DISCLAIMER' : 'Disclaimer',
+            'FOOTER_COOKIES' : 'Cookies'
         });
 
         $translateProvider.preferredLanguage('en');

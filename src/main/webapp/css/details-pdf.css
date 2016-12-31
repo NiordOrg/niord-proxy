@@ -87,3 +87,8 @@ table.position-table td.pos-index {
     min-width: 4mm;
 }
 
+.message-area-heading {
+    color: #A32638;
+    font-size: 20px;
+    margin-top: 30px
+}

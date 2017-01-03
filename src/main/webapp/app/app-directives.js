@@ -345,7 +345,7 @@ angular.module('niord.proxy.app')
 
 
                     /*********************************/
-                    /* Nw-NM Layers                  */
+                    /* Raster Layers                  */
                     /*********************************/
 
                     var layers = [];
@@ -358,6 +358,30 @@ angular.module('niord.proxy.app')
                     layers.push(new ol.layer.Tile({
                         source: osmSource
                     }));
+
+
+                    // The WMS layer is only added when message details is being displayed
+                    if (scope.detailsMap && $rootScope.wmsLayer) {
+
+                        var wmsLayer = new ol.layer.Tile({
+                            source: new ol.source.TileWMS({
+                                url: '/wms/',
+                                params: {
+                                    'LAYERS': 'cells',
+                                    'TRANSPARENT': 'TRUE'
+                                },
+                                crossOrigin: ''
+                            })
+                        });
+                        wmsLayer.setVisible(false);
+                        layers.push(wmsLayer);
+                        scope.addToLayerSwitcher(wmsLayer, "WMS");
+                    }
+
+
+                    /*********************************/
+                    /* Nw-NM Layers                  */
+                    /*********************************/
 
 
                     var nwStyle = new ol.style.Style({

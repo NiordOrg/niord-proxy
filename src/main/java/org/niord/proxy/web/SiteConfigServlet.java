@@ -1,5 +1,6 @@
 package org.niord.proxy.web;
 
+import org.apache.commons.lang.StringUtils;
 import org.niord.proxy.conf.Settings;
 import org.niord.proxy.util.WebUtils;
 
@@ -120,6 +121,10 @@ public class SiteConfigServlet  extends HttpServlet {
         str.append("    $rootScope.executionMode = \"")
                 .append(settings.getExecutionMode().toString())
                 .append("\";\n");
+
+        str.append("    $rootScope.wmsLayer = ")
+                .append(StringUtils.isNotBlank(settings.getWmsServerUrl()))
+                .append(";\n");
 
         return str.toString();
     }

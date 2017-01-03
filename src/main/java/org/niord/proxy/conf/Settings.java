@@ -48,6 +48,9 @@ public class Settings {
 
     private ExecutionMode executionMode;
 
+    private String wmsServerUrl;
+
+
     /** Constructor **/
     @PostConstruct
     private void init() {
@@ -84,7 +87,11 @@ public class Settings {
             executionMode = ExecutionMode.DEVELOPMENT;
         }
         log.info("mode: " + executionMode);
+
+        wmsServerUrl = System.getProperty("niord-proxy.wmsServerUrl", "");
+        log.info("wmsServerUrl: " + wmsServerUrl);
     }
+
 
     /**
      * Returns the language if it is valid, and defaults to a valid language
@@ -125,5 +132,9 @@ public class Settings {
 
     public String getAnalyticsTrackingId() {
         return analyticsTrackingId;
+    }
+
+    public String getWmsServerUrl() {
+        return wmsServerUrl;
     }
 }

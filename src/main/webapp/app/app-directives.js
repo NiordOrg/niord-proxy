@@ -368,7 +368,7 @@ angular.module('niord.proxy.app')
 
                     var nmStyle = new ol.style.Style({
                         fill: new ol.style.Fill({ color: 'rgba(255, 0, 255, 0.2)' }),
-                        stroke: new ol.style.Stroke({ color: '#8B008B', width: 1 }),
+                        stroke: new ol.style.Stroke({ color: '#8B008B', width: 2 }),
                         image: new ol.style.Icon({
                             anchor: [0.5, 0.5],
                             scale: 0.3,
@@ -378,7 +378,7 @@ angular.module('niord.proxy.app')
 
                     var messageDetailsStyle = new ol.style.Style({
                         fill: new ol.style.Fill({ color: 'rgba(255, 0, 255, 0.2)' }),
-                        stroke: new ol.style.Stroke({ color: '#8B008B', width: 1 }),
+                        stroke: new ol.style.Stroke({ color: '#8B008B', width: 2 }),
                         image: new ol.style.Circle({
                             radius: 4,
                             fill: new ol.style.Fill({
@@ -398,6 +398,10 @@ angular.module('niord.proxy.app')
                         })
                     });
 
+                    var borderOutlineStyle = new ol.style.Style({
+                        stroke: new ol.style.Stroke({ color: '#FFFFFF', width: 4 })
+                    });
+
 
                     // Construct the NM layer
                     var nmLayer = new ol.layer.Vector({
@@ -414,7 +418,7 @@ angular.module('niord.proxy.app')
                             } else {
                                 featureStyle = nmStyle;
                             }
-                            return [ featureStyle ];
+                            return [ borderOutlineStyle, featureStyle ];
                         }
                     });
                     nmLayer.setVisible(true);
@@ -436,7 +440,7 @@ angular.module('niord.proxy.app')
                             } else {
                                 featureStyle = nwStyle;
                             }
-                            return [ featureStyle ];
+                            return [ borderOutlineStyle, featureStyle ];
                         }
                     });
                     nwLayer.setVisible(true);

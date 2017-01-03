@@ -297,7 +297,8 @@ angular.module('niord.proxy.app')
                     showNoPosMessages:  '=',
                     maxZoom:            '@',
                     osm:                '@',
-                    readOnly:           '='
+                    readOnly:           '=',
+                    centerPointZoomLevel:   '='
                 },
 
                 link: function (scope, element, attrs) {
@@ -317,6 +318,9 @@ angular.module('niord.proxy.app')
                     var zoom = 6;
                     var lon  = 11;
                     var lat  = 56;
+
+                    // Defined the zoom level for which to show a center point
+                    scope.centerPointZoomLevel = scope.centerPointZoomLevel || 12;
 
 
                     /*********************************/
@@ -403,28 +407,6 @@ angular.module('niord.proxy.app')
                     });
 
 
-                    // Construct the NM layer
-                    var nmLayer = new ol.layer.Vector({
-                        source: new ol.source.Vector({
-                            features: new ol.Collection(),
-                            wrapX: false
-                        }),
-                        style: function(feature) {
-                            var featureStyle = null;
-                            if (feature.get('parentFeatureIds')) {
-                                featureStyle = bufferedStyle;
-                            } else if (scope.detailsMap) {
-                                featureStyle = messageDetailsStyle;
-                            } else {
-                                featureStyle = nmStyle;
-                            }
-                            return [ borderOutlineStyle, featureStyle ];
-                        }
-                    });
-                    nmLayer.setVisible(true);
-                    layers.push(nmLayer);
-
-
                     // Construct the NW layer
                     var nwLayer = new ol.layer.Vector({
                         source: new ol.source.Vector({
@@ -445,6 +427,28 @@ angular.module('niord.proxy.app')
                     });
                     nwLayer.setVisible(true);
                     layers.push(nwLayer);
+
+
+                    // Construct the NM layer
+                    var nmLayer = new ol.layer.Vector({
+                        source: new ol.source.Vector({
+                            features: new ol.Collection(),
+                            wrapX: false
+                        }),
+                        style: function(feature) {
+                            var featureStyle = null;
+                            if (feature.get('parentFeatureIds')) {
+                                featureStyle = bufferedStyle;
+                            } else if (scope.detailsMap) {
+                                featureStyle = messageDetailsStyle;
+                            } else {
+                                featureStyle = nmStyle;
+                            }
+                            return [ borderOutlineStyle, featureStyle ];
+                        }
+                    });
+                    nmLayer.setVisible(true);
+                    layers.push(nmLayer);
 
 
                     /*********************************/
@@ -665,6 +669,41 @@ angular.module('niord.proxy.app')
                     /* Update Messages               */
                     /*********************************/
 
+
+                    /** Returns if the feature center point should be displayed **/
+                    function showFeatureCenter(features) {
+                        // Don't show center point for details maps
+                        if (!features || features.length == 0 || scope.detailsMap) {
+                            return false;
+                        }
+
+                        var zoomLevel = map.getView().getZoom();
+                        if (zoomLevel > scope.centerPointZoomLevel) {
+                            return false;
+                        }
+
+                        // Check if the list of features contain any non-point geometries
+                        for (var x = 0; x < features.length; x++) {
+                            var g = features[x].getGeometry();
+                            if (g && g.getType() != 'Point' && g.getType() != 'MultiPoint') {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+
+
+                    /** Adds the OpenLayes feature to the NW or NM layer **/
+                    function addMessageFeature(message, feature) {
+                        feature.set('message', message);
+                        if (message.mainType == 'NW') {
+                            nwLayer.getSource().addFeature(feature);
+                        } else {
+                            nmLayer.getSource().addFeature(feature);
+                        }
+                    }
+
+
                     /** Updates the message layers **/
                     function updateMessageLayers() {
                         var messages = attrs.messages ? scope.messages : [ scope.message ];
@@ -679,15 +718,24 @@ angular.module('niord.proxy.app')
                             var message = messages[x];
                             var features = MessageService.featuresForMessage(message);
                             if (features.length > 0) {
+                                var olFeatures = [];
                                 angular.forEach(features, function (gjFeature) {
                                     var olFeature = MapService.gjToOlFeature(gjFeature);
-                                    olFeature.set('message', message);
-                                    if (message.mainType == 'NW') {
-                                        nwLayer.getSource().addFeature(olFeature);
-                                    } else {
-                                        nmLayer.getSource().addFeature(olFeature);
-                                    }
+                                    addMessageFeature(message, olFeature);
+                                    olFeatures.push(olFeature);
                                 });
+
+                                // Check if we need to add a center point for the message features
+                                if (showFeatureCenter(olFeatures)) {
+                                    var center = MapService.getFeaturesCenter(olFeatures);
+                                    if (center) {
+                                        var centerFeature = new ol.Feature({
+                                            geometry: new ol.geom.Point(center)
+                                        });
+                                        addMessageFeature(message, centerFeature);
+                                    }
+                                }
+
                             } else {
                                 scope.noPosMessages.push(messages[x]);
                             }
@@ -774,6 +822,21 @@ angular.module('niord.proxy.app')
 
                     scope.$watch("message", messagesUpdated, true);
                     scope.$watchCollection("messages", messagesUpdated);
+
+                    /** Check zoom level changes that would result in center points being turned on/off **/
+                    var saveZoomLevel = map.getView().getZoom();
+                    function checkZoomLevel() {
+                        var zoomLevel = map.getView().getZoom();
+                        if ((zoomLevel > scope.centerPointZoomLevel) != saveZoomLevel > scope.centerPointZoomLevel) {
+                            saveZoomLevel = zoomLevel;
+                            updateMessageLayers();
+                            scope.$$phase || scope.$apply();
+                        }
+                    }
+
+                    if (!scope.detailsMap) {
+                        map.on('moveend', checkZoomLevel);
+                    }
 
                 }
             }

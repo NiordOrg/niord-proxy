@@ -167,6 +167,7 @@ angular.module('niord.proxy.app')
                     return label + suffix;
                 },
 
+
                 /** Returns the features associated with a message **/
                 featuresForMessage: function(msg) {
                     var features = [];
@@ -386,6 +387,19 @@ angular.module('niord.proxy.app')
                 } catch (ex) {
                 }
                 return point;
+            };
+
+
+            /** Computes the center for the list of features **/
+            this.getFeaturesCenter = function (features) {
+                var extent = ol.extent.createEmpty();
+                for (var i = 0; features && i < features.length; i++) {
+                    var geometry = features[i].getGeometry();
+                    if (geometry) {
+                        ol.extent.extend(extent, geometry.getExtent());
+                    }
+                }
+                return ol.extent.isEmpty(extent) ? null : ol.extent.getCenter(extent);
             };
 
 

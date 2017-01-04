@@ -7,7 +7,7 @@
     <div ng-if="layerSwitcherLayers.length > 0" class="map-layer-switcher">
         <ul>
             <li ng-repeat="l in layerSwitcherLayers">
-                <input type="checkbox" ng-model="l.visible" ng-change="updateVisibility(l)">&nbsp;{{l.name}}
+                <input type="checkbox" ng-model="l.visible" ng-change="updateVisibility(l)">&nbsp;<span ng-bind-html="l.name"></span>
             </li>
         </ul>
     </div>

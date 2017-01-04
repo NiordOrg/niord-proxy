@@ -373,9 +373,9 @@ angular.module('niord.proxy.app')
                                 crossOrigin: ''
                             })
                         });
-                        wmsLayer.setVisible(false);
+                        wmsLayer.setVisible(true);
                         layers.push(wmsLayer);
-                        scope.addToLayerSwitcher(wmsLayer, "WMS");
+                        scope.addToLayerSwitcher(wmsLayer, AppService.translate('LAYER_WMS'));
                     }
 
 
@@ -550,7 +550,7 @@ angular.module('niord.proxy.app')
                         });
                         labelLayer.setVisible(true);
                         layers.push(labelLayer);
-                        scope.addToLayerSwitcher(labelLayer, "Labels");
+                        scope.addToLayerSwitcher(labelLayer, AppService.translate('LAYER_LABELS'));
                     }
 
                     /*********************************/

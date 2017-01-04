@@ -426,10 +426,6 @@ angular.module('niord.proxy.app')
                         })
                     });
 
-                    var borderOutlineStyle = new ol.style.Style({
-                        stroke: new ol.style.Stroke({ color: '#FFFFFF', width: 4 })
-                    });
-
 
                     // Construct the NW layer
                     var nwLayer = new ol.layer.Vector({
@@ -446,7 +442,7 @@ angular.module('niord.proxy.app')
                             } else {
                                 featureStyle = nwStyle;
                             }
-                            return [ borderOutlineStyle, featureStyle ];
+                            return [ featureStyle ];
                         }
                     });
                     nwLayer.setVisible(true);
@@ -468,7 +464,7 @@ angular.module('niord.proxy.app')
                             } else {
                                 featureStyle = nmStyle;
                             }
-                            return [ borderOutlineStyle, featureStyle ];
+                            return [ featureStyle ];
                         }
                     });
                     nmLayer.setVisible(true);

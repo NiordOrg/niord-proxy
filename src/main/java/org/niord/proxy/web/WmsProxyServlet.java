@@ -82,12 +82,14 @@ public class WmsProxyServlet extends HttpServlet {
             return;
         }
 
+        boolean layerParamDefined = wmsServerUrl.toLowerCase().contains("layers=");
+
         @SuppressWarnings("unchecked")
         Map<String, String[]> paramMap = request.getParameterMap();
         String params = paramMap
                 .entrySet()
                 .stream()
-                .filter(p -> !"layers".equalsIgnoreCase(p.getKey()))
+                .filter(p -> !layerParamDefined || !"layers".equalsIgnoreCase(p.getKey()))
                 .map(p -> String.format("%s=%s", p.getKey(), p.getValue()[0]))
                 .collect(Collectors.joining("&"));
 

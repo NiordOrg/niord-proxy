@@ -20,6 +20,7 @@ import java.util.logging.Logger;
  *     <li>niord-proxy.analyticsTrackingId : The Google Analytics tracking ID</li>
  *     <li>niord-proxy.languages : Comma-separated list of languages</li>
  *     <li>niord-proxy.executionMode : The execution mode, either "development", "test" or "production"</li>
+ *     <li>niord-proxy.wmsServerUrl : A WMS server URL incl username and password. If defined, enables a proxied WMS layer.</li>
  * </ul>
  */
 @Singleton

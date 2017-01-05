@@ -74,7 +74,7 @@ public class MessageService extends AbstractNiordService {
 
     private List<MessageVo> messages = new ArrayList<>();
     private Map<String, List<Geometry>> geometries = new HashMap<>();
-    private AreaGroups areaGroups = new AreaGroups();
+    private List<AreaVo> areaRoots = new ArrayList<>();
 
 
     /** Initialize the service **/
@@ -92,7 +92,7 @@ public class MessageService extends AbstractNiordService {
 
 
         // Fetch messages from the NW-NM service
-        periodicFetchMessages();
+        periodicFetchData();
     }
 
 
@@ -102,9 +102,9 @@ public class MessageService extends AbstractNiordService {
     }
 
 
-    /** Returns the message area groups **/
-    public AreaGroups getAreaGroups() {
-        return areaGroups;
+    /** Returns the area roots **/
+    public List<AreaVo> getAreaRoots() {
+        return areaRoots;
     }
 
 
@@ -307,8 +307,28 @@ public class MessageService extends AbstractNiordService {
      * Periodically loads the published messages from the Niord server
      */
     @Schedule(second = "12", minute = "*/3", hour = "*")
-    public void periodicFetchMessages() {
+    public void periodicFetchData() {
 
+        // Load all area roots defined by the settings, along with their sub-areas - once...
+        if (this.areaRoots.isEmpty()) {
+            List<AreaVo> areaRoots = new ArrayList<>();
+            for (String areaId : settings.getAreaIds()) {
+
+                // Fetch the area from the server
+                AreaVo area = executeNiordJsonRequest(
+                        getAreaUrl(areaId),
+                        json -> new ObjectMapper().readValue(json, AreaVo.class));
+
+                if (area != null) {
+                    areaRoots.add(area);
+                }
+            }
+            this.areaRoots = areaRoots;
+            log.info("Loaded area roots: " + areaRoots);
+        }
+
+
+        // Load all active messages
         List<MessageVo> messages = executeNiordJsonRequest(
                 getActiveMessagesUrl(),
                 json -> new ObjectMapper().readValue(json, new TypeReference<List<MessageVo>>(){})
@@ -353,79 +373,24 @@ public class MessageService extends AbstractNiordService {
         });
 
 
-        // Construct the area groups
-        AreaGroups areaGroups = new AreaGroups();
-
-        // First, compute the root areas
-        messages.stream()
-                .filter(m -> m.getAreas() != null && !m.getAreas().isEmpty())
-                .flatMap(m -> m.getAreas().stream())
-                .forEach(a -> {
-                    AreaVo rootArea = getParentAreaAtLevel(a, 0);
-
-                    // Add the root area to the area-groups, if it is not already present
-                    if (areaGroups.getRootAreas().stream().noneMatch(ra -> Objects.equals(ra.getId(), rootArea.getId()))) {
-                        areaGroups.getRootAreas().add(rootArea);
-                    }
-                });
-
-
         // If there are any general messages present (messages without an area), add a virtual "General"
         // area to each root area: Denmark -> General, Greenland -> General, etc.
-        List<MessageVo> generalMessages = messages.stream()
-                .filter(m -> m.getAreas() == null || m.getAreas().isEmpty())
+        List<AreaVo> generalAreas = areaRoots.stream()
+                .map(a -> {
+                    AreaVo generalArea = GENERAL_AREA.copy(DataFilter.get());
+                    generalArea.setParent(a);
+                    return generalArea;
+                })
                 .collect(Collectors.toList());
-
-        if (!generalMessages.isEmpty()) {
-            areaGroups.getRootAreas().forEach(ra -> {
-                AreaVo area = GENERAL_AREA.copy(DataFilter.get());
-                area.setParent(ra);
-                generalMessages.forEach(m -> {
-                    if (m.getAreas() == null) {
-                        m.setAreas(new ArrayList<>());
-                    }
-                    m.getAreas().add(area);
-                });
-            });
-        }
-
-        // For each root area, add the list of sub-areas to the area group
         messages.stream()
-                .filter(m -> m.getAreas() != null && !m.getAreas().isEmpty())
-                .flatMap(m -> m.getAreas().stream())
-                .forEach(a -> {
-                    AreaVo area = getParentAreaAtLevel(a, 1);
-
-                    // Add the area itself, if it is not already present
-                    if (area.getParent() != null) {
-                        AreaVo rootArea = area.getParent();
-                        List<AreaVo> subAreas = areaGroups.getSubAreas()
-                                .computeIfAbsent(rootArea.getId(), k -> new ArrayList<>());
-                        if (subAreas.stream().noneMatch(sa -> Objects.equals(sa.getId(), area.getId()))) {
-                            AreaVo areaCopy = area.copy(DataFilter.get()); // Strip parent
-                            subAreas.add(areaCopy);
-                        }
-                    }
-                });
+                .filter(m -> m.getAreas() == null || m.getAreas().isEmpty())
+                .forEach(m -> m.setAreas(generalAreas));
 
 
         // Ready to update our local fields
         this.messages = messages;
         this.geometries = geometries;
-        this.areaGroups = areaGroups;
     }
-
-
-    /** Return the level parent-most area **/
-    @SuppressWarnings("all")
-    private AreaVo getParentAreaAtLevel(AreaVo area, int level) {
-        List<AreaVo> areaLineage = new ArrayList<>();
-        for (AreaVo a = area; a != null; a = a.getParent()) {
-            areaLineage.add(0, a);
-        }
-        return areaLineage.get(Math.min(areaLineage.size() - 1, level));
-    }
-
 
 
     /**
@@ -459,12 +424,7 @@ public class MessageService extends AbstractNiordService {
      * @return the list of active messages sorted by area
      */
     private String getActiveMessagesUrl() {
-        String url = settings.getServer()
-                + "/rest/public/v1/messages";
-        if (StringUtils.isNotBlank(settings.getAreaId())) {
-            url += "?areaId=" + WebUtils.encodeURIComponent(settings.getAreaId());
-        }
-        return url;
+        return settings.getServer() + "/rest/public/v1/messages";
     }
 
 
@@ -488,4 +448,14 @@ public class MessageService extends AbstractNiordService {
         return settings.getServer()
                 + "/rest/public/v1/message/" + WebUtils.encodeURIComponent(messageId);
     }
+
+    /**
+     * Returns the url for fetching the area with the given ID
+     * @return the area with the given ID
+     */
+    private String getAreaUrl(String areaId) {
+        return settings.getServer()
+                + "/rest/public/v1/area/" + WebUtils.encodeURIComponent(areaId);
+    }
+
 }

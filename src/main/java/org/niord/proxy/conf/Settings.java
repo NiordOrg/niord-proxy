@@ -37,7 +37,7 @@ public class Settings {
     // URL of the Niord server
     private String server;
 
-    private String areaId;
+    private String[] areaIds;
 
     private String repoRoot;
 
@@ -60,8 +60,8 @@ public class Settings {
         server = System.getProperty("niord-proxy.server", "https://niord.e-navigation.net");
         log.info("server: " + server);
 
-        areaId = System.getProperty("niord-proxy.area");
-        log.info("AreaId: " + areaId);
+        areaIds = System.getProperty("niord-proxy.areas", "urn:mrn:iho:country:dk").split(",");
+        log.info("AreaIds: " + Arrays.asList(areaIds));
 
         repoRoot = System.getProperty("niord-proxy.repoRootPath");
         if (StringUtils.isBlank(repoRoot)) {
@@ -111,8 +111,8 @@ public class Settings {
         return server;
     }
 
-    public String getAreaId() {
-        return areaId;
+    public String[] getAreaIds() {
+        return areaIds;
     }
 
     public String getRepoRoot() {

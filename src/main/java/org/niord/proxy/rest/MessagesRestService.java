@@ -16,6 +16,7 @@
 package org.niord.proxy.rest;
 
 import org.apache.commons.lang.StringUtils;
+import org.niord.model.message.AreaVo;
 import org.niord.model.message.MainType;
 import org.niord.model.message.MessageVo;
 
@@ -91,16 +92,16 @@ public class MessagesRestService {
 
 
     /**
-     * Fetches the area groups
+     * Fetches the area roots - which may be used for message filtering
      *
-     * @return the area groups
+     * @return the area roots
      */
     @GET
-    @Path("/area-groups")
+    @Path("/area-roots")
     @Produces("application/json;charset=UTF-8")
-    public AreaGroups  areaGroups() {
+    public List<AreaVo>  areaRoots() {
 
-        return messageService.getAreaGroups();
+        return messageService.getAreaRoots();
     }
 
 }

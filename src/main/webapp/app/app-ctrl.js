@@ -35,7 +35,14 @@ angular.module('niord.proxy.app')
 
     /**********************************************************************
      * Controller that handles the messages used for list and map overview
-     **********************************************************************/
+     **********************************************************************
+     * The messages area either fetched based on a message filter or defined
+     * by a publication.
+     * When the messages are fetched by message filter, every change to
+     * the filter will cause a filtered set of messages to be loaded from
+     * the server, except for the sub-area selection. This section is
+     * handled in this controller.
+     */
     .controller('MessageCtrl', ['$scope', '$rootScope', '$window', '$location', '$timeout', '$stateParams', 'MessageService', 'AppService',
         function ($scope, $rootScope, $window, $location, $timeout, $stateParams, MessageService, AppService) {
             'use strict';
@@ -43,11 +50,14 @@ angular.module('niord.proxy.app')
             $scope.loading = true;
             $scope.publication = undefined;
             $scope.modeText = '';
+
+            // All messages for area based searches
+            $scope.areaMessages = [];
+            $scope.subAreas = [];
+
+            // The filtered list of messages to display
             $scope.messages = [];
-            $scope.areaGroups = {
-                rootAreas: [],
-                subAreas: {}
-            };
+
             var storage = $window.localStorage;
 
             // Check if a root area has been specified via request parameters
@@ -68,7 +78,6 @@ angular.module('niord.proxy.app')
                     'NM': storage.NM ? storage.NM == 'true' : true
                 },
                 rootArea: undefined, // Currently selected root area
-                subAreas: [],        // Sub-areas of current root area
                 wkt: undefined
             };
 
@@ -90,13 +99,17 @@ angular.module('niord.proxy.app')
 
             } else {
 
-                // Pre-load the area groups
-                MessageService.getAreaGroups()
-                    .success(function (areaGroups) {
+                // Pre-load the area roots
+                MessageService.getAreaRoots()
+                    .success(function (areaRoots) {
 
-                        $scope.areaGroups = areaGroups;
-                        if ($scope.areaGroups.rootAreas.length > 0) {
-                            $scope.updateRootArea($scope.areaGroups.rootAreas[0]);
+                        $scope.areaRoots = areaRoots;
+                        if ($scope.areaRoots.length > 0) {
+                            var selRoot = $.grep($scope.areaRoots, function (area) {
+                                return initRootAreaId && (area.id == initRootAreaId || area.mrn == initRootAreaId);
+                            });
+                            var rootArea = selRoot.length == 1 ? selRoot[0] : $scope.areaRoots[0];
+                            $scope.updateRootArea(rootArea);
                         }
 
                         // Ready to load messages
@@ -112,7 +125,6 @@ angular.module('niord.proxy.app')
             // Update the currently selected root area
             $scope.updateRootArea = function (rootArea) {
                 $scope.params.rootArea = rootArea;
-                $scope.params.subAreas = $scope.areaGroups.subAreas[rootArea.id] || [];
             };
 
 
@@ -127,15 +139,17 @@ angular.module('niord.proxy.app')
 
             /**
              * Scans through the search result and marks all messages that should potentially
-             * display an area head line
+             * display an area head line.
+             * Also, builds the list of sub-areas to display for the current root area
              **/
-            $scope.checkGroupByArea = function (maxLevels) {
+            $scope.checkGroupByArea = function (messages, maxLevels) {
                 maxLevels = maxLevels || 2;
 
+                $scope.subAreas.length = 0;
                 var lastAreaId = undefined;
-                if ($scope.messages && $scope.messages.length > 0) {
-                    for (var m = 0; m < $scope.messages.length; m++) {
-                        var msg = $scope.messages[m];
+                if (messages && messages.length > 0) {
+                    for (var m = 0; m < messages.length; m++) {
+                        var msg = messages[m];
                         if (msg.areas && msg.areas.length > 0) {
                             var msgArea = msg.areas[0];
                             var areas = [];
@@ -147,6 +161,9 @@ angular.module('niord.proxy.app')
                                 if (!lastAreaId || area.id != lastAreaId) {
                                     lastAreaId = area.id;
                                     msg.areaHeading = area;
+                                    if (area.parent) {
+                                        $scope.subAreas.push(area);
+                                    }
                                 }
                             }
                         }
@@ -155,8 +172,12 @@ angular.module('niord.proxy.app')
             };
 
 
-            /** Returns the URL parameters string for the current search parameters **/
-            $scope.getSearchParams = function () {
+            /**
+             * Returns the URL parameters string for the current search parameters
+             * The subAreaFilter indicates if the subarea selection should be included
+             * in the filter.
+             **/
+            $scope.getSearchParams = function (subAreaFilter) {
                 var p = 'language=' + $scope.params.language;
 
                 if ($scope.params.publicationId) {
@@ -174,7 +195,7 @@ angular.module('niord.proxy.app')
                     if ($scope.params.mainTypes.NM) {
                         p += '&mainType=NM';
                     }
-                    var areas =  $scope.params.subAreas ? $scope.params.subAreas : [];
+                    var areas =  subAreaFilter && $scope.subAreas ? $scope.subAreas : [];
                     var selectedAreas = 0;
                     for (var x = 0; x < areas.length; x++) {
                         if (areas[x].selected) {
@@ -212,24 +233,62 @@ angular.module('niord.proxy.app')
                 }
 
                 // Perform the search
-                var params = $scope.getSearchParams();
+                var params = $scope.getSearchParams(false);
                 MessageService.search(params)
                     .success(function (messages) {
-                        $scope.messages = messages;
-                        $scope.checkGroupByArea();
+                        $scope.areaMessages = messages;
+                        $scope.checkGroupByArea($scope.areaMessages);
+                        $scope.filterMessages();
                     });
+            };
+
+
+            /** Called when the subarea list or selection has changed **/
+            $scope.filterMessages = function () {
+                // Create a look-up of all selected subarea ids
+                var includeAll = true;
+                var selectedIds = {};
+                angular.forEach($scope.subAreas, function (area) {
+                    if (area.selected) {
+                        selectedIds[area.id] = area.id;
+                        includeAll = false;
+                    }
+                });
+
+                $scope.messages.length = 0;
+                if ($scope.areaMessages && $scope.areaMessages.length > 0) {
+                    angular.forEach($scope.areaMessages, function (message) {
+                        if (includeAll) {
+                            $scope.messages.push(message);
+                            return;
+                        }
+                        for (var a = 0; message.areas && a < message.areas.length; a++) {
+                            var area = message.areas[a];
+                            while (area) {
+                                if (selectedIds[area.id]) {
+                                    $scope.messages.push(message);
+                                    return;
+                                }
+                                area = area.parent;
+                            }
+                        }
+                    })
+                }
             };
 
 
             /** Creates a PDF for the current search result **/
             $scope.pdf = function () {
-                var params = $scope.getSearchParams();
+                var params = $scope.getSearchParams(true);
                 $window.open('/details.pdf?' + params, '_blank');
             };
 
 
             // Every time the parameters change, refresh the message list
             $scope.$watch("params", $scope.refreshMessages, true);
+
+            // Monitor the list of subareas
+            $scope.$watch("subAreas", $scope.filterMessages, true);
 
             // Every time the language change, update the params
             $scope.$watch(AppService.getLanguage, function (lang) {

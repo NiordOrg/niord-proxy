@@ -32,20 +32,21 @@
             </span>
         </div>
     </div>
-    <div ng-if="!publication" class="row-fluid filter-bar" ng-if="areaGroups.rootAreas.length > 0">
+
+    <div ng-if="!publication" class="row-fluid filter-bar" ng-if="areaRoots.length > 0">
         <div class="input-group col-xs-12 center filter-bar-btns">
-            <span ng-if="areaGroups.rootAreas.length > 1"
-                ng-repeat="rootArea in areaGroups.rootAreas" class="filter-bar-btn"
+            <span ng-if="areaRoots.length > 1"
+                ng-repeat="rootArea in areaRoots" class="filter-bar-btn"
                 ng-class="{ 'filter-bar-btn-selected' : rootArea.id == params.rootArea.id }"
                 ng-click="updateRootArea(rootArea)"
                 render-message-area="rootArea" lineage="false">
             </span>
 
-            <span ng-if="areaGroups.rootAreas.length > 1 && params.rootArea && params.subAreas.length > 0"
+            <span ng-if="areaRoots.length > 1 && params.rootArea && subAreas.length > 0"
                   class="filter-bar-separator"></span>
 
-            <span ng-if="params.rootArea && params.subAreas.length > 0"
-                  ng-repeat="area in params.subAreas" class="filter-bar-btn"
+            <span ng-if="params.rootArea && subAreas.length > 0"
+                  ng-repeat="area in subAreas" class="filter-bar-btn"
                   ng-class="{ 'filter-bar-btn-selected' : area.selected}"
                   ng-click="area.selected = !area.selected"
                   render-message-area="area" lineage="false">

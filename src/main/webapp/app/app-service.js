@@ -104,9 +104,9 @@ angular.module('niord.proxy.app')
                 },
 
 
-                /** Returns the area groups **/
-                getAreaGroups: function () {
-                    return $http.get('/rest/messages/area-groups');
+                /** Returns the area roots **/
+                getAreaRoots: function () {
+                    return $http.get('/rest/messages/area-roots');
                 },
 
 

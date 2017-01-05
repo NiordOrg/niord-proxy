@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * The following system properties can be used to initialize the settings:
  * <ul>
  *     <li>niord-proxy.server : The full URL of the back-end Niord server</li>
- *     <li>niord-proxy.area : Restrict to a specific area</li>
+ *     <li>niord-proxy.areas : Comma-separated list of area IDs or MRNs to use for root area filtering.</li>
  *     <li>niord-proxy.repoRootPath : Path to existing Niord repo or local repo copy</li>
  *     <li>niord-proxy.repoType : either "shared" for a shared Niord repo, or "local" for a locally maintained copy</li>
  *     <li>niord-proxy.analyticsTrackingId : The Google Analytics tracking ID</li>

@@ -178,7 +178,7 @@ public class MessageDetailsServlet extends HttpServlet {
         if (StringUtils.isNotBlank(request.getParameter("messageId"))) {
             MessageVo msg = messages.isEmpty() ? null : messages.get(0);
             if (msg != null) {
-                txt.append(bundle.getString("filter_type_" + msg.getMainType().toString().toLowerCase()))
+                txt.append(bundle.getString("filter_type_single_" + msg.getMainType().toString().toLowerCase()))
                     .append(" ");
             }
             SimpleDateFormat format = new SimpleDateFormat(bundle.getString("filter_date_format"), locale);

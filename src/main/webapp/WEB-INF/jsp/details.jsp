@@ -43,7 +43,6 @@
         <table width="100%">
             <tr>
                 <td width="30%" align="left" valign="bottom">
-                    <fmt:formatDate value="${now}" type="both" dateStyle="long" timeStyle="medium"/>
                 </td>
                 <td width="40%" align="center" valign="middle">
                     <c:choose>

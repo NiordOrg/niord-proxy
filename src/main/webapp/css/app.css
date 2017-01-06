@@ -131,6 +131,18 @@ footer {
     margin-top: 20px;
 }
 
+.message-details-dialog-banner {
+    font-weight: bold;
+    padding: 6px;
+    color: #444444;
+    background-color: lightgray;
+    text-align: center;
+    vertical-align: middle;
+    border-bottom: 1px solid #bbb;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
 .message-details-list {
     font-size: 11px;
     margin: 100px auto 40px auto;

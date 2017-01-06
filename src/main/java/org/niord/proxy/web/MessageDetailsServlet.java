@@ -105,7 +105,7 @@ public class MessageDetailsServlet extends HttpServlet {
         try {
             // Get the messages in the given language for the requested provider
             List<MessageVo> messages = getMessages(request, language);
-            String searchText = getSearchText(request, language);
+            String searchText = getSearchText(request, language, messages);
 
             // Register the attributes to be used on the JSP page
             request.setAttribute("messages", messages);
@@ -167,18 +167,29 @@ public class MessageDetailsServlet extends HttpServlet {
 
 
     /** Formats the search criteria textually */
-    private String getSearchText(HttpServletRequest request, String language) {
-
-        // A specific message was requested
-        if (StringUtils.isNotBlank(request.getParameter("messageId"))) {
-            return "";
-        }
+    private String getSearchText(HttpServletRequest request, String language, List<MessageVo> messages) {
 
         // Look up the resource bundle
         Locale locale = new Locale(language);
         ResourceBundle bundle = ResourceBundle.getBundle("MessageDetails", locale);
-
         StringBuilder txt = new StringBuilder();
+
+        // A specific message was requested
+        if (StringUtils.isNotBlank(request.getParameter("messageId"))) {
+            MessageVo msg = messages.isEmpty() ? null : messages.get(0);
+            if (msg != null) {
+                txt.append(bundle.getString("filter_type_" + msg.getMainType().toString().toLowerCase()))
+                    .append(" ");
+            }
+            SimpleDateFormat format = new SimpleDateFormat(bundle.getString("filter_date_format"), locale);
+            space(txt).append("<span style='float: right'>")
+                    .append(format.format(new Date()))
+                    .append("</span>");
+            return txt.toString();
+        }
+
+
+        // Compose filter for list of messages
         String and = bundle.getString("filter_and");
 
         if (StringUtils.isNotBlank(request.getParameter("active")) && Boolean.valueOf(request.getParameter("active"))) {
@@ -238,7 +249,8 @@ public class MessageDetailsServlet extends HttpServlet {
         }
 
         SimpleDateFormat format = new SimpleDateFormat(bundle.getString("filter_date_format"), locale);
-        space(txt).append(format.format(new Date()));
+        space(txt).append(bundle.getString("filter_date_at"))
+                .append(" ").append(format.format(new Date()));
 
 
         // NB: WKT is actually not currently used by the client - skip it for now

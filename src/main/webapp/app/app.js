@@ -54,21 +54,20 @@ angular.module('niord.proxy.app',
         }])
 
 
-    .run(['$rootScope', '$window', '$location',
-        function($rootScope, $window, $location) {
+    .run(['$rootScope', 'AnalyticsService',
+        function($rootScope, AnalyticsService) {
 
             // Configure Google Analytics
-            if ($rootScope.analyticsTrackingId && $rootScope.analyticsTrackingId.length > 0) {
+            if (AnalyticsService.enabled()) {
 
                 // initialise google analytics
-                try { $window.ga('create', $rootScope.analyticsTrackingId, 'auto'); } catch (ex) {}
+                AnalyticsService.initAnalytics();
 
                 // track pageview on state change
                 $rootScope.$on('$stateChangeSuccess', function () {
-                    try { $window.ga('send', 'pageview', $location.path()); } catch (ex) {}
+                    AnalyticsService.logPageView();
                 });
             }
-
         }]);
 
 

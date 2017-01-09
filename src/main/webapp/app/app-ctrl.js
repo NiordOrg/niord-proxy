@@ -127,6 +127,7 @@ angular.module('niord.proxy.app')
             // Update the currently selected root area
             $scope.updateRootArea = function (rootArea) {
                 $scope.params.rootArea = rootArea;
+                $scope.init();
             };
 
 

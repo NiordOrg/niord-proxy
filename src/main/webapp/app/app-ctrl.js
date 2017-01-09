@@ -445,7 +445,9 @@ angular.module('niord.proxy.app')
                 // Perform the search
                 var params = 'language=' + $scope.params.language;
                 if ($scope.params.date) {
-                    params += '&from=' + $scope.params.date.getTime() + '&to=' + $scope.params.date.getTime();
+                    var startDate = moment($scope.params.date);
+                    var endDate = moment($scope.params.date).endOf('day');
+                    params += '&from=' + startDate + '&to=' + endDate;
                 }
 
                 PublicationService.search(params)

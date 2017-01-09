@@ -114,6 +114,10 @@ public class SiteConfigServlet  extends HttpServlet {
                 .append(languages)
                 .append("];\n");
 
+        str.append("    $rootScope.timeZone = \"")
+                .append(settings.getTimeZone())
+                .append("\";\n");
+
         str.append("    $rootScope.analyticsTrackingId = \"")
                 .append(settings.getAnalyticsTrackingId())
                 .append("\";\n");

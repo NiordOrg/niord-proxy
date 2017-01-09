@@ -17,6 +17,7 @@ import java.util.logging.Logger;
  *     <li>niord-proxy.areas : Comma-separated list of area IDs or MRNs to use for root area filtering.</li>
  *     <li>niord-proxy.repoRootPath : Path to existing Niord repo or local repo copy</li>
  *     <li>niord-proxy.repoType : either "shared" for a shared Niord repo, or "local" for a locally maintained copy</li>
+ *     <li>niord-proxy.timeZone : The time-zone to use, e.g. "Europe/Copenhagen"</li>
  *     <li>niord-proxy.analyticsTrackingId : The Google Analytics tracking ID</li>
  *     <li>niord-proxy.languages : Comma-separated list of languages</li>
  *     <li>niord-proxy.executionMode : The execution mode, either "development", "test" or "production"</li>
@@ -42,6 +43,8 @@ public class Settings {
     private String repoRoot;
 
     private RepoType repoType;
+
+    private String timeZone;
 
     private String analyticsTrackingId;
 
@@ -75,6 +78,9 @@ public class Settings {
             repoType = RepoType.LOCAL;
         }
         log.info("repoType: " + repoType);
+
+        timeZone = System.getProperty("niord-proxy.timeZone", "Europe/Copenhagen");
+        log.info("timeZone: " + timeZone);
 
         analyticsTrackingId = System.getProperty("niord-proxy.analyticsTrackingId", "");
         log.info("analyticsTrackingId: " + analyticsTrackingId);
@@ -125,6 +131,10 @@ public class Settings {
 
     public String[] getLanguages() {
         return languages;
+    }
+
+    public String getTimeZone() {
+        return timeZone;
     }
 
     public ExecutionMode getExecutionMode() {

@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -171,6 +172,7 @@ public class MessageDetailsServlet extends HttpServlet {
 
         // Look up the resource bundle
         Locale locale = new Locale(language);
+        TimeZone timeZone = TimeZone.getTimeZone(settings.getTimeZone());
         ResourceBundle bundle = ResourceBundle.getBundle("MessageDetails", locale);
         StringBuilder txt = new StringBuilder();
 
@@ -182,6 +184,7 @@ public class MessageDetailsServlet extends HttpServlet {
                     .append(" ");
             }
             SimpleDateFormat format = new SimpleDateFormat(bundle.getString("filter_date_format"), locale);
+            format.setTimeZone(timeZone);
             space(txt).append("<span style='float: right'>")
                     .append(format.format(new Date()))
                     .append("</span>");
@@ -249,6 +252,7 @@ public class MessageDetailsServlet extends HttpServlet {
         }
 
         SimpleDateFormat format = new SimpleDateFormat(bundle.getString("filter_date_format"), locale);
+        format.setTimeZone(timeZone);
         space(txt).append(bundle.getString("filter_date_at"))
                 .append(" ").append(format.format(new Date()));
 

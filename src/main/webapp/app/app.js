@@ -57,6 +57,10 @@ angular.module('niord.proxy.app',
     .run(['$rootScope', 'AnalyticsService',
         function($rootScope, AnalyticsService) {
 
+            if ($rootScope.timeZone) {
+                moment.tz.setDefault($rootScope.timeZone);
+            }
+
             // Configure Google Analytics
             if (AnalyticsService.enabled()) {
 

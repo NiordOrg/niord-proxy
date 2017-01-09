@@ -375,11 +375,11 @@ footer {
 .view-mode-bar .language-flag {
     height: 16px;
     padding-right: 15px;
-    opacity: 0.3;
+    opacity: 0.5;
 }
 
 .view-mode-bar .active-language {
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 .view-mode-bar-txt {

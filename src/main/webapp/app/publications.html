@@ -18,7 +18,7 @@
                 </td>
                 <td valign="middle" width="100">
                     <span ng-if="pub.descs[0].link">
-                        <a ng-href="{{pub.descs[0].link}}" target="_blank">
+                        <a ng-href="{{pub.descs[0].link}}" ng-click="downloadPublication(pub)" target="_blank">
                             <span class="glyphicon glyphicon-download-alt"></span>
                             <span translate>OPEN_PUBLICATION</span>
                         </a>
@@ -26,7 +26,8 @@
                 </td>
                 <td valign="middle" width="100">
                     <span ng-if="pub.type == 'MESSAGE_REPORT'">
-                        <a ui-sref="messages.details({ publicationId: pub.publicationId })">
+                        <a ui-sref="messages.details({ publicationId: pub.publicationId })"
+                            ng-click="browsePublication(pub)">
                             <span class="glyphicon glyphicon-th-list"></span>
                             <span translate>BROWSE_PUBLICATION</span>
                         </a>

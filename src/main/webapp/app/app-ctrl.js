@@ -421,8 +421,10 @@ angular.module('niord.proxy.app')
     /**********************************************************************
      * Controller that handles the list of publications
      **********************************************************************/
-    .controller('PublicationCtrl', ['$scope', '$rootScope', '$window', '$location', '$timeout', 'AppService', 'PublicationService',
-        function ($scope, $rootScope, $window, $location, $timeout, AppService, PublicationService) {
+    .controller('PublicationCtrl', ['$scope', '$rootScope', '$window', '$location', '$timeout',
+                'AppService', 'PublicationService', 'AnalyticsService',
+        function ($scope, $rootScope, $window, $location, $timeout,
+                  AppService, PublicationService, AnalyticsService) {
             'use strict';
 
             $scope.publications = [];
@@ -485,6 +487,18 @@ angular.module('niord.proxy.app')
                 }
             };
 
+
+            /** Called when a publication download link is clicked **/
+            $scope.downloadPublication = function (pub) {
+                // Log the event to Google Analytics
+                AnalyticsService.logEvent('Publication', 'download-publication', pub.descs[0].title);
+            };
+
+            /** Called when a publication browse link is clicked **/
+            $scope.browsePublication = function (pub) {
+                // Log the event to Google Analytics
+                AnalyticsService.logEvent('Publication', 'browse-publication', pub.descs[0].title);
+            }
         }])
 
 

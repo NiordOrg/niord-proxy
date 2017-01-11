@@ -183,10 +183,10 @@
                         </c:if>
 
                         <!-- Source line -->
-                        <c:if test="${not empty msg.descs and not empty msg.descs[0].source}">
+                        <c:if test="${(not empty msg.descs and not empty msg.descs[0].source) or not empty msg.publishDateFrom}">
                             <tr>
                                 <td align="right" colspan="2">
-                                    (${msg.descs[0].source})
+                                    (${msg:renderMessageSource(msg, locale, timeZone)})
                                 </td>
                             </tr>
                         </c:if>

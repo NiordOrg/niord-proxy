@@ -115,6 +115,7 @@ public class MessageDetailsServlet extends HttpServlet {
             request.setAttribute("languages", Arrays.asList(settings.getLanguages()));
             request.setAttribute("language", language);
             request.setAttribute("locale", locale);
+            request.setAttribute("timeZone", settings.getTimeZone());
             request.setAttribute("now", new Date());
             request.setAttribute("pdf", pdf);
 

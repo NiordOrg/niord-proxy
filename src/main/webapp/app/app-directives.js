@@ -178,8 +178,8 @@ angular.module('niord.proxy.app')
     /****************************************************************
      * Replaces the content of the element with the area description
      ****************************************************************/
-    .directive('renderMessageArea', ['$rootScope', 'MessageService', 'AppService',
-        function ($rootScope, MessageService, AppService) {
+    .directive('renderMessageArea', ['$rootScope', 'MessageService',
+        function ($rootScope, MessageService) {
         return {
             restrict: 'A',
             scope: {
@@ -214,6 +214,48 @@ angular.module('niord.proxy.app')
             }
         };
     }])
+
+
+    /****************************************************************
+     * Renders the message source + publication date
+     ****************************************************************/
+    .directive('renderMessageSource', ['$rootScope', 'AppService', 'MessageService',
+        function ($rootScope, AppService, MessageService) {
+
+            return {
+                restrict: 'E',
+                template: '<span class="message-source">{{source}}</span>',
+                scope: {
+                    msg: "=",
+                    format: "="
+                },
+                link: function(scope) {
+
+                    scope.source = '';
+                    scope.format = scope.format || AppService.translate('SOURCE_DATE_FORMAT');
+
+                    scope.updateSource = function () {
+                        scope.source = '';
+
+                        if (scope.msg) {
+                            var desc = MessageService.desc(scope.msg, $rootScope.language);
+                            if (desc && desc.source) {
+                                scope.source = desc.source;
+                            }
+                            if (scope.msg.publishDateFrom) {
+                                if (scope.source.length > 0) {
+                                    scope.source += ". ";
+                                }
+                                scope.source += AppService.translate('FIELD_PUBLISHED', null, scope.lang)
+                                    + " " + moment(scope.msg.publishDateFrom).format(scope.format);
+                            }
+                        }
+                    };
+
+                    scope.$watch("[msg.descs, msg.publishDateFrom,language]", scope.updateSource, true);
+                }
+            };
+        }])
 
 
     /****************************************************************

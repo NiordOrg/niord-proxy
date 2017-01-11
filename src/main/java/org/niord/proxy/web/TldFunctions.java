@@ -15,14 +15,19 @@
  */
 package org.niord.proxy.web;
 
+import org.apache.commons.lang.StringUtils;
 import org.niord.model.message.AreaVo;
 import org.niord.model.message.AttachmentVo;
 import org.niord.model.message.AttachmentVo.AttachmentDisplayType;
 import org.niord.model.message.MessageVo;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.ResourceBundle;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 /**
@@ -65,6 +70,34 @@ public class TldFunctions {
             }
 
             area = lineage ? area.getParent() : null;
+        }
+        return result;
+    }
+
+
+    /**
+     * Returns the source to display for a message.
+     * @param msg the message
+     * @return the source display for a message
+     */
+    public static String renderMessageSource(MessageVo msg, Locale locale, String timeZoneId) {
+        String result = "";
+        if (msg != null) {
+            if (msg.getDescs() != null && !msg.getDescs().isEmpty()
+                    && StringUtils.isNotBlank(msg.getDescs().get(0).getSource())) {
+                result += msg.getDescs().get(0).getSource();
+            }
+            if (msg.getPublishDateFrom() != null) {
+                TimeZone timeZone = TimeZone.getTimeZone(timeZoneId);
+                ResourceBundle bundle = ResourceBundle.getBundle("MessageDetails", locale);
+                SimpleDateFormat format = new SimpleDateFormat(bundle.getString("source_date_format"), locale);
+                format.setTimeZone(timeZone);
+
+                if (StringUtils.isNotBlank(result)) {
+                    result += ". ";
+                }
+                result += bundle.getString("source_published") + " " + format.format(msg.getPublishDateFrom());
+            }
         }
         return result;
     }

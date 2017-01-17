@@ -336,6 +336,7 @@ angular.module('niord.proxy.app')
                     messages:           '=?',
                     message:            '=?',
                     fitExtent:          '=',
+                    rootArea:           '=?',
                     showNoPosMessages:  '=',
                     maxZoom:            '@',
                     osm:                '@',
@@ -354,6 +355,7 @@ angular.module('niord.proxy.app')
 
                     var maxZoom = scope.maxZoom ? parseInt(scope.maxZoom) : 10;
                     var updateSizeTimer;
+                    var updateMessagesTimer;
 
 
                     // Just used for bootstrapping the map
@@ -364,6 +366,21 @@ angular.module('niord.proxy.app')
                     // Defined the zoom level for which to show a center point
                     scope.centerPointZoomLevel = scope.centerPointZoomLevel || 12;
 
+
+                    /*********************************/
+                    /* Clean-up                      */
+                    /*********************************/
+
+                    element.on('$destroy', function() {
+                        if (updateSizeTimer !== undefined) {
+                            $timeout.cancel(updateSizeTimer);
+                            updateSizeTimer = null;
+                        }
+                        if (updateMessagesTimer !== undefined) {
+                            $timeout.cancel(updateMessagesTimer);
+                            updateMessagesTimer = null;
+                        }
+                    });
 
                     /*********************************/
                     /* Layer switcher                */
@@ -860,6 +877,15 @@ angular.module('niord.proxy.app')
                     }
 
 
+                    /** Called when messages are updated - starts a timer to update the map layers **/
+                    function messageUpdatedAsync() {
+                        if (updateMessagesTimer !== undefined) {
+                            $timeout.cancel(updateMessagesTimer);
+                        }
+                        updateMessagesTimer = $timeout(messagesUpdated, 100);
+                    }
+
+
                     /** Called when messages are updated **/
                     function messagesUpdated() {
 
@@ -878,12 +904,19 @@ angular.module('niord.proxy.app')
                                     padding: [5, 5, 5, 5],
                                     maxZoom: maxZoom
                                 });
+                            } else if (scope.rootArea && scope.rootArea.latitude
+                                && scope.rootArea.longitude && scope.rootArea.zoomLevel) {
+                                // Update the map center and zoom
+                                var center = MapService.fromLonLat([ scope.rootArea.longitude, scope.rootArea.latitude ]);
+                                map.getView().setCenter(center);
+                                map.getView().setZoom(scope.rootArea.zoomLevel);
                             }
                         }
                     }
 
-                    scope.$watch("message", messagesUpdated, true);
-                    scope.$watchCollection("messages", messagesUpdated);
+                    scope.$watch("message", messageUpdatedAsync, true);
+                    scope.$watch("rootArea", messageUpdatedAsync, true);
+                    scope.$watchCollection("messages", messageUpdatedAsync);
 
                     /** Check zoom level changes that would result in center points being turned on/off **/
                     var saveZoomLevel = map.getView().getZoom();

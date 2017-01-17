@@ -1,6 +1,7 @@
 package org.niord.proxy.conf;
 
 import org.apache.commons.lang.StringUtils;
+import org.niord.proxy.rest.RootArea;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -14,7 +15,9 @@ import java.util.logging.Logger;
  * The following system properties can be used to initialize the settings:
  * <ul>
  *     <li>niord-proxy.server : The full URL of the back-end Niord server</li>
- *     <li>niord-proxy.areas : Comma-separated list of area IDs or MRNs to use for root area filtering.</li>
+ *     <li>niord-proxy.areas : Comma-separated list of area-specs to use for root area filtering.
+ *              The individual area-spec should have the format "areaIDorMRN|latitude|longitude|zoomLevel" with
+ *              only the first part being mandatory.</li>
  *     <li>niord-proxy.repoRootPath : Path to existing Niord repo or local repo copy</li>
  *     <li>niord-proxy.repoType : either "shared" for a shared Niord repo, or "local" for a locally maintained copy</li>
  *     <li>niord-proxy.timeZone : The time-zone to use, e.g. "Europe/Copenhagen"</li>
@@ -38,7 +41,7 @@ public class Settings {
     // URL of the Niord server
     private String server;
 
-    private String[] areaIds;
+    private RootArea[] rootAreas;
 
     private String repoRoot;
 
@@ -63,7 +66,8 @@ public class Settings {
         server = System.getProperty("niord-proxy.server", "https://niord.e-navigation.net");
         log.info("server: " + server);
 
-        areaIds = System.getProperty("niord-proxy.areas", "urn:mrn:iho:country:dk").split(",");
+        String[] areaIds = System.getProperty("niord-proxy.areas", "urn:mrn:iho:country:dk").split(",");
+        rootAreas = Arrays.stream(areaIds).map(RootArea::new).toArray(RootArea[]::new);
         log.info("AreaIds: " + Arrays.asList(areaIds));
 
         repoRoot = System.getProperty("niord-proxy.repoRootPath");
@@ -117,8 +121,8 @@ public class Settings {
         return server;
     }
 
-    public String[] getAreaIds() {
-        return areaIds;
+    public RootArea[] getRootAreas() {
+        return rootAreas;
     }
 
     public String getRepoRoot() {

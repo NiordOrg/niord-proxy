@@ -74,7 +74,7 @@ public class MessageService extends AbstractNiordService {
 
     private List<MessageVo> messages = new ArrayList<>();
     private Map<String, List<Geometry>> geometries = new HashMap<>();
-    private List<AreaVo> areaRoots = new ArrayList<>();
+    private List<RootArea> areaRoots = new ArrayList<>();
 
 
     /** Initialize the service **/
@@ -103,7 +103,7 @@ public class MessageService extends AbstractNiordService {
 
 
     /** Returns the area roots **/
-    public List<AreaVo> getAreaRoots() {
+    public List<RootArea> getAreaRoots() {
         return areaRoots;
     }
 
@@ -309,18 +309,18 @@ public class MessageService extends AbstractNiordService {
     @Schedule(second = "12", minute = "*/3", hour = "*")
     public void periodicFetchData() {
 
-        // Load all area roots defined by the settings, along with their sub-areas - once...
+        // Load all area roots defined by the settings - once...
         if (this.areaRoots.isEmpty()) {
-            List<AreaVo> areaRoots = new ArrayList<>();
-            for (String areaId : settings.getAreaIds()) {
+            List<RootArea> areaRoots = new ArrayList<>();
+            for (RootArea rootArea : settings.getRootAreas()) {
 
                 // Fetch the area from the server
                 AreaVo area = executeNiordJsonRequest(
-                        getAreaUrl(areaId),
+                        getAreaUrl(rootArea.getAreaId()),
                         json -> new ObjectMapper().readValue(json, AreaVo.class));
 
                 if (area != null) {
-                    areaRoots.add(area);
+                    areaRoots.add(rootArea.setArea(area));
                 }
             }
             this.areaRoots = areaRoots;

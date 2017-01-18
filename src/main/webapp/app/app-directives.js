@@ -347,6 +347,7 @@ angular.module('niord.proxy.app')
                 link: function (scope, element, attrs) {
 
                     scope.noPosMessages = []; // Messages with no geometry
+                    scope.minimizeNoPosMessages = false;
                     scope.layerSwitcherLayers = [];
                     scope.language = $rootScope.language;
 
@@ -917,6 +918,11 @@ angular.module('niord.proxy.app')
                     scope.$watch("message", messageUpdatedAsync, true);
                     scope.$watch("rootArea", messageUpdatedAsync, true);
                     scope.$watchCollection("messages", messageUpdatedAsync);
+
+                    /** Toggle minimize the no-pos message panel **/
+                    scope.toggleMinimizeNoPosMessages = function () {
+                        scope.minimizeNoPosMessages = !scope.minimizeNoPosMessages;
+                    };
 
                     /** Check zoom level changes that would result in center points being turned on/off **/
                     var saveZoomLevel = map.getView().getZoom();

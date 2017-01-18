@@ -167,6 +167,9 @@ public class MessageService extends AbstractNiordService {
         log.info(String.format("Search for language=%s, publication=%s -> returning %d messages",
                 language, publication, messages.size()));
 
+        // If there are any general messages present (messages without an area), add a virtual "General" area
+        checkAddGeneralAreas(messages);
+
         return messages.stream()
                 .map(this::checkRewriteRepoPath)
                 .collect(Collectors.toList());
@@ -335,7 +338,7 @@ public class MessageService extends AbstractNiordService {
         );
 
         if (messages != null) {
-            updateMessages(messages);
+            updatePublishedMessages(messages);
         }
     }
 
@@ -345,7 +348,7 @@ public class MessageService extends AbstractNiordService {
      * Updates local message list and computed data such as message geometries
      * @param messages the messages
      */
-    private void updateMessages(List<MessageVo> messages) {
+    private void updatePublishedMessages(List<MessageVo> messages) {
 
         // First, check if we need to rewrite the repository paths
         messages.forEach(this::checkRewriteRepoPath);
@@ -373,23 +376,35 @@ public class MessageService extends AbstractNiordService {
         });
 
 
-        // If there are any general messages present (messages without an area), add a virtual "General"
-        // area to each root area: Denmark -> General, Greenland -> General, etc.
-        List<AreaVo> generalAreas = areaRoots.stream()
-                .map(a -> {
-                    AreaVo generalArea = GENERAL_AREA.copy(DataFilter.get());
-                    generalArea.setParent(a);
-                    return generalArea;
-                })
-                .collect(Collectors.toList());
-        messages.stream()
-                .filter(m -> m.getAreas() == null || m.getAreas().isEmpty())
-                .forEach(m -> m.setAreas(generalAreas));
-
+        // If there are any general messages present (messages without an area), add a virtual "General" area
+        checkAddGeneralAreas(messages);
 
         // Ready to update our local fields
         this.messages = messages;
         this.geometries = geometries;
+    }
+
+
+    /**
+     * If there are any general messages present (messages without an area), add a virtual "General"
+     * area to each root area: Denmark -> General, Greenland -> General, etc.
+     *
+     * @param messages the messages to check
+     */
+    private void checkAddGeneralAreas(List<MessageVo> messages) {
+        if (messages != null) {
+            List<AreaVo> generalAreas = areaRoots.stream()
+                    .map(a -> {
+                        AreaVo generalArea = GENERAL_AREA.copy(DataFilter.get());
+                        generalArea.setParent(a);
+                        return generalArea;
+                    })
+                    .collect(Collectors.toList());
+
+            messages.stream()
+                    .filter(m -> m.getAreas() == null || m.getAreas().isEmpty())
+                    .forEach(m -> m.setAreas(generalAreas));
+        }
     }
 
 

@@ -244,7 +244,10 @@ angular.module('niord.proxy.app')
                             }
                             if (scope.msg.publishDateFrom) {
                                 if (scope.source.length > 0) {
-                                    scope.source += ". ";
+                                    if (scope.source.charAt(scope.source.length-1) != '.') {
+                                        scope.source += ".";
+                                    }
+                                    scope.source += " ";
                                 }
                                 scope.source += AppService.translate('FIELD_PUBLISHED', null, scope.lang)
                                     + " " + moment(scope.msg.publishDateFrom).format(scope.format);

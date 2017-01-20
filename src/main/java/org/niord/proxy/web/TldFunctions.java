@@ -94,7 +94,10 @@ public class TldFunctions {
                 format.setTimeZone(timeZone);
 
                 if (StringUtils.isNotBlank(result)) {
-                    result += ". ";
+                    if (!result.endsWith(".")) {
+                        result += ".";
+                    }
+                    result += " ";
                 }
                 result += bundle.getString("source_published") + " " + format.format(msg.getPublishDateFrom());
             }

@@ -5,6 +5,9 @@
     <div ng-include="'/app/publications-filter.html'"></div>
 
     <div class="publication-list">
+
+        <div class="publication-intro" ng-bind-html="'PUBLICATION_INTRO' | translate"></div>
+
         <table style="width: 100%">
             <tr ng-repeat-start="pub in publications"  ng-if="pub.categoryHeading">
                 <td colspan="4" style="border: none">

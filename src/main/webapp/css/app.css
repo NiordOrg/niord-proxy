@@ -515,6 +515,15 @@ footer {
     padding: 0 10px;
 }
 
+.publication-intro {
+    font-size: 12px;
+    color: gray;
+    text-align: center;
+    margin: 100px auto 0 auto;
+    max-width: 820px;
+    padding: 0 10px;
+}
+
 .publication-table-item td {
     border-bottom: 1px solid #eee;
 }

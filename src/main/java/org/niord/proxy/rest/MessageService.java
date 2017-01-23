@@ -323,7 +323,12 @@ public class MessageService extends AbstractNiordService {
                         json -> new ObjectMapper().readValue(json, AreaVo.class));
 
                 if (area != null) {
-                    areaRoots.add(rootArea.setArea(area));
+
+                    List<AreaVo> subAreas = executeNiordJsonRequest(
+                            getSubAreasUrl(rootArea.getAreaId()),
+                            json -> new ObjectMapper().readValue(json, new TypeReference<List<AreaVo>>(){}));
+
+                    areaRoots.add(rootArea.setAreaData(area, subAreas));
                 }
             }
             this.areaRoots = areaRoots;
@@ -471,6 +476,15 @@ public class MessageService extends AbstractNiordService {
     private String getAreaUrl(String areaId) {
         return settings.getServer()
                 + "/rest/public/v1/area/" + WebUtils.encodeURIComponent(areaId);
+    }
+
+    /**
+     * Returns the url for fetching the sub-areas of the area with the given ID
+     * @return the area with the given ID
+     */
+    private String getSubAreasUrl(String areaId) {
+        return settings.getServer()
+                + "/rest/public/v1/area/" + WebUtils.encodeURIComponent(areaId) + "/sub-areas";
     }
 
 }

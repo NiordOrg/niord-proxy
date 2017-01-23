@@ -448,7 +448,7 @@ footer {
 
 .filter-bar-btn {
     display:inline-block;
-    margin: 0 5px;
+    margin: 0 2px;
     padding: 2px 5px;
     cursor: pointer;
 }
@@ -470,7 +470,7 @@ footer {
 }
 
 .filter-bar-separator {
-    margin: 5px 20px;
+    margin: 5px 10px;
     border-left: 1px dotted gray;
 }
 

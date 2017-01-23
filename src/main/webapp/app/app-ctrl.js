@@ -127,6 +127,7 @@ angular.module('niord.proxy.app')
             // Update the currently selected root area
             $scope.updateRootArea = function (rootArea) {
                 $scope.params.rootArea = rootArea;
+                $scope.subAreas = angular.copy(rootArea.subAreas);
                 $scope.init();
             };
 
@@ -146,9 +147,19 @@ angular.module('niord.proxy.app')
              * Also, builds the list of sub-areas to display for the current root area
              **/
             $scope.checkGroupByArea = function (messages, maxLevels) {
+
+                if ($scope.params.rootArea) {
+                    $scope.subAreas = angular.copy($scope.params.rootArea.subAreas);
+                } else {
+                    $scope.subAreas.length = 0;
+                }
+                var subAreaIds = {};
+                angular.forEach($scope.subAreas, function (a) {
+                    subAreaIds[a.id] = a.id;
+                });
+
                 maxLevels = maxLevels || 2;
 
-                $scope.subAreas.length = 0;
                 var lastAreaId = undefined;
                 if (messages && messages.length > 0) {
                     for (var m = 0; m < messages.length; m++) {
@@ -164,8 +175,11 @@ angular.module('niord.proxy.app')
                                 if (!lastAreaId || area.id != lastAreaId) {
                                     lastAreaId = area.id;
                                     msg.areaHeading = area;
-                                    if (area.parent) {
+
+                                    // If present, add the "General" area
+                                    if (area.parent && !subAreaIds[area.id]) {
                                         $scope.subAreas.push(area);
+                                        subAreaIds[area.id] = area.id;
                                     }
                                 }
                             }

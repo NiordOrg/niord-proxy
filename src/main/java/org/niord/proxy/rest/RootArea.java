@@ -3,6 +3,9 @@ package org.niord.proxy.rest;
 import org.apache.commons.lang.StringUtils;
 import org.niord.model.message.AreaVo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Extends AreaVo with position and zoom level.
  *
@@ -16,6 +19,7 @@ public class RootArea extends AreaVo {
     Float latitude;
     Float longitude;
     Integer zoomLevel;
+    List<AreaVo> subAreas = new ArrayList<>();
 
     /** No-arg constructor **/
     public RootArea() {
@@ -40,11 +44,12 @@ public class RootArea extends AreaVo {
     }
 
     /** Sets the actual area for this root area **/
-    public RootArea setArea(AreaVo area) {
+    public RootArea setAreaData(AreaVo area, List<AreaVo> subAreas) {
         setId(area.getId());
         setMrn(area.getMrn());
         setDescs(area.getDescs());
         setActive(area.isActive());
+        this.subAreas = subAreas;
         return this;
     }
 
@@ -62,5 +67,9 @@ public class RootArea extends AreaVo {
 
     public Integer getZoomLevel() {
         return zoomLevel;
+    }
+
+    public List<AreaVo> getSubAreas() {
+        return subAreas;
     }
 }

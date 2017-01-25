@@ -152,7 +152,9 @@ angular.module('niord.proxy.app')
                     label = '<span class="' + messageClass + '">' + label + '</span>';
 
                     // If requested, show cancelled and expired status of the message
-                    if (showStatus && (msg.status == 'EXPIRED' || msg.status == 'CANCELLED')) {
+                    // Special case: Permanent NtMs may expire, but the hazard/event they pertain to is still valid,
+                    //               so, do not show the expired badge for these.
+                    if (showStatus && ((msg.status == 'EXPIRED' && msg.type != 'PERMANENT_NOTICE') || msg.status == 'CANCELLED')) {
                         label += '<span class="label-message-status">'
                             + AppService.translate('STATUS_' + msg.status)
                             + '</span>';

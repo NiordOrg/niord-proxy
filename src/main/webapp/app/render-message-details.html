@@ -45,7 +45,7 @@
             </th>
             <td class="message-description">
                 <div ng-if="part.descs && part.descs.length > 0">
-                    <div ng-if="part.descs[0].subject">
+                    <div ng-if="part.descs[0].subject && !part.hideSubject">
                         <strong>{{part.descs[0].subject}}</strong>
                         <span ng-if="part.descs[0].lang != language">
                             <img ng-src="/img/flags/{{part.descs[0].lang}}.png" style="height: 12px; opacity: 0.5;"/>

@@ -147,7 +147,7 @@
                                         </c:if>
                                     </th>
                                     <td class="message-description">
-                                        <c:if test="${not empty part.descs && not empty part.descs[0].subject}">
+                                        <c:if test="${not empty part.descs && not empty part.descs[0].subject && part.hideSubject ne true}">
                                             <div><strong>${part.descs[0].subject}</strong></div>
                                         </c:if>
                                         <c:if test="${not empty part.descs && not empty part.descs[0].details}">

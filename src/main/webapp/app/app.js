@@ -10,7 +10,7 @@ angular.module('niord.proxy.app',
     [   'ngSanitize',
         'ui.bootstrap',
         'ui.router',
-        'ui.bootstrap.datetimepicker',
+        'daterangepicker',
         'pascalprecht.translate',
         'niord.proxy.conf'
     ])

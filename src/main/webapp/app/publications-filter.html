@@ -6,33 +6,33 @@
 
             <table style="margin: 0 auto">
                 <tr>
+                    <td valign="middle" translate>ACTIVE_DATE</td>
                     <td>
+                        <span class="filter-bar-btn">
+
+                            <span  style="width: 240px" class="input-group">
+                                <input date-range-picker
+                                       class="form-control input-sm date-picker"
+                                       style="font-size: 11px"
+                                       type="text"
+                                       ng-model="params.dateInterval"
+                                       options="dateRangeOptions">
+                                <span class="input-group-addon input-sm">
+                                     <i class="glyphicon glyphicon-calendar"></i>
+                                </span>
+                            </span>
+
+                        </span>
+                    </td>
+
+                    <td style="padding-left: 20px">
                         <span class="filter-bar-btn"
-                              ng-class="{ 'filter-bar-btn-selected' : params.date == null }"
-                              ng-click="params.date = undefined" translate>
+                              ng-class="{ 'filter-bar-btn-selected' : !params.dateInterval.startDate && !params.dateInterval.endDate  }"
+                              ng-click="params.dateInterval = { startDate: null, endDate: null}" translate>
                             ACTIVE_NOW
                         </span>
                     </td>
 
-                    <td>
-                        <span class="filter-bar-btn">
-                            <div class="dropdown">
-                                <a class="dropdown-toggle" id="date" role="button" data-toggle="dropdown" data-target="#">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control input-sm calendar" style="height: 28px; cursor: pointer"
-                                               placeholder="{{ 'ACTIVE_DATE' | translate}}"
-                                               value="{{params.date | formatDate:'ll'}}" readonly="readonly">
-                                        <span class="input-group-addon calendar">
-                                            <i class="glyphicon glyphicon-calendar"></i>
-                                        </span>
-                                    </div>
-                                </a>
-                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                    <datetimepicker style="font-size: 12px" ng-model="params.date" data-datetimepicker-config="datePickerConfig"></datetimepicker>
-                                </ul>
-                            </div>
-                        </span>
-                    </td>
                 </tr>
             </table>
 

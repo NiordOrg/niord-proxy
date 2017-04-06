@@ -431,7 +431,7 @@ angular.module('niord.proxy.app')
             $scope.dateFormat = 'dd-MM-yyyy';
             $scope.params = {
                 language: AppService.getLanguage(),
-                date: undefined
+                dateInterval: { startDate: null, endDate: null}
             };
 
             $scope.datePickerConfig = {
@@ -440,16 +440,43 @@ angular.module('niord.proxy.app')
                 minView:'day'
             };
 
+            $scope.dateRangeOptions = {
+                linkedCalendars: false,
+                showWeekNumbers: true,
+                locale: {
+                    applyLabel: "Apply",
+                    fromLabel: "From",
+                    format: "ll",
+                    toLabel: "To",
+                    cancelLabel: 'Cancel',
+                    customRangeLabel: 'Custom range'
+                },
+                ranges: {}
+            };
+
+            var currentYear = moment().year();
+            for (var x = 2; x >= 0; x--) {
+                var year = '' + (currentYear - x);
+                $scope.dateRangeOptions.ranges[year] =
+                    [ moment("01-01-" + year, "MM-DD-YYYY"), moment("12-31-" + year, "MM-DD-YYYY") ];
+
+            }
+
 
             /** Refreshes the publication list from the back-end **/
             $scope.refreshPublications = function () {
 
                 // Perform the search
                 var params = 'language=' + $scope.params.language;
-                if ($scope.params.date) {
-                    var startDate = moment($scope.params.date);
-                    var endDate = moment($scope.params.date).endOf('day');
-                    params += '&from=' + startDate + '&to=' + endDate;
+                var startDate = $scope.params.dateInterval.startDate;
+                var endDate = $scope.params.dateInterval.endDate;
+                if (startDate || endDate) {
+                    if (startDate) {
+                        params += '&from=' + startDate;
+                    }
+                    if (endDate) {
+                        params += '&to=' + endDate;
+                    }
                 }
 
                 PublicationService.search(params)

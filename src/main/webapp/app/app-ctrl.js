@@ -23,8 +23,8 @@ angular.module('niord.proxy.app')
 
             // Fetch the execution mode
             $scope.mode  = AppService.getExecutionMode();
-            if ($scope.mode == 'DEVELOPMENT' || $scope.mode == 'TEST') {
-                $scope.modeText = $scope.mode == 'DEVELOPMENT' ? 'DEV' : 'TEST';
+            if ($scope.mode === 'DEVELOPMENT' || $scope.mode === 'TEST') {
+                $scope.modeText = $scope.mode === 'DEVELOPMENT' ? 'DEV' : 'TEST';
                 $timeout(function () {
                     $('.execution-mode').fadeIn(500);
                 }, 200);
@@ -76,8 +76,8 @@ angular.module('niord.proxy.app')
                 // Active messages
                 activeNow: false,
                 mainTypes: {
-                    'NW': storage.NW ? storage.NW == 'true' : true,
-                    'NM': storage.NM ? storage.NM == 'true' : true
+                    'NW': storage.NW ? storage.NW === 'true' : true,
+                    'NM': storage.NM ? storage.NM === 'true' : true
                 },
                 rootArea: undefined, // Currently selected root area
                 wkt: undefined
@@ -108,9 +108,9 @@ angular.module('niord.proxy.app')
                         $scope.areaRoots = areaRoots;
                         if ($scope.areaRoots.length > 0) {
                             var selRoot = $.grep($scope.areaRoots, function (area) {
-                                return initRootAreaId && (area.id == initRootAreaId || area.mrn == initRootAreaId);
+                                return initRootAreaId && (area.id === initRootAreaId || area.mrn === initRootAreaId);
                             });
-                            var rootArea = selRoot.length == 1 ? selRoot[0] : $scope.areaRoots[0];
+                            var rootArea = selRoot.length === 1 ? selRoot[0] : $scope.areaRoots[0];
                             $scope.updateRootArea(rootArea);
                         }
 
@@ -161,7 +161,7 @@ angular.module('niord.proxy.app')
                             }
                             if (areas.length > 0) {
                                 area = areas[Math.min(areas.length - 1, maxLevels - 1)];
-                                if (!lastAreaId || area.id != lastAreaId) {
+                                if (!lastAreaId || area.id !== lastAreaId) {
                                     lastAreaId = area.id;
                                     msg.areaHeading = area;
                                     if (area.parent) {
@@ -206,7 +206,7 @@ angular.module('niord.proxy.app')
                             selectedAreas++;
                         }
                     }
-                    if ($scope.params.rootArea && selectedAreas == 0) {
+                    if ($scope.params.rootArea && selectedAreas === 0) {
                         p += '&areaId=' + $scope.params.rootArea.id;
                     }
                     if ($scope.params.wkt) {
@@ -329,7 +329,7 @@ angular.module('niord.proxy.app')
 
             // Navigate to the previous message in the message list
             $scope.selectPrev = function() {
-                if ($scope.pushedMessageIds.length == 1 && $scope.index > 0) {
+                if ($scope.pushedMessageIds.length === 1 && $scope.index > 0) {
                     $scope.index--;
                     $scope.pushedMessageIds[0] = $scope.messages[$scope.index];
                     $scope.loadMessageDetails();
@@ -339,7 +339,7 @@ angular.module('niord.proxy.app')
 
             // Navigate to the next message in the message list
             $scope.selectNext = function() {
-                if ($scope.pushedMessageIds.length == 1 && $scope.index >= 0 && $scope.index < $scope.messages.length - 1) {
+                if ($scope.pushedMessageIds.length === 1 && $scope.index >= 0 && $scope.index < $scope.messages.length - 1) {
                     $scope.index++;
                     $scope.pushedMessageIds[0] = $scope.messages[$scope.index];
                     $scope.loadMessageDetails();
@@ -376,7 +376,7 @@ angular.module('niord.proxy.app')
             };
 
 
-            // Return the currently diisplayed message id
+            // Return the currently displayed message id
             $scope.currentMessageId = function() {
                 return $scope.pushedMessageIds[$scope.pushedMessageIds.length - 1];
             };
@@ -394,7 +394,7 @@ angular.module('niord.proxy.app')
                         $scope.showMap = true;
                         if ($scope.msg.attachments) {
                             var attachmentsAbove = $.grep($scope.msg.attachments, function (att) {
-                                return att.display == 'ABOVE';
+                                return att.display === 'ABOVE';
                             });
                             if (attachmentsAbove.length > 0) {
                                 $scope.showMap = false;
@@ -479,7 +479,7 @@ angular.module('niord.proxy.app')
                 if ($scope.publications && $scope.publications.length > 0) {
                     for (var p = 0; p < $scope.publications.length; p++) {
                         var pub = $scope.publications[p];
-                        if (pub.category && (lastCategoryId === undefined || lastCategoryId != pub.category.categoryId)) {
+                        if (pub.category && (lastCategoryId === undefined || lastCategoryId !== pub.category.categoryId)) {
                             lastCategoryId = pub.category.categoryId;
                             pub.categoryHeading = pub.category;
                         }

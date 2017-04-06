@@ -58,10 +58,10 @@ angular.module('niord.proxy.app')
                     // Extract the attachments that will displayed above and below the message data
                     if (scope.msg.attachments) {
                         scope.attachmentsAbove = $.grep(scope.msg.attachments, function (att) {
-                            return att.display == 'ABOVE';
+                            return att.display === 'ABOVE';
                         });
                         scope.attachmentsBelow = $.grep(scope.msg.attachments, function (att) {
-                            return att.display == 'BELOW';
+                            return att.display === 'BELOW';
                         });
                     }
                 };
@@ -151,7 +151,7 @@ angular.module('niord.proxy.app')
                 link: function(scope, element) {
 
                     function endsWithDot(str) {
-                        return str && str.length > 0 && str.charAt(str.length-1) == '.';
+                        return str && str.length > 0 && str.charAt(str.length-1) === '.';
                     }
 
                     var result = '';
@@ -165,7 +165,7 @@ angular.module('niord.proxy.app')
                     if (scope.ref.descs && scope.ref.descs.length > 0 && scope.ref.descs[0].description) {
                         result += ' - ' + scope.ref.descs[0].description;
                     }
-                    if ((result.length == 0 && !endsWithDot(scope.ref.messageId)) ||
+                    if ((result.length === 0 && !endsWithDot(scope.ref.messageId)) ||
                         (result.length > 0 && !endsWithDot(result))) {
                         result += '.';
                     }
@@ -244,7 +244,7 @@ angular.module('niord.proxy.app')
                             }
                             if (scope.msg.publishDateFrom) {
                                 if (scope.source.length > 0) {
-                                    if (scope.source.charAt(scope.source.length-1) != '.') {
+                                    if (scope.source.charAt(scope.source.length-1) !== '.') {
                                         scope.source += ".";
                                     }
                                     scope.source += " ";
@@ -415,7 +415,7 @@ angular.module('niord.proxy.app')
 
                     // Add OSM layer
                     var osmSource = new ol.source.OSM();
-                    if (scope.osm == 'ArcGIS') {
+                    if (scope.osm === 'ArcGIS') {
                         osmSource.setUrl('//services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}');
                     }
                     layers.push(new ol.layer.Tile({
@@ -677,7 +677,7 @@ angular.module('niord.proxy.app')
                             var messages = [];
                             map.forEachFeatureAtPixel(pixel, function(feature, layer) {
                                 var msg = feature.get('message');
-                                if ((layer  == nwLayer || layer  == nmLayer) && msg && messageIds[msg.id] === undefined) {
+                                if ((layer  === nwLayer || layer  === nmLayer) && msg && messageIds[msg.id] === undefined) {
                                     messages.push(msg);
                                     messageIds[msg.id] = msg.id;
                                 }
@@ -735,7 +735,7 @@ angular.module('niord.proxy.app')
                             if (messages.length > 0) {
                                 var oldTitle = info.attr('data-original-title');
                                 var newTitle = scope.renderTooltipContent(messages);
-                                if (oldTitle != newTitle) {
+                                if (oldTitle !== newTitle) {
                                     info.tooltip('hide')
                                         .attr('data-original-title', newTitle)
                                         .tooltip('fixTitle');
@@ -756,7 +756,7 @@ angular.module('niord.proxy.app')
                     /** Returns if the feature center point should be displayed **/
                     function showFeatureCenter(features) {
                         // Don't show center point for details maps
-                        if (!features || features.length == 0 || scope.detailsMap) {
+                        if (!features || features.length === 0 || scope.detailsMap) {
                             return false;
                         }
 
@@ -768,7 +768,7 @@ angular.module('niord.proxy.app')
                         // Check if the list of features contain any non-point geometries
                         for (var x = 0; x < features.length; x++) {
                             var g = features[x].getGeometry();
-                            if (g && g.getType() != 'Point' && g.getType() != 'MultiPoint') {
+                            if (g && g.getType() !== 'Point' && g.getType() !== 'MultiPoint') {
                                 return true;
                             }
                         }
@@ -779,7 +779,7 @@ angular.module('niord.proxy.app')
                     /** Adds the OpenLayes feature to the NW or NM layer **/
                     function addMessageFeature(message, feature) {
                         feature.set('message', message);
-                        if (message.mainType == 'NW') {
+                        if (message.mainType === 'NW') {
                             nwLayer.getSource().addFeature(feature);
                         } else {
                             nmLayer.getSource().addFeature(feature);
@@ -931,7 +931,7 @@ angular.module('niord.proxy.app')
                     var saveZoomLevel = map.getView().getZoom();
                     function checkZoomLevel() {
                         var zoomLevel = map.getView().getZoom();
-                        if ((zoomLevel > scope.centerPointZoomLevel) != saveZoomLevel > scope.centerPointZoomLevel) {
+                        if ((zoomLevel > scope.centerPointZoomLevel) !== saveZoomLevel > scope.centerPointZoomLevel) {
                             saveZoomLevel = zoomLevel;
                             updateMessageLayers();
                             scope.$$phase || scope.$apply();

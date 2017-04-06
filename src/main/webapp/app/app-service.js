@@ -57,7 +57,7 @@ angular.module('niord.proxy.app')
                  * @param lang the language
                  */
                 setLanguage: function (lang) {
-                    if (lang != $rootScope.language) {
+                    if (lang !== $rootScope.language) {
                         $translate.use(lang);
                         $rootScope.language = lang;
                         $window.localStorage['language'] = lang;
@@ -84,11 +84,11 @@ angular.module('niord.proxy.app')
         function($rootScope, $http, $uibModal, AppService) {
             'use strict';
 
-            /** Returs the list of message ids **/
+            /** Returns the list of message ids **/
             function extractMessageIds(messages) {
                 var ids = [];
                 if (messages) {
-                    for (var i in messages) {
+                    for (var i = 0; i < messages.length; i++) {
                         ids.push(messages[i].id);
                     }
                 }
@@ -124,7 +124,7 @@ angular.module('niord.proxy.app')
                     lang = lang || $rootScope.language;
                     if (o && o.descs && o.descs.length > 0) {
                         for (var x = 0; x < o.descs.length; x++) {
-                            if (o.descs[x].lang == lang) {
+                            if (o.descs[x].lang === lang) {
                                 return o.descs[x];
                             }
                         }
@@ -142,7 +142,7 @@ angular.module('niord.proxy.app')
                     }
 
                     var label = msg.shortId ? msg.shortId : undefined;
-                    var messageClass = msg.mainType == 'NW' ? 'label-message-nw' : 'label-message-nm';
+                    var messageClass = msg.mainType === 'NW' ? 'label-message-nw' : 'label-message-nm';
 
                     // If no shortId is defined, show the message type instead
                     if (!label) {
@@ -154,7 +154,7 @@ angular.module('niord.proxy.app')
                     // If requested, show cancelled and expired status of the message
                     // Special case: Permanent NtMs may expire, but the hazard/event they pertain to is still valid,
                     //               so, do not show the expired badge for these.
-                    if (showStatus && ((msg.status == 'EXPIRED' && msg.type != 'PERMANENT_NOTICE') || msg.status == 'CANCELLED')) {
+                    if (showStatus && ((msg.status === 'EXPIRED' && msg.type !== 'PERMANENT_NOTICE') || msg.status === 'CANCELLED')) {
                         label += '<span class="label-message-status">'
                             + AppService.translate('STATUS_' + msg.status)
                             + '</span>';
@@ -162,8 +162,8 @@ angular.module('niord.proxy.app')
 
                     // For NM T&P add a suffix
                     var suffix = '';
-                    if (msg.type == 'TEMPORARY_NOTICE' || msg.type == 'PRELIMINARY_NOTICE') {
-                        suffix = msg.type == 'TEMPORARY_NOTICE' ? '&nbsp; (T)' : '&nbsp; (P)';
+                    if (msg.type === 'TEMPORARY_NOTICE' || msg.type === 'PRELIMINARY_NOTICE') {
+                        suffix = msg.type === 'TEMPORARY_NOTICE' ? '&nbsp; (T)' : '&nbsp; (P)';
                     }
 
                     return label + suffix;
@@ -489,8 +489,8 @@ angular.module('niord.proxy.app')
                 if (g instanceof Array) {
                     if (g.length >= 2 && $.isNumeric(g[0])) {
                         var bufferFeature = props['parentFeatureIds'];
-                        var affectedArea = props['restriction'] == 'affected';
-                        var includeCoord = (polygonType != 'Exterior');
+                        var affectedArea = props['restriction'] === 'affected';
+                        var includeCoord = (polygonType !== 'Exterior');
                         if (includeCoord && !bufferFeature && !affectedArea) {
                             coords.push({
                                 lon: g[0],
@@ -501,32 +501,32 @@ angular.module('niord.proxy.app')
                         }
                         index++;
                     } else {
-                        for (var x = 0; x < g.length; x++) {
-                            polygonType = (polygonType == 'Interior' && x == g.length - 1) ? 'Exterior' : polygonType;
-                            index = that.serializeReadableCoordinates(g[x], coords, props, index, polygonType);
+                        for (var x1 = 0; x1 < g.length; x1++) {
+                            polygonType = (polygonType === 'Interior' && x1 === g.length - 1) ? 'Exterior' : polygonType;
+                            index = that.serializeReadableCoordinates(g[x1], coords, props, index, polygonType);
                         }
                     }
-                } else if (g.type == 'FeatureCollection') {
-                    for (var x = 0; g.features && x < g.features.length; x++) {
-                        index = that.serializeReadableCoordinates(g.features[x], coords);
+                } else if (g.type === 'FeatureCollection') {
+                    for (var x2 = 0; g.features && x2 < g.features.length; x2++) {
+                        index = that.serializeReadableCoordinates(g.features[x2], coords);
                     }
-                } else if (g.type == 'Feature') {
+                } else if (g.type === 'Feature') {
                     index = that.serializeReadableCoordinates(g.geometry, coords, g.properties, 0);
-                } else if (g.type == 'GeometryCollection') {
-                    for (var x = 0; g.geometries && x < g.geometries.length; x++) {
-                        index = that.serializeReadableCoordinates(g.geometries[x], coords, props, index);
+                } else if (g.type === 'GeometryCollection') {
+                    for (var x3 = 0; g.geometries && x3 < g.geometries.length; x3++) {
+                        index = that.serializeReadableCoordinates(g.geometries[x3], coords, props, index);
                     }
-                } else if (g.type == 'MultiPolygon') {
+                } else if (g.type === 'MultiPolygon') {
                     for (var p = 0; p < g.coordinates.length; p++) {
                         // For polygons, do not include coordinates for interior rings
-                        for (var x = 0; x < g.coordinates[p].length; x++) {
-                            index = that.serializeReadableCoordinates(g.coordinates[p][x], coords, props, index, x == 0 ? 'Interior' : 'Exterior');
+                        for (var x4 = 0; x4 < g.coordinates[p].length; x4++) {
+                            index = that.serializeReadableCoordinates(g.coordinates[p][x4], coords, props, index, x4 === 0 ? 'Interior' : 'Exterior');
                         }
                     }
-                } else if (g.type == 'Polygon') {
+                } else if (g.type === 'Polygon') {
                     // For polygons, do not include coordinates for interior rings
-                    for (var x = 0; x < g.coordinates.length; x++) {
-                        index = that.serializeReadableCoordinates(g.coordinates[x], coords, props, index, x == 0 ? 'Interior' : 'Exterior');
+                    for (var x5 = 0; x5 < g.coordinates.length; x5++) {
+                        index = that.serializeReadableCoordinates(g.coordinates[x5], coords, props, index, x5 === 0 ? 'Interior' : 'Exterior');
                     }
                 } else if (g.type) {
                     index = that.serializeReadableCoordinates(g.coordinates, coords, props, index);

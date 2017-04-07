@@ -904,8 +904,9 @@ angular.module('niord.proxy.app')
                             ol.extent.extend(extent, nwLayer.getSource().getExtent());
                             ol.extent.extend(extent, nmLayer.getSource().getExtent());
                             if (!ol.extent.isEmpty(extent)) {
-                                map.getView().fit(extent, map.getSize(), {
+                                map.getView().fit(extent, {
                                     padding: [5, 5, 5, 5],
+                                    size: map.getSize(),
                                     maxZoom: maxZoom
                                 });
                             } else if (scope.rootArea && scope.rootArea.latitude

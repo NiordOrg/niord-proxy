@@ -454,6 +454,7 @@ angular.module('niord.proxy.app')
                 ranges: {}
             };
 
+            // Add the last 3 years as easy-selection intervals
             var currentYear = moment().year();
             for (var x = 2; x >= 0; x--) {
                 var year = '' + (currentYear - x);
@@ -461,6 +462,18 @@ angular.module('niord.proxy.app')
                     [ moment("01-01-" + year, "MM-DD-YYYY"), moment("12-31-" + year, "MM-DD-YYYY") ];
 
             }
+
+
+            /** Updates the date range selector UI for the currently selected language **/
+            $scope.updateDateSelectorLanguage = function () {
+                var locale = $scope.dateRangeOptions.locale;
+                locale.applyLabel = AppService.translate('TERM_APPLY');
+                locale.cancelLabel = AppService.translate('TERM_CANCEL');
+                locale.fromLabel = AppService.translate('DATE_FROM');
+                locale.toLabel = AppService.translate('DATE_TO');
+                locale.customRangeLabel = AppService.translate('CUSTOM_DATE_RANGE');
+            };
+            $scope.updateDateSelectorLanguage();
 
 
             /** Refreshes the publication list from the back-end **/
@@ -493,6 +506,7 @@ angular.module('niord.proxy.app')
             // Every time the language change, update the params
             $scope.$watch(AppService.getLanguage, function (lang) {
                 $scope.params.language = lang;
+                $scope.updateDateSelectorLanguage();
             }, true);
 
 

@@ -8,6 +8,8 @@ angular.module('niord.proxy.app')
 
         $translateProvider.translations('en', {
 
+            'TERM_APPLY' : 'Apply',
+            'TERM_CANCEL' : 'Cancel',
             'MENU_DETAILS' : 'Details',
             'MENU_MAP' : 'Map',
             'MENU_TABLE' : 'List',
@@ -53,6 +55,9 @@ angular.module('niord.proxy.app')
             'LAYER_LABELS': 'Labels',
             'ACTIVE_NOW' : 'Show Active Now',
             'ACTIVE_DATE' : 'Select Date Interval',
+            'DATE_FROM' : 'From',
+            'DATE_TO' : 'To',
+            'CUSTOM_DATE_RANGE' : 'Date Interval',
             'SHOW_ATTACHMENTS' : 'Show attachments',
             'HIDE_ATTACHMENTS' : 'Hide attachments',
             'MSG_NOT_FOUND' : 'Message {{messageId}} is not available',
@@ -70,6 +75,8 @@ angular.module('niord.proxy.app')
 
         $translateProvider.translations('da', {
 
+            'TERM_APPLY' : 'Vælg',
+            'TERM_CANCEL' : 'Annullér',
             'MENU_DETAILS' : 'Detaljer',
             'MENU_MAP' : 'Kort',
             'MENU_TABLE' : 'Liste',
@@ -115,6 +122,9 @@ angular.module('niord.proxy.app')
             'LAYER_LABELS': 'Labels',
             'ACTIVE_NOW' : 'Vis aktive nu',
             'ACTIVE_DATE' : 'Vælg dato-interval',
+            'DATE_FROM' : 'Fra',
+            'DATE_TO' : 'Til',
+            'CUSTOM_DATE_RANGE' : 'Dato-interval',
             'SHOW_ATTACHMENTS' : 'Vis vedhæftninger',
             'HIDE_ATTACHMENTS' : 'Skjul vedhæftninger',
             'MSG_NOT_FOUND' : 'Meddelelse {{messageId}} er ikke tilg&aelig;ngelig',

@@ -2,11 +2,47 @@
 <div ng-controller="PublicationCtrl">
 
     <div ng-include="'/app/main-menu.html'"></div>
-    <div ng-include="'/app/publications-filter.html'"></div>
 
     <div class="publication-list">
 
-        <div class="publication-intro" ng-bind-html="'PUBLICATION_INTRO' | translate"></div>
+        <div class="publication-date-filter">
+
+            <div style="margin-bottom: 20px" ng-bind-html="'PUBLICATION_INTRO' | translate"></div>
+
+            <table style="margin: 0 auto">
+                <tr>
+                    <td>
+                        <span class="filter-bar-btn">
+
+                            <span  style="width: 240px" class="input-group">
+                                <input date-range-picker
+                                       class="form-control input-sm date-picker"
+                                       style="font-size: 11px"
+                                       type="text"
+                                       ng-model="params.dateInterval"
+                                       options="dateRangeOptions">
+                                <span class="input-group-addon input-sm">
+                                     <i class="glyphicon glyphicon-calendar"></i>
+                                </span>
+                            </span>
+
+                        </span>
+                    </td>
+
+                    <td style="padding-left: 20px; padding-bottom: 5px">
+                        <span class="filter-bar-btn"
+                              ng-class="{ 'filter-bar-btn-selected' : !params.dateInterval.startDate && !params.dateInterval.endDate,
+                                           'filter-bar-btn-outline' : params.dateInterval.startDate || params.dateInterval.endDate }"
+                              ng-click="params.dateInterval = { startDate: null, endDate: null}" translate>
+                            ACTIVE_NOW
+                        </span>
+                    </td>
+
+                </tr>
+            </table>
+
+
+        </div>
 
         <table style="width: 100%">
             <tr ng-repeat-start="pub in publications"  ng-if="pub.categoryHeading">

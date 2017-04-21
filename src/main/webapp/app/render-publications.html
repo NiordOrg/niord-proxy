@@ -1,0 +1,32 @@
+
+
+<table style="width: 100%">
+    <tr ng-repeat-start="pub in publications"  ng-if="pub.categoryHeading">
+        <td colspan="4" style="border: none">
+            <h4 class="publication-category-heading">{{pub.categoryHeading.descs[0].name}}</h4>
+        </td>
+    </tr>
+    <tr ng-repeat-end class="publication-table-item">
+        <td valign="middle" align="left" width="*" nowrap>
+            <span class="glyphicon glyphicon-book"></span>
+            {{pub.descs[0].title}}
+        </td>
+        <td valign="middle" width="100">
+            <span ng-if="pub.descs[0].link">
+                <a ng-href="{{pub.descs[0].link}}" ng-click="downloadPublication(pub)" target="_blank">
+                    <span class="glyphicon glyphicon-download-alt"></span>
+                    <span translate>OPEN_PUBLICATION</span>
+                </a>
+            </span>
+        </td>
+        <td valign="middle" width="100">
+            <span ng-if="pub.type == 'MESSAGE_REPORT'">
+                <a ui-sref="messages.details({ publicationId: pub.publicationId })"
+                   ng-click="browsePublication(pub)">
+                    <span class="glyphicon glyphicon-th-list"></span>
+                    <span translate>BROWSE_PUBLICATION</span>
+                </a>
+            </span>
+        </td>
+    </tr>
+</table>

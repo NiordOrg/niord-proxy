@@ -427,7 +427,8 @@ angular.module('niord.proxy.app')
                   AppService, PublicationService, AnalyticsService) {
             'use strict';
 
-            $scope.publications = [];
+            $scope.activePublications = [];
+            $scope.historicalPublications = [];
             $scope.dateFormat = 'dd-MM-yyyy';
             $scope.params = {
                 language: AppService.getLanguage(),
@@ -448,19 +449,22 @@ angular.module('niord.proxy.app')
                     fromLabel: "From",
                     format: "ll",
                     toLabel: "To",
-                    cancelLabel: 'Cancel',
-                    customRangeLabel: 'Custom range'
-                },
-                ranges: {}
+                    cancelLabel: 'Cancel'
+                }
             };
 
-            // Add the last 3 years as easy-selection intervals
-            var currentYear = moment().year();
-            for (var x = 2; x >= 0; x--) {
-                var year = '' + (currentYear - x);
-                $scope.dateRangeOptions.ranges[year] =
-                    [ moment("01-01-" + year, "MM-DD-YYYY"), moment("12-31-" + year, "MM-DD-YYYY") ];
 
+            // Compute a set of fixed data ranges
+            $scope.ranges = [];
+            var currentYear = moment().year();
+            for (var x = 0; x < 3; x++) {
+                var year = '' + (currentYear - x);
+                $scope.ranges.push({
+                    name: year,
+                    dateInterval: {
+                        startDate: moment("01-01-" + year, "MM-DD-YYYY"),
+                        endDate: moment("12-31-" + year, "MM-DD-YYYY") }
+                });
             }
 
 
@@ -471,13 +475,25 @@ angular.module('niord.proxy.app')
                 locale.cancelLabel = AppService.translate('TERM_CANCEL');
                 locale.fromLabel = AppService.translate('DATE_FROM');
                 locale.toLabel = AppService.translate('DATE_TO');
-                locale.customRangeLabel = AppService.translate('CUSTOM_DATE_RANGE');
             };
             $scope.updateDateSelectorLanguage();
 
 
-            /** Refreshes the publication list from the back-end **/
-            $scope.refreshPublications = function () {
+            /** Refreshes the active publication list from the back-end **/
+            $scope.refreshActivePublications = function () {
+
+                // Perform the search
+                var params = 'language=' + $scope.params.language;
+                PublicationService.search(params)
+                    .success(function (publications) {
+                        $scope.activePublications = publications;
+                        $scope.checkGroupByCategory($scope.activePublications);
+                    });
+            };
+
+
+            /** Refreshes the historical publication list from the back-end **/
+            $scope.refreshHistoricalPublications = function () {
 
                 // Perform the search
                 var params = 'language=' + $scope.params.language;
@@ -490,22 +506,24 @@ angular.module('niord.proxy.app')
                     if (endDate) {
                         params += '&to=' + endDate;
                     }
+                    PublicationService.search(params)
+                        .success(function (publications) {
+                            $scope.historicalPublications = publications;
+                            $scope.checkGroupByCategory($scope.historicalPublications);
+                        });
+                } else {
+                    $scope.historicalPublications.length = 0;
                 }
-
-                PublicationService.search(params)
-                    .success(function (publications) {
-                        $scope.publications = publications;
-                        $scope.checkGroupByCategory();
-                    });
             };
 
 
             // Every time the parameters change, refresh the publication list
-            $scope.$watch("params", $scope.refreshPublications, true);
+            $scope.$watch("params", $scope.refreshHistoricalPublications, true);
 
             // Every time the language change, update the params
             $scope.$watch(AppService.getLanguage, function (lang) {
                 $scope.params.language = lang;
+                $scope.refreshActivePublications();
                 $scope.updateDateSelectorLanguage();
             }, true);
 
@@ -514,12 +532,12 @@ angular.module('niord.proxy.app')
              * Scans through the search result and marks all publications that should
              * display a category head line
              **/
-            $scope.checkGroupByCategory = function () {
+            $scope.checkGroupByCategory = function (publications) {
 
                 var lastCategoryId = undefined;
-                if ($scope.publications && $scope.publications.length > 0) {
-                    for (var p = 0; p < $scope.publications.length; p++) {
-                        var pub = $scope.publications[p];
+                if (publications && publications.length > 0) {
+                    for (var p = 0; p < publications.length; p++) {
+                        var pub = publications[p];
                         if (pub.category && (lastCategoryId === undefined || lastCategoryId !== pub.category.categoryId)) {
                             lastCategoryId = pub.category.categoryId;
                             pub.categoryHeading = pub.category;
@@ -527,19 +545,6 @@ angular.module('niord.proxy.app')
                     }
                 }
             };
-
-
-            /** Called when a publication download link is clicked **/
-            $scope.downloadPublication = function (pub) {
-                // Log the event to Google Analytics
-                AnalyticsService.logEvent('Publication', 'download-publication', pub.descs[0].title);
-            };
-
-            /** Called when a publication browse link is clicked **/
-            $scope.browsePublication = function (pub) {
-                // Log the event to Google Analytics
-                AnalyticsService.logEvent('Publication', 'browse-publication', pub.descs[0].title);
-            }
         }])
 
 

@@ -5,75 +5,60 @@
 
     <div class="publication-list">
 
-        <div class="publication-date-filter">
+        <uib-tabset class="framed-tabs">
 
-            <div style="margin-bottom: 20px" ng-bind-html="'PUBLICATION_INTRO' | translate"></div>
+            <!-- ****************************** -->
+            <!-- ***** Active Publications **** -->
+            <!-- ****************************** -->
+            <uib-tab>
+                <tab-heading>
+                    <span translate>ACTIVE_PUBLICATIONS</span>
+                </tab-heading>
 
-            <table style="margin: 0 auto">
-                <tr>
-                    <td>
-                        <span class="filter-bar-btn">
+                <publication-list publications="activePublications"></publication-list>
 
-                            <span  style="width: 240px" class="input-group">
-                                <input date-range-picker
-                                       class="form-control input-sm date-picker"
-                                       style="font-size: 11px"
-                                       type="text"
-                                       ng-model="params.dateInterval"
-                                       options="dateRangeOptions">
-                                <span class="input-group-addon input-sm">
-                                     <i class="glyphicon glyphicon-calendar"></i>
-                                </span>
+            </uib-tab>
+
+            <!-- ****************************** -->
+            <!-- ** Historical Publications *** -->
+            <!-- ****************************** -->
+            <uib-tab>
+                <tab-heading>
+                    <span translate>HISTORICAL_PUBLICATIONS</span>
+                </tab-heading>
+
+                <div class="publication-date-filter form-inline">
+
+                    <span translate>CUSTOM_DATE_RANGE</span> &nbsp;
+
+
+                    <span  style="margin-right: 20px">
+                        <span  style="width: 240px; margin:0 auto" class="input-group">
+                            <input date-range-picker
+                                   class="form-control input-sm date-picker"
+                                   style="font-size: 11px"
+                                   type="text"
+                                   ng-model="params.dateInterval"
+                                   options="dateRangeOptions">
+                            <span class="input-group-addon input-sm">
+                                 <i class="glyphicon glyphicon-calendar"></i>
                             </span>
-
                         </span>
-                    </td>
-
-                    <td style="padding-left: 20px; padding-bottom: 5px">
-                        <span class="filter-bar-btn"
-                              ng-class="{ 'filter-bar-btn-selected' : !params.dateInterval.startDate && !params.dateInterval.endDate,
-                                           'filter-bar-btn-outline' : params.dateInterval.startDate || params.dateInterval.endDate }"
-                              ng-click="params.dateInterval = { startDate: null, endDate: null}" translate>
-                            ACTIVE_NOW
-                        </span>
-                    </td>
-
-                </tr>
-            </table>
-
-
-        </div>
-
-        <table style="width: 100%">
-            <tr ng-repeat-start="pub in publications"  ng-if="pub.categoryHeading">
-                <td colspan="4" style="border: none">
-                    <h4 class="publication-category-heading">{{pub.categoryHeading.descs[0].name}}</h4>
-                </td>
-            </tr>
-            <tr ng-repeat-end class="publication-table-item">
-                <td valign="middle" align="left" width="*" nowrap>
-                    <span class="glyphicon glyphicon-book"></span>
-                    {{pub.descs[0].title}}
-                </td>
-                <td valign="middle" width="100">
-                    <span ng-if="pub.descs[0].link">
-                        <a ng-href="{{pub.descs[0].link}}" ng-click="downloadPublication(pub)" target="_blank">
-                            <span class="glyphicon glyphicon-download-alt"></span>
-                            <span translate>OPEN_PUBLICATION</span>
-                        </a>
                     </span>
-                </td>
-                <td valign="middle" width="100">
-                    <span ng-if="pub.type == 'MESSAGE_REPORT'">
-                        <a ui-sref="messages.details({ publicationId: pub.publicationId })"
-                            ng-click="browsePublication(pub)">
-                            <span class="glyphicon glyphicon-th-list"></span>
-                            <span translate>BROWSE_PUBLICATION</span>
-                        </a>
+
+                    <span ng-repeat="range in ranges"
+                          class="filter-bar-btn publication-date-btn"
+                          ng-click="params.dateInterval = range.dateInterval">
+                        {{range.name}}
                     </span>
-                </td>
-            </tr>
-        </table>
+
+                </div>
+
+                <publication-list publications="historicalPublications"></publication-list>
+
+            </uib-tab>
+
+        </uib-tabset>
 
     </div>
 

@@ -118,6 +118,21 @@ footer {
 }
 
 
+.framed-tabs .tab-content {
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    background-color: white;
+    padding: 20px;
+}
+
+
+.framed-tabs li a {
+    padding: 10px 20px;
+    font-size: 12px;
+}
+
+
 .message-details-dialog-error {
     width: 100%;
     text-align: center;
@@ -458,12 +473,6 @@ footer {
     color: inherit;
 }
 
-.filter-bar-btn-outline {
-    cursor: pointer;
-    border-radius: 4px;
-    border: 1px solid lightgray;
-}
-
 .filter-bar-btn-selected {
     color: white;
     background-color: #636;
@@ -522,12 +531,9 @@ footer {
 }
 
 .publication-table-item td {
-    border-bottom: 1px solid #eee;
-}
-
-.publication-table-item td {
+    border-bottom: 1px solid white;
     padding: 10px 10px;
-    background-color: white;
+    background-color: #eee;
 }
 
 
@@ -539,13 +545,21 @@ footer {
 
 .publication-date-filter {
     font-size: 12px;
-    color: gray;
+    padding: 20px;
     text-align: center;
-    margin: 80px auto 0 auto;
-    max-width: 820px;
-    padding: 0 10px;
-    width: 100%;
-    vertical-align: middle;
+    border: 1px solid #eee;
+    border-radius: 5px;
+}
+
+.publication-date-btn {
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1px solid lightgray;
+}
+
+.publication-date-btn:active {
+    color: white;
+    background-color: #636;
 }
 
 .daterangepicker {

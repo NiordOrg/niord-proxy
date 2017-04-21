@@ -65,8 +65,8 @@ angular.module('niord.proxy.app')
             'OPEN_PUBLICATION' : 'Download',
             'BROWSE_PUBLICATION' : 'Browse',
             'REMOVE_PUBLICATION': 'Remove publication',
-            'PUBLICATION_INTRO': 'The page lists active publications and annexes.<br>'
-                                + 'Select a specific date interval below to access earlier publications and annexes.',
+            'ACTIVE_PUBLICATIONS': 'Active NtM and Publications',
+            'HISTORICAL_PUBLICATIONS': 'Historical NtM and Publications',
             'TEASER_TEXT': 'Click the map for<br>Notices to Mariners<br>and Navigational Warnings',
             'FOOTER_COPYRIGHT' : '&copy; 2017 Danish Maritime Authority',
             'FOOTER_DISCLAIMER' : 'Disclaimer',
@@ -132,8 +132,8 @@ angular.module('niord.proxy.app')
             'OPEN_PUBLICATION' : 'Download',
             'BROWSE_PUBLICATION' : 'Gennemse',
             'REMOVE_PUBLICATION': 'Fjern publikation',
-            'PUBLICATION_INTRO': 'Siden viser listen af aktive publikationer og bilag.<br>'
-                                    + 'Vælg et specifikt dato-interval nedenfor for at se tidligere publikationer og bilag.',
+            'ACTIVE_PUBLICATIONS': 'Aktive EfS og publikationer',
+            'HISTORICAL_PUBLICATIONS': 'Historiske EfS og publikationer',
             'TEASER_TEXT': 'Klik på kortet for aktuelle<br>Efterretninger for Søfarende<br>samt Navigationsadvarsler',
             'FOOTER_COPYRIGHT' : '&copy; 2017 Søfartsstyrelsen',
             'FOOTER_DISCLAIMER' : 'Disclaimer',

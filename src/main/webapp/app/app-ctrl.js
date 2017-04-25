@@ -457,7 +457,7 @@ angular.module('niord.proxy.app')
             // Compute a set of fixed data ranges
             $scope.ranges = [];
             var currentYear = moment().year();
-            for (var x = 0; x < 3; x++) {
+            for (var x = 0; x < 5; x++) {
                 var year = '' + (currentYear - x);
                 $scope.ranges.push({
                     name: year,

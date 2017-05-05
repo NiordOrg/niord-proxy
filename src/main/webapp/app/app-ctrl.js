@@ -135,6 +135,10 @@ angular.module('niord.proxy.app')
                 $scope.init();
             };
 
+            // If specified in the URL, show the given message details
+            if ($stateParams.messageId) {
+                $timeout(function() { MessageService.detailsDialog($stateParams.messageId) });
+            }
 
             /**
              * Called to initialize the controller whenever the viewmode changes.

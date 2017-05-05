@@ -67,6 +67,11 @@ angular.module('niord.proxy.app')
             var requestParams = $location.search();
             var initRootAreaId = requestParams.area || storage.rootAreaId;
 
+            // teaser is a variable used to get around the aggressive caching of Chrome for the teaser page
+            $scope.$watch('teaser', function () {
+               $scope.init();
+            });
+
             $scope.params = {
                 language: AppService.getLanguage(),
 
@@ -192,11 +197,16 @@ angular.module('niord.proxy.app')
                     if ($scope.params.activeNow) {
                         p += '&active=true';
                     }
-                    if ($scope.params.mainTypes.NW) {
-                        p += '&mainType=NW';
-                    }
-                    if ($scope.params.mainTypes.NM) {
-                        p += '&mainType=NM';
+                    if ($scope.teaser) {
+                        // Always show both NW and NM on teaser page
+                        p += '&mainType=NW&mainType=NM';
+                    } else {
+                        if ($scope.params.mainTypes.NW) {
+                            p += '&mainType=NW';
+                        }
+                        if ($scope.params.mainTypes.NM) {
+                            p += '&mainType=NM';
+                        }
                     }
                     var areas =  subAreaFilter && $scope.subAreas ? $scope.subAreas : [];
                     var selectedAreas = 0;

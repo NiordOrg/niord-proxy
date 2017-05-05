@@ -27,7 +27,7 @@
 </head>
 <body class="teaser-body" ng-controller="AppCtrl">
 
-<div ng-controller="MessageCtrl">
+<div ng-controller="MessageCtrl" ng-init="teaser = true">
     <a href="/index.html#/messages/map" target="_blank">
         <message-map class="teaser-map" messages="messages" show-no-pos-messages="false" fit-extent="true" max-zoom="10" ng-init="init()"
                      read-only="true" osm="ArcGIS">

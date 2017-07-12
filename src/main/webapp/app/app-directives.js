@@ -418,6 +418,13 @@ angular.module('niord.proxy.app')
                     if (scope.osm === 'ArcGIS') {
                         osmSource.setUrl('//services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}');
                     }
+                    osmSource.setAttributions([
+                        new ol.Attribution({
+                            html: AppService.translate('MAP_COPYRIGHT')}),
+                        new ol.Attribution({
+                            html: '&copy; ' +
+                            '<a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors.'})
+                    ]);
                     layers.push(new ol.layer.Tile({
                         source: osmSource
                     }));

@@ -292,7 +292,7 @@ footer {
 }
 
 .ol-attribution {
-    visibility: hidden;
+    visibility: visible;
 }
 
 /** Map layer-switcher classes **/

@@ -6,8 +6,16 @@ import org.niord.proxy.rest.RootArea;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -66,6 +74,9 @@ public class Settings {
         server = System.getProperty("niord-proxy.server", "https://niord.e-navigation.net");
         log.info("server: " + server);
 
+        // Accept incomplete SSL certificate chains from the server
+        checkInitHttpsConnections(server);
+
         String[] areaIds = System.getProperty("niord-proxy.areas", "urn:mrn:iho:country:dk").split(",");
         rootAreas = Arrays.stream(areaIds).map(RootArea::new).toArray(RootArea[]::new);
         log.info("AreaIds: " + Arrays.asList(areaIds));
@@ -101,6 +112,46 @@ public class Settings {
 
         wmsServerUrl = System.getProperty("niord-proxy.wmsServerUrl", "");
         log.info("wmsServerUrl: " + wmsServerUrl);
+    }
+
+
+    /**
+     * For e.g. "*.e-navigation.net", with no intermediate certificates specified, you will get an
+     * "unable to find valid certification path to requested target.
+     * Code around this.
+     * See https://stackoverflow.com/questions/6047996/ignore-self-signed-ssl-cert-using-jersey-client
+     */
+    private void checkInitHttpsConnections(String server) {
+        if (!StringUtils.startsWithIgnoreCase(server, "https")) {
+            return;
+        }
+
+        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] arg0, String arg1)
+                    throws CertificateException {
+            }
+
+            @Override
+            public void checkClientTrusted(X509Certificate[] arg0, String arg1)
+                    throws CertificateException {
+            }
+        }};
+
+        // Install the all-trusting trust manager
+        try {
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAllCerts, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Cannot init SSLContext: " + e.getMessage(), e);
+        }
     }
 
 

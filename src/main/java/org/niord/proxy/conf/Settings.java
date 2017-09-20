@@ -100,7 +100,7 @@ public class Settings {
         analyticsTrackingId = System.getProperty("niord-proxy.analyticsTrackingId", "");
         log.info("analyticsTrackingId: " + analyticsTrackingId);
 
-        languages = System.getProperty("niord-proxy.c", "da,en").split(",");
+        languages = System.getProperty("niord-proxy.languages", "da,en").split(",");
         log.info("languages: " + Arrays.asList(languages));
 
         try {

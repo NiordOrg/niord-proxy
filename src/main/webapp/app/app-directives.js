@@ -697,9 +697,10 @@ angular.module('niord.proxy.app')
                         map.on('click', function(evt) {
                             var messages = scope.getMessagesForPixel(map.getEventPixel(evt.originalEvent));
                             if (messages.length >= 1) {
-                                $timeout(function() { info.tooltip('hide'); });
-                                MessageService.detailsDialog(messages[0].id, messages);
-                                scope.$$phase || scope.$apply();
+                                $timeout(function() {
+                                    info.tooltip('hide');
+                                    MessageService.detailsDialog(messages[0].id, messages);
+                                });
                             }
                         });
 

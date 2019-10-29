@@ -10,6 +10,13 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- script: 'wget http://apache.mirror.gtcomm.net/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.zip'
+
+- task: ExtractFiles@1
+  inputs:
+      archiveFilePatterns: 'apache-maven-3.5.4-bin.zip'
+      destinationFolder: '$(build.sourcesdirectory)/maven'
+
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
@@ -17,7 +24,9 @@ steps:
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: '1.8'
     jdkArchitectureOption: 'x64'
-    mavenVersionOption: '3.5.4'
+    mavenVersionOption: 'Path'
+    mavenDirectory: '$(build.sourcesdirectory)/maven/apache-maven-3.5.4'
+    mavenSetM2Home: true
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     goals: 'package'

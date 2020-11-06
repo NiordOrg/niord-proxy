@@ -69,9 +69,11 @@ angular.module('niord.proxy.app')
             'HISTORICAL_PUBLICATIONS': 'Historical NtM and Publications',
             'TEASER_TEXT': 'Click the map for<br>Notices to Mariners<br>and Navigational Warnings',
             'MAP_COPYRIGHT' : '&copy; <a href="http://www.dma.dk" target="_blank">Danish Maritime Authority</a>.',
+            'MAP_ACCESSIBILITY' : '<a href="https://www.was.digst.dk/nautiskinformation-soefartsstyrelsen-dk" target="_blank">Accessibility</a>.',
             'FOOTER_COPYRIGHT' : '&copy; 2017 Danish Maritime Authority',
             'FOOTER_DISCLAIMER' : 'Disclaimer',
-            'FOOTER_COOKIES' : 'Cookies'
+            'FOOTER_COOKIES' : 'Cookies',
+            'FOOTER_ACCESSIBILITY': 'Accessibility'
         });
 
         $translateProvider.translations('da', {
@@ -137,9 +139,11 @@ angular.module('niord.proxy.app')
             'HISTORICAL_PUBLICATIONS': 'Historiske EfS og publikationer',
             'TEASER_TEXT': 'Klik på kortet for aktuelle<br>Efterretninger for Søfarende<br>samt Navigationsadvarsler',
             'MAP_COPYRIGHT' : '&copy; <a href="http://www.soefartsstyrelsen.dk" target="_blank">Søfartsstyrelsen</a>.',
+            'MAP_ACCESSIBILITY' : '<a href="https://www.was.digst.dk/nautiskinformation-soefartsstyrelsen-dk" target="_blank">Tilgængelighed</a>.',
             'FOOTER_COPYRIGHT' : '&copy; 2017 Søfartsstyrelsen',
             'FOOTER_DISCLAIMER' : 'Disclaimer',
-            'FOOTER_COOKIES' : 'Cookies'
+            'FOOTER_COOKIES' : 'Cookies',
+            'FOOTER_ACCESSIBILITY': 'Tilgængelighed'
         });
 
         $translateProvider.preferredLanguage('en');

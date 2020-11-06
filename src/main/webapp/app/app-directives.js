@@ -420,6 +420,8 @@ angular.module('niord.proxy.app')
                     }
                     osmSource.setAttributions([
                         new ol.Attribution({
+                            html: AppService.translate('MAP_ACCESSIBILITY')}),
+                        new ol.Attribution({
                             html: AppService.translate('MAP_COPYRIGHT')}),
                         new ol.Attribution({
                             html: '&copy; ' +

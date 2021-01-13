@@ -25,9 +25,9 @@ The Niord Proxy can be run as an executable jar:
 
 ### Release Docker Image
 
-In order to release Niord you will need access to https://hub.docker.com/u/dmadk
+In order to release Niord as a Docker image you will need access to https://hub.docker.com/u/dmadk
 
-Replace
+Run the following commands with the actual version replacing the version tag.
 
 ```bash
 $ docker build . -t dmadk/niord-proxy:$REPLACE_WITH_VERSION_TAG$

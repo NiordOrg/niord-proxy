@@ -3,13 +3,13 @@
 The Niord Proxy is intended to demonstrate how an end-user facing website could retrieve and render messages from a
 Niord back-end server.
 
-http://docs.niord.org/dev-guide/guide.html#niord-proxy-development-set-up provides a more detailed user guide. 
+Addition developer documentation is provided at http://docs.niord.org/dev-guide/guide.html#niord-proxy-development-set-up. 
 
 ## Prerequisites
 * Java JDK 1.8
 * Maven 3.5.x
 
-Note this project does not build with Maven 3.6 or Java versions never than Java 8
+__NOTE:__ this project does not build with Maven 3.6 or Java versions never than Java 8
 
 ### Build
 

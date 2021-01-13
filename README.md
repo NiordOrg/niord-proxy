@@ -27,9 +27,11 @@ The Niord Proxy can be run as an executable jar:
 
 In order to release Niord you will need access to https://hub.docker.com/u/dmadk
 
+Replace
+
 ```bash
-$ docker build . -t dmadk/niord-proxy:2.0.0
-$ docker push dmadk/niord-proxy:2.0.0
+$ docker build . -t dmadk/niord-proxy:$REPLACE_WITH_VERSION_TAG$
+$ docker push dmadk/niord-proxy:$REPLACE_WITH_VERSION_TAG$
 ```
 
 You should also update the version in the Helm chart of Niord Proxy (https://github.com/NiordOrg/charts) and release a new chart.

@@ -1,5 +1,6 @@
 FROM amazoncorretto:8
 
+RUN "ls -R" 
 ADD ./target/niord-proxy-swarm.jar /opt/niord-proxy-swarm.jar
 
 ENV EXECUTION_MODE development

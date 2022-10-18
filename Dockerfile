@@ -1,6 +1,6 @@
 FROM amazoncorretto:8
 
-ADD target/niord-proxy-swarm.jar /opt/niord-proxy-swarm.jar
+ADD ./target/niord-proxy-swarm.jar /opt/niord-proxy-swarm.jar
 
 ENV EXECUTION_MODE development
 ENV NIORD_PROXY_SERVER https://niord.e-navigation.net

@@ -45,7 +45,6 @@ steps:
     containerRegistry: '$(container-registry)'
     repository: '$(container-registry-repository)'
     Dockerfile: './Dockerfile'
-    buildContext: '$(build.artifactstagingdirectory)'
     tags: '$(Build.BuildNumber)'
 
 - task: PublishPipelineArtifact@1

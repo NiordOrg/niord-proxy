@@ -2,7 +2,6 @@
 # Build your Java project and run tests with Apache Maven.
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
-
 trigger:
 - master
 
@@ -10,14 +9,16 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: 'wget http://apache.mirror.gtcomm.net/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.zip'
+- script: 'wget https://archive.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.zip'
 
 - task: ExtractFiles@1
+  displayName: 'Unzip Maven'
   inputs:
       archiveFilePatterns: 'apache-maven-3.5.4-bin.zip'
       destinationFolder: '$(build.sourcesdirectory)/maven'
 
 - task: Maven@3
+  displayName: 'Build app using Maven'
   inputs:
     mavenPomFile: 'pom.xml'
     mavenOptions: '-Xmx3072m'
@@ -30,3 +31,18 @@ steps:
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     goals: 'package'
+
+- task: Docker@2
+  displayName: 'Build and push image'
+  inputs:
+    containerRegistry: '$(container-registry)'
+    repository: '$(container-registry-repository)'
+    Dockerfile: '$(project-path)/Dockerfile'
+    buildContext: '$(build.artifactstagingdirectory)'
+    tags: '$(Build.BuildNumber)'
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish Docker-Compose'
+  inputs:
+    targetPath: '$(project-path)/docker-compose.yml'
+    artifact: niord-proxy

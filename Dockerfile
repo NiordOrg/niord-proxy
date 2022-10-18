@@ -1,4 +1,4 @@
-FROM java:openjdk-8-jdk
+FROM amazoncorretto:8
 
 ADD target/niord-proxy-swarm.jar /opt/niord-proxy-swarm.jar
 

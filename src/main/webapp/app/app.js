@@ -58,23 +58,11 @@ angular.module('niord.proxy.app',
         }])
 
 
-    .run(['$rootScope', 'AnalyticsService',
-        function($rootScope, AnalyticsService) {
+    .run(['$rootScope',
+        function($rootScope) {
 
             if ($rootScope.timeZone) {
                 moment.tz.setDefault($rootScope.timeZone);
-            }
-
-            // Configure Google Analytics
-            if (AnalyticsService.enabled()) {
-
-                // initialise google analytics
-                AnalyticsService.initAnalytics();
-
-                // track pageview on state change
-                $rootScope.$on('$stateChangeSuccess', function () {
-                    AnalyticsService.logPageView();
-                });
             }
         }]);
 

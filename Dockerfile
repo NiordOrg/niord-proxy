@@ -22,6 +22,5 @@ ENTRYPOINT java \
    -Dniord-proxy.repoRootPath=$NIORD_REPO_PATH \
    -Dniord-proxy.repoRootType=$NIORD_REPO_TYPE \
    -Dniord-proxy.mode=$EXECUTION_MODE \
-   -Dniord-proxy.analyticsTrackingId=$NIORD_PROXY_TRACKING_ID \
    -Dniord-proxy.wmsServerUrl=$NIORD_PROXY_WMS_URL \
    -jar /opt/niord-proxy-swarm.jar

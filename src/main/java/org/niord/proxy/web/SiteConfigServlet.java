@@ -118,10 +118,6 @@ public class SiteConfigServlet  extends HttpServlet {
                 .append(settings.getTimeZone())
                 .append("\";\n");
 
-        str.append("    $rootScope.analyticsTrackingId = \"")
-                .append(settings.getAnalyticsTrackingId())
-                .append("\";\n");
-
         str.append("    $rootScope.executionMode = \"")
                 .append(settings.getExecutionMode().toString())
                 .append("\";\n");

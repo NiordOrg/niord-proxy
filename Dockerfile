@@ -1,4 +1,4 @@
-FROM amazoncorretto:8
+FROM amazoncorretto:8-alpine-jdk
 
 ADD ./target/niord-proxy-swarm.jar /opt/niord-proxy-swarm.jar
 

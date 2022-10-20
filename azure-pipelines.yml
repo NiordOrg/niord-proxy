@@ -32,13 +32,6 @@ steps:
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     goals: 'package'
 
-- task: Bash@3
-  inputs:
-    targetType: 'inline'
-    script: |
-      # Write your commands here
-      ls -R
-
 - task: Docker@2
   displayName: 'Build and push image'
   inputs:
@@ -50,5 +43,5 @@ steps:
 - task: PublishPipelineArtifact@1
   displayName: 'Publish Docker-Compose'
   inputs:
-    targetPath: '$(project-path)/docker-compose.yml'
+    targetPath: './docker-compose.yml'
     artifact: niord-proxy

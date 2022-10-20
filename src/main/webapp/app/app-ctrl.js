@@ -44,9 +44,9 @@ angular.module('niord.proxy.app')
      * handled in this controller.
      */
     .controller('MessageCtrl', ['$scope', '$rootScope', '$window', '$location', '$timeout', '$stateParams',
-                'MessageService', 'AppService', 'AnalyticsService',
+                'MessageService', 'AppService',
         function ($scope, $rootScope, $window, $location, $timeout, $stateParams,
-                  MessageService, AppService, AnalyticsService) {
+                  MessageService, AppService) {
             'use strict';
 
             $scope.loading = true;

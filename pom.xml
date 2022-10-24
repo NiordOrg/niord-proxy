@@ -107,7 +107,7 @@
 
         <!-- JSTL support -->
         <dependency>
-            <groupId>javax.servlet.jsp</groupId>
+            <groupId>javax.servlet.jsp.jstl</groupId>
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>

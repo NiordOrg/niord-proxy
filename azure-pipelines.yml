@@ -36,7 +36,7 @@ steps:
   displayName: 'Build and push image'
   inputs:
     containerRegistry: '$(container-registry)'
-    repository: '$(container-registry-repository)'
+    repository: 'niord-proxy'
     Dockerfile: './Dockerfile'
     tags: '$(Build.BuildNumber)'
 

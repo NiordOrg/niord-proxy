@@ -10,7 +10,7 @@ services:
       - ${NIORD_HOME}:/opt/niord
     environment:
       - EXECUTION_MODE=${PROXY_EXECUTION_MODE}
-      - NIORD_PROXY_SERVER=https://${APPSRV_NAME}
+      - NIORD_PROXY_SERVER=${NIORD_APPSRV_SERVER}
       - NIORD_REPO_PATH=/opt/niord/repo
       - NIORD_PROXY_AREAS=${PROXY_AREAS}
       - NIORD_REPO_TYPE=${PROXY_REPO_TYPE}

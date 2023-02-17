@@ -15,5 +15,10 @@ services:
       - NIORD_PROXY_AREAS=${PROXY_AREAS}
       - NIORD_REPO_TYPE=${PROXY_REPO_TYPE}
       - NIORD_PROXY_WMS_URL=${PROXY_WMS_URL}
+    logging:
+      driver: "json-file"
+      options:
+          max-size: "1g"
+          max-file: "3"
     restart: unless-stopped
     network_mode: bridge

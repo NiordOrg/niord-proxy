@@ -9,12 +9,17 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: 'wget https://archive.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.zip'
+- task: Bash@3
+  displayName: Download Maven
+  inputs:
+    targetType: 'inline'
+    script: 'wget https://archive.apache.org/dist/maven/maven-3/$(maven-version)/binaries/apache-maven-$(maven-version)-bin.tar.gz'
+
 
 - task: ExtractFiles@1
   displayName: 'Unzip Maven'
   inputs:
-      archiveFilePatterns: 'apache-maven-3.5.4-bin.zip'
+      archiveFilePatterns: 'apache-maven-$(maven-version)-bin.tar.gz'
       destinationFolder: '$(build.sourcesdirectory)/maven'
 
 - task: Maven@3
@@ -26,7 +31,7 @@ steps:
     jdkVersionOption: '1.8'
     jdkArchitectureOption: 'x64'
     mavenVersionOption: 'Path'
-    mavenDirectory: '$(build.sourcesdirectory)/maven/apache-maven-3.5.4'
+    mavenDirectory: '$(build.sourcesdirectory)/maven/apache-maven-$(maven-version)'
     mavenSetM2Home: true
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'

@@ -22,8 +22,3 @@ services:
           max-file: "3"
     restart: unless-stopped
     network_mode: bridge
-    healthcheck:
-      test: ["CMD", "curl", "-f", "${NIORD_APPSRV_SERVER}/rest/public/v1/messages"]
-      interval: 30s
-      timeout: 10s
-      retries: 5

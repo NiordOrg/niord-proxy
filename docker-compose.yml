@@ -20,11 +20,10 @@ services:
       options:
           max-size: "1g"
           max-file: "3"
-    restart: on-failure
+    restart: unless-stopped
     network_mode: bridge
     healthcheck:
       test: ["CMD", "curl", "-f", "${NIORD_APPSRV_SERVER}/rest/public/v1/messages"]
-      interval: 0s
+      interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 0s

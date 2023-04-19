@@ -314,7 +314,8 @@ public class MessageService extends AbstractNiordService {
         // Load all area roots defined by the settings - once...
         if (this.areaRoots != null) {
             for (RootArea rootArea : settings.getRootAreas()) {
-                if (!this.areaRoots.stream().anyMatch(a -> a.getMrn().equals(rootArea))) {
+                if (this.areaRoots.stream().noneMatch(a -> a.getMrn().equals(rootArea.getAreaId()))) {
+                    log.info("Try to fetch area from server: " + rootArea.getAreaId());
 
                     // Fetch the area from the server
                     AreaVo area = executeNiordJsonRequest(
@@ -323,12 +324,11 @@ public class MessageService extends AbstractNiordService {
 
                     if (area != null) {
                         this.areaRoots.add(rootArea.setArea(area));
-                        log.info("Add new area root: " + area.getId());
+                        log.info("Add new area to root: " + area.getMrn() + ", id:" + area.getId());
                     }
                 }
             }
         }
-
 
         // Load all active messages
         List<MessageVo> messages = executeNiordJsonRequest(

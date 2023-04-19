@@ -324,7 +324,7 @@ public class MessageService extends AbstractNiordService {
 
                     if (area != null) {
                         this.areaRoots.add(rootArea.setArea(area));
-                        log.info("Add new area to root: " + area.getMrn() + ", id:" + area.getId());
+                        log.info("Added new area to root: " + area.getMrn() + ", id:" + area.getId());
                     }
                 }
             }

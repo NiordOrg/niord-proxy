@@ -311,23 +311,22 @@ public class MessageService extends AbstractNiordService {
      */
     @Schedule(second = "12", minute = "*/3", hour = "*")
     public void periodicFetchData() {
-
         // Load all area roots defined by the settings - once...
-        if (this.areaRoots.isEmpty()) {
-            List<RootArea> areaRoots = new ArrayList<>();
+        if (this.areaRoots != null) {
             for (RootArea rootArea : settings.getRootAreas()) {
+                if (!this.areaRoots.stream().anyMatch(a -> a.getMrn().equals(rootArea))) {
 
-                // Fetch the area from the server
-                AreaVo area = executeNiordJsonRequest(
-                        getAreaUrl(rootArea.getAreaId()),
-                        json -> new ObjectMapper().readValue(json, AreaVo.class));
+                    // Fetch the area from the server
+                    AreaVo area = executeNiordJsonRequest(
+                            getAreaUrl(rootArea.getAreaId()),
+                            json -> new ObjectMapper().readValue(json, AreaVo.class));
 
-                if (area != null) {
-                    areaRoots.add(rootArea.setArea(area));
+                    if (area != null) {
+                        this.areaRoots.add(rootArea.setArea(area));
+                        log.info("Add new area root: " + area.getId());
+                    }
                 }
             }
-            this.areaRoots = areaRoots;
-            log.info("Loaded area roots: " + areaRoots);
         }
 
 

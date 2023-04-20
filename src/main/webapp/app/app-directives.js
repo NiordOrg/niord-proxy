@@ -961,26 +961,12 @@ angular.module('niord.proxy.app')
     /****************************************************************
      * Renders a list of publications
      ****************************************************************/
-    .directive('publicationList', ['AnalyticsService', function (AnalyticsService) {
+    .directive('publicationList', [function () {
         return {
             restrict: 'E',
             templateUrl: '/app/render-publications.html',
             scope: {
                 publications: "="
-            },
-            link: function(scope) {
-
-                /** Called when a publication download link is clicked **/
-                scope.downloadPublication = function (pub) {
-                    // Log the event to Google Analytics
-                    AnalyticsService.logEvent('Publication', 'download-publication', pub.descs[0].title);
-                };
-
-                /** Called when a publication browse link is clicked **/
-                scope.browsePublication = function (pub) {
-                    // Log the event to Google Analytics
-                    AnalyticsService.logEvent('Publication', 'browse-publication', pub.descs[0].title);
-                }
             }
         };
     }]);

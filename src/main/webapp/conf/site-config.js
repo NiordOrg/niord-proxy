@@ -30,7 +30,6 @@ angular.module('niord.proxy.conf')
          */
 
         $rootScope.languages = [ "da", "en" ];
-        $rootScope.analyticsTrackingId = "";
         $rootScope.executionMode = "DEVELOPMENT";
         $rootScope.wmsLayer = false;
 

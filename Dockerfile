@@ -1,6 +1,6 @@
-FROM java:openjdk-8-jdk
+FROM amazoncorretto:8-alpine-jdk
 
-ADD target/niord-proxy-swarm.jar /opt/niord-proxy-swarm.jar
+ADD ./target/niord-proxy-swarm.jar /opt/niord-proxy-swarm.jar
 
 ENV EXECUTION_MODE development
 ENV NIORD_PROXY_SERVER https://niord.e-navigation.net
@@ -22,6 +22,5 @@ ENTRYPOINT java \
    -Dniord-proxy.repoRootPath=$NIORD_REPO_PATH \
    -Dniord-proxy.repoRootType=$NIORD_REPO_TYPE \
    -Dniord-proxy.mode=$EXECUTION_MODE \
-   -Dniord-proxy.analyticsTrackingId=$NIORD_PROXY_TRACKING_ID \
    -Dniord-proxy.wmsServerUrl=$NIORD_PROXY_WMS_URL \
    -jar /opt/niord-proxy-swarm.jar

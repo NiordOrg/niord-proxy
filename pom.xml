@@ -6,7 +6,7 @@
     <artifactId>niord-proxy</artifactId>
     <name>Niord Proxy Client</name>
     <version>1.0.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -23,20 +23,10 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.3.2</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.4.1</version>
                 <configuration>
-                    <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>org.niord.proxy.NiordProxyMain</mainClass>
-                        </transformer>
-                    </transformers>
+<!-- place configuration here -->
                 </configuration>
                 <executions>
                     <execution>
@@ -44,7 +34,6 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
-                        <configuration><finalName>niord-proxy-tomcat</finalName></configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -103,6 +92,13 @@
             <groupId>com.vividsolutions</groupId>
             <artifactId>jts-io</artifactId>
             <version>1.14.0</version>
+        </dependency>
+
+        <!-- CORS support -->
+        <dependency>
+            <groupId>org.ebaysf.web</groupId>
+            <artifactId>cors-filter</artifactId>
+            <version>1.0.1</version>
         </dependency>
 
         <!-- JSTL support -->

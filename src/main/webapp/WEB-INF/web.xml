@@ -6,7 +6,7 @@
 
     <filter>
         <filter-name>CORS Filter</filter-name>
-        <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
+        <filter-class>org.ebaysf.web.cors.CORSFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>CORS Filter</filter-name>

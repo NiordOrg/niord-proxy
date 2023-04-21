@@ -29,6 +29,7 @@ import java.util.logging.Logger;
  *     <li>niord-proxy.repoRootPath : Path to existing Niord repo or local repo copy</li>
  *     <li>niord-proxy.repoType : either "shared" for a shared Niord repo, or "local" for a locally maintained copy</li>
  *     <li>niord-proxy.timeZone : The time-zone to use, e.g. "Europe/Copenhagen"</li>
+ *     <li>niord-proxy.analyticsTrackingId : The Google Analytics tracking ID</li>
  *     <li>niord-proxy.languages : Comma-separated list of languages</li>
  *     <li>niord-proxy.executionMode : The execution mode, either "development", "test" or "production"</li>
  *     <li>niord-proxy.wmsServerUrl : A WMS server URL incl username and password. If defined, enables a proxied WMS layer.</li>
@@ -55,6 +56,8 @@ public class Settings {
     private RepoType repoType;
 
     private String timeZone;
+
+    private String analyticsTrackingId;
 
     private String[] languages;
 
@@ -93,6 +96,9 @@ public class Settings {
 
         timeZone = System.getProperty("niord-proxy.timeZone", "Europe/Copenhagen");
         log.info("timeZone: " + timeZone);
+
+        analyticsTrackingId = System.getProperty("niord-proxy.analyticsTrackingId", "");
+        log.info("analyticsTrackingId: " + analyticsTrackingId);
 
         languages = System.getProperty("niord-proxy.languages", "da,en").split(",");
         log.info("languages: " + Arrays.asList(languages));
@@ -188,6 +194,10 @@ public class Settings {
 
     public ExecutionMode getExecutionMode() {
         return executionMode;
+    }
+
+    public String getAnalyticsTrackingId() {
+        return analyticsTrackingId;
     }
 
     public String getWmsServerUrl() {

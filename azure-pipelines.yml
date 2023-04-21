@@ -2,6 +2,7 @@
 # Build your Java project and run tests with Apache Maven.
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
 trigger:
 - master
 
@@ -9,21 +10,14 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: Bash@3
-  displayName: Download Maven
-  inputs:
-    targetType: 'inline'
-    script: 'wget https://archive.apache.org/dist/maven/maven-3/$(maven-version)/binaries/apache-maven-$(maven-version)-bin.tar.gz'
-
+- script: 'wget http://apache.mirror.gtcomm.net/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.zip'
 
 - task: ExtractFiles@1
-  displayName: 'Unzip Maven'
   inputs:
-      archiveFilePatterns: 'apache-maven-$(maven-version)-bin.tar.gz'
+      archiveFilePatterns: 'apache-maven-3.5.4-bin.zip'
       destinationFolder: '$(build.sourcesdirectory)/maven'
 
 - task: Maven@3
-  displayName: 'Build app using Maven'
   inputs:
     mavenPomFile: 'pom.xml'
     mavenOptions: '-Xmx3072m'
@@ -31,22 +25,8 @@ steps:
     jdkVersionOption: '1.8'
     jdkArchitectureOption: 'x64'
     mavenVersionOption: 'Path'
-    mavenDirectory: '$(build.sourcesdirectory)/maven/apache-maven-$(maven-version)'
+    mavenDirectory: '$(build.sourcesdirectory)/maven/apache-maven-3.5.4'
     mavenSetM2Home: true
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     goals: 'package'
-
-- task: Docker@2
-  displayName: 'Build and push image'
-  inputs:
-    containerRegistry: '$(container-registry)'
-    repository: 'niord-proxy'
-    Dockerfile: './Dockerfile'
-    tags: '$(Build.BuildNumber)'
-
-- task: PublishPipelineArtifact@1
-  displayName: 'Publish Docker-Compose'
-  inputs:
-    targetPath: './docker-compose.yml'
-    artifact: niord-proxy

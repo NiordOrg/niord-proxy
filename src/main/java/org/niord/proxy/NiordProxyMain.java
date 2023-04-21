@@ -15,13 +15,13 @@
  */
 package org.niord.proxy;
 
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.niord.proxy.conf.LogConfiguration;
 import org.niord.proxy.rest.RestApplication;
 import org.niord.proxy.util.JtsConverter;
 import org.niord.proxy.web.TldFunctions;
-import org.apache.catalina.startup.Tomcat;
-
-import java.io.File;
+import org.wildfly.swarm.Swarm;
+import org.wildfly.swarm.jaxrs.JAXRSArchive;
 
 /**
  * Bootstrapping the Niord Proxy
@@ -30,21 +30,22 @@ public class NiordProxyMain {
 
     public static void main(String[] args) throws Exception {
 
-        // Instantiate a Tomcat
-        String contextPath = "/";
-        String webappDir = new File("src/main/webapp/").getAbsolutePath();
-        Tomcat tomcat = new Tomcat();
-        tomcat.setPort(9000);
-        tomcat.getConnector();
+        // Instantiate the container
+        Swarm swarm = new Swarm();
 
-        // add the web application
-        tomcat.addWebapp(contextPath, webappDir);
+        // Create one or more deployments
+        JAXRSArchive deployment = ShrinkWrap.create(JAXRSArchive.class)
+            .setContextRoot( "/" )
+            .addPackage( NiordProxyMain.class.getPackage() )
+            .addPackage( LogConfiguration.class.getPackage() )
+            .addPackage( RestApplication.class.getPackage() )
+            .addPackage( JtsConverter.class.getPackage() )
+            .addPackage( TldFunctions.class.getPackage() )
+            .addAllDependencies()
+            .staticContent();
 
-        // run the Tomcat
-        tomcat.start();
-tomcat.getServer().await();
-
-
+        swarm.start()
+            .deploy(deployment);
     }
 
 }

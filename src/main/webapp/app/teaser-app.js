@@ -20,23 +20,5 @@ angular.module('niord.proxy.app',
             $translateProvider.useSanitizeValueStrategy('sanitize');
         }])
 
-
-    .run(['$rootScope', '$window', '$location',
-        function($rootScope, $window, $location) {
-
-            // Configure Google Analytics
-            if ($rootScope.analyticsTrackingId && $rootScope.analyticsTrackingId.length > 0) {
-
-                // initialise google analytics
-                try {
-                    $window.ga('create', $rootScope.analyticsTrackingId, 'auto');
-                    $window.ga('send', 'pageview', $location.path());
-                } catch (ex) {
-                }
-            }
-
-        }]);
-
-
 function adjustMessageListTopPosition() {
 }

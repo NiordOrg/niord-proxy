@@ -44,9 +44,9 @@ angular.module('niord.proxy.app')
      * handled in this controller.
      */
     .controller('MessageCtrl', ['$scope', '$rootScope', '$window', '$location', '$timeout', '$stateParams',
-                'MessageService', 'AppService',
+                'MessageService', 'AppService', 'AnalyticsService',
         function ($scope, $rootScope, $window, $location, $timeout, $stateParams,
-                  MessageService, AppService) {
+                  MessageService, AppService, AnalyticsService) {
             'use strict';
 
             $scope.loading = true;
@@ -299,6 +299,9 @@ angular.module('niord.proxy.app')
                 var params = $scope.getSearchParams(true);
                 var url = '/details.pdf?' + params;
 
+                // Log the event to Google Analytics
+                AnalyticsService.logEvent('PDF', 'generate-list-report', url);
+
                 $window.open(url, '_blank');
             };
 
@@ -321,9 +324,9 @@ angular.module('niord.proxy.app')
      * Controller that handles displaying message details in a dialog
      *******************************************************************/
     .controller('MessageDialogCtrl', ['$scope', '$rootScope', '$window', 'MessageService', 'AppService',
-                'messageId', 'messages',
+                'AnalyticsService', 'messageId', 'messages',
         function ($scope, $rootScope, $window, MessageService, AppService,
-                  messageId, messages) {
+                  AnalyticsService, messageId, messages) {
             'use strict';
 
             $scope.warning = undefined;
@@ -380,6 +383,9 @@ angular.module('niord.proxy.app')
                         + '&language=' + $rootScope.language;
                 var url = '/details.pdf?' + params;
 
+                // Log the event to Google Analytics
+                AnalyticsService.logEvent('PDF', 'generate-details-report', url);
+
                 $window.open(url, '_blank');
             };
 
@@ -409,6 +415,10 @@ angular.module('niord.proxy.app')
                             }
                         }
                         $scope.hasGeometry = MessageService.featuresForMessage($scope.msg).length > 0;
+
+                        // Log the event to Google Analytics
+                        var label = $scope.msg.shortId || $scope.msg.id;
+                        AnalyticsService.logEvent('Message', 'show-details', label);
                     })
                     .error(function () {
                         $scope.msg = undefined;
@@ -426,9 +436,9 @@ angular.module('niord.proxy.app')
      * Controller that handles the list of publications
      **********************************************************************/
     .controller('PublicationCtrl', ['$scope', '$rootScope', '$window', '$location', '$timeout',
-                'AppService', 'PublicationService',
+                'AppService', 'PublicationService', 'AnalyticsService',
         function ($scope, $rootScope, $window, $location, $timeout,
-                  AppService, PublicationService) {
+                  AppService, PublicationService, AnalyticsService) {
             'use strict';
 
             $scope.activePublications = [];

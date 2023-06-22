@@ -313,7 +313,7 @@ public class MessageService extends AbstractNiordService {
     public void periodicFetchData() {
         // Load all area roots defined by the settings - once...
         if (this.areaRoots != null) {
-            if(!this.areaRoots.stream().allMatch(a -> Arrays.stream(settings.getRootAreas()).anyMatch(r -> a.getMrn().equals(r.getAreaId())))) {
+            if(!Arrays.stream(settings.getRootAreas()).allMatch(r -> this.areaRoots.stream().anyMatch(a -> a.getMrn().equals(r.getAreaId())))) {
                 log.info("Found difference in catched areas and incoming ones, updating...");
                 List<RootArea> areaRoots = new ArrayList<>();
                 for (RootArea rootArea : settings.getRootAreas()) {

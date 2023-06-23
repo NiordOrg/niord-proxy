@@ -313,8 +313,10 @@ public class MessageService extends AbstractNiordService {
     public void periodicFetchData() {
         // Load all area roots defined by the settings - once...
         if (this.areaRoots != null) {
-            for (RootArea rootArea : settings.getRootAreas()) {
-                if (this.areaRoots.stream().noneMatch(a -> a.getMrn().equals(rootArea.getAreaId()))) {
+            if(!Arrays.stream(settings.getRootAreas()).allMatch(r -> this.areaRoots.stream().anyMatch(a -> a.getMrn().equals(r.getAreaId())))) {
+                log.info("No all the areas has been loaded. Reloading all");
+                List<RootArea> areaRoots = new ArrayList<>();
+                for (RootArea rootArea : settings.getRootAreas()) {
                     log.info("Try to fetch area from server: " + rootArea.getAreaId());
 
                     // Fetch the area from the server
@@ -323,10 +325,12 @@ public class MessageService extends AbstractNiordService {
                             json -> new ObjectMapper().readValue(json, AreaVo.class));
 
                     if (area != null) {
-                        this.areaRoots.add(rootArea.setArea(area));
-                        log.info("Added new area to root: " + area.getMrn() + ", id:" + area.getId());
+                        areaRoots.add(rootArea.setArea(area));
+                        log.info("Received new area:" + area.getMrn() + ", id:" + area.getId());
                     }
                 }
+                this.areaRoots = areaRoots;
+                log.info("Loaded area roots: " + areaRoots);
             }
         }
 

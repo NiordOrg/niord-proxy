@@ -15,27 +15,9 @@
  */
 package org.niord.proxy.web;
 
-import com.itextpdf.text.DocumentException;
-import org.apache.commons.lang.StringUtils;
-import org.niord.model.message.AreaDescVo;
-import org.niord.model.message.MainType;
-import org.niord.model.message.MessageVo;
-import org.niord.proxy.conf.Settings;
-import org.niord.proxy.rest.MessageService;
-import org.niord.proxy.util.WebUtils;
-import org.w3c.dom.Document;
-import org.w3c.tidy.Tidy;
-import org.xhtmlrenderer.pdf.ITextRenderer;
+import static org.niord.proxy.rest.MessageService.GENERAL_AREA;
 
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -55,7 +37,34 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static org.niord.proxy.rest.MessageService.GENERAL_AREA;
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.apache.commons.lang.StringUtils;
+import org.niord.model.message.AreaDescVo;
+import org.niord.model.message.MainType;
+import org.niord.model.message.MessageVo;
+import org.niord.proxy.conf.Settings;
+import org.niord.proxy.rest.MessageService;
+import org.niord.proxy.util.WebUtils;
+import org.w3c.dom.Document;
+import org.w3c.tidy.Tidy;
+import org.xhtmlrenderer.pdf.ITextRenderer;
+
+import com.itextpdf.text.DocumentException;
 
 /**
  * Servlet used for generating either a HTML details page
@@ -331,18 +340,54 @@ public class MessageDetailsServlet extends HttpServlet {
 
     /**
      * Use JTidy to clean up the HTML
-     * @param html the HTML to clean up
+     * 
+     * @param html
+     *            the HTML to clean up
      * @return the resulting XHTML
      */
-    public Document cleanHtml(String html) {
+    public Document cleanHtml(String html) throws DocumentException {
         Tidy tidy = new Tidy();
 
-        tidy.setShowWarnings(false); //to hide errors
-        tidy.setQuiet(true); //to hide warning
+        tidy.setShowWarnings(false); // to hide errors
+        tidy.setQuiet(true); // to hide warning
 
         tidy.setXHTML(true);
-        return tidy.parseDOM(new StringReader(html), new StringWriter());
+        Document d = tidy.parseDOM(new StringReader(html), new StringWriter());
+        return convert(d);
     }
+
+    /** This method removes a lot of internal jtidy classes that itext fails with */
+    private Document convert(Document doc) throws DocumentException {
+            try {
+                // Create a TransformerFactory instance
+                TransformerFactory tf = TransformerFactory.newInstance();
+                
+                // Create a Transformer instance
+                Transformer transformer = tf.newTransformer();
+                
+                // To keep the output clean (omit XML declaration and indentation)
+                transformer.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
+                transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "yes");
+
+                // Create a StringWriter to hold the XML string
+                StringWriter writer = new StringWriter();
+                
+                // Perform the transformation from Document to String
+                transformer.transform(new DOMSource(doc), new StreamResult(writer));
+                
+                // Return the string representation of the document
+                String html =  writer.getBuffer().toString();
+                
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                Document document = builder.parse(new ByteArrayInputStream(html.getBytes()));
+                return document;
+                
+            } catch (Exception e) {
+              throw new DocumentException(e);
+            }
+    }
+    
 
 
     /**

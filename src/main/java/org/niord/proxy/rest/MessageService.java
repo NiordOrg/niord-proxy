@@ -131,7 +131,13 @@ public class MessageService extends AbstractNiordService {
                 .filter(m -> filterByAreaIds(m, areaIds))
                 .filter(m -> filterByGeometry(m, geometry))
                 .filter(m -> filterByActiveStatus(m, active))
-                .map(m -> m.copy(filter))
+                .map(m -> {try  { 
+                    return m.copy(filter); // may fail
+                } catch (Exception e) {
+                    log.warning("Invalid message " + m.getShortId());
+                    return null;
+                }})
+                .filter( m ->m!=null)
                 .collect(Collectors.toList());
 
         log.info(String.format("Search for language=%s, mainTypes=%s, areaIds=%s, wkt=%s -> returning %d messages",

@@ -41,7 +41,6 @@ public class NiordProxyMain {
             .addPackage( RestApplication.class.getPackage() )
             .addPackage( JtsConverter.class.getPackage() )
             .addPackage( TldFunctions.class.getPackage() )
-            .addAllDependencies()
             .staticContent();
 
         swarm.start()

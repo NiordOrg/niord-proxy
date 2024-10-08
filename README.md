@@ -33,5 +33,3 @@ Run the following commands with the actual version replacing the version tag.
 $ docker build . -t dmadk/niord-proxy:$REPLACE_WITH_VERSION_TAG$
 $ docker push dmadk/niord-proxy:$REPLACE_WITH_VERSION_TAG$
 ```
-
-You should also update the version in the Helm chart of Niord Proxy (https://github.com/NiordOrg/charts) and release a new chart.

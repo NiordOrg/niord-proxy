@@ -68,9 +68,9 @@ angular.module('niord.proxy.app')
             'ACTIVE_PUBLICATIONS': 'Active NtM and Publications',
             'HISTORICAL_PUBLICATIONS': 'Historical NtM and Publications',
             'TEASER_TEXT': 'Click the map for<br>Notices to Mariners<br>and Navigational Warnings',
-            'MAP_COPYRIGHT' : '&copy; <a href="http://www.dma.dk" target="_blank">Danish Maritime Authority</a>.',
+            'MAP_COPYRIGHT' : '&copy; <a href="https://www.brs.dk/en/" target="_blank">Danish Emergency Management Agency</a>.',
             'MAP_ACCESSIBILITY' : '<a href="https://www.was.digst.dk/nautiskinformation-soefartsstyrelsen-dk" target="_blank">Accessibility</a>.',
-            'FOOTER_COPYRIGHT' : '&copy; 2017 Danish Maritime Authority',
+            'FOOTER_COPYRIGHT' : '&copy; 2025 Danish Emergency Management Agency',
             'FOOTER_DISCLAIMER' : 'Disclaimer',
             'FOOTER_COOKIES' : 'Cookies',
             'FOOTER_ACCESSIBILITY': 'Accessibility'
@@ -138,9 +138,9 @@ angular.module('niord.proxy.app')
             'ACTIVE_PUBLICATIONS': 'Aktive EfS og publikationer',
             'HISTORICAL_PUBLICATIONS': 'Historiske EfS og publikationer',
             'TEASER_TEXT': 'Klik på kortet for aktuelle<br>Efterretninger for Søfarende<br>samt Navigationsadvarsler',
-            'MAP_COPYRIGHT' : '&copy; <a href="http://www.soefartsstyrelsen.dk" target="_blank">Søfartsstyrelsen</a>.',
+            'MAP_COPYRIGHT' : '&copy; <a href="https://www.brs.dk/da/" target="_blank">Beredskabsstyrelsen</a>.',
             'MAP_ACCESSIBILITY' : '<a href="https://www.was.digst.dk/nautiskinformation-soefartsstyrelsen-dk" target="_blank">Tilgængelighed</a>.',
-            'FOOTER_COPYRIGHT' : '&copy; 2017 Søfartsstyrelsen',
+            'FOOTER_COPYRIGHT' : '&copy; 2025 Beredskabsstyrelsen',
             'FOOTER_DISCLAIMER' : 'Disclaimer',
             'FOOTER_COOKIES' : 'Cookies',
             'FOOTER_ACCESSIBILITY': 'Tilgængelighed'

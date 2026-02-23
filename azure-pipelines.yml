@@ -41,7 +41,7 @@ steps:
     mavenDirectory: '$(build.sourcesdirectory)/maven/apache-maven-$(maven-version)'
     mavenSetM2Home: true
     publishJUnitResults: false
-    goals: '-pl niord-model clean install -DskipTests'
+    goals: 'clean install -DskipTests'
 
 - task: Maven@3
   displayName: 'Build app using Maven'

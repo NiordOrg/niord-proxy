@@ -22,6 +22,27 @@ steps:
       archiveFilePatterns: 'apache-maven-$(maven-version)-bin.tar.gz'
       destinationFolder: '$(build.sourcesdirectory)/maven'
 
+- task: Bash@3
+  displayName: Clone niord repo
+  inputs:
+    targetType: 'inline'
+    script: 'git clone -b 1.1 https://github.com/NiordOrg/niord.git'
+
+- task: Maven@3
+  displayName: 'Build niord-model'
+  retryCountOnTaskFailure: 3
+  inputs:
+    mavenPomFile: './niord/pom.xml'
+    mavenOptions: '-Xmx3072m'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.8'
+    jdkArchitectureOption: 'x64'
+    mavenVersionOption: 'Path'
+    mavenDirectory: '$(build.sourcesdirectory)/maven/apache-maven-$(maven-version)'
+    mavenSetM2Home: true
+    publishJUnitResults: false
+    goals: '-pl niord-model clean install -DskipTests'
+
 - task: Maven@3
   displayName: 'Build app using Maven'
   inputs:
